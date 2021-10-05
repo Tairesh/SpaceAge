@@ -1,0 +1,29 @@
+name: tests
+
+on:
+  push:
+    paths:
+      - '**/*.rs'
+  pull_request:
+    paths:
+      - '**/*.rs'
+
+jobs:
+  tests:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: "Install dependencies"
+        run: |
+          sudo apt update
+          sudo apt install -y libsdl2-dev
+          rustup update
+          rustc --version
+      - name: "Build"
+        run: cargo build
+      - name: "Check codestyle"
+        run: cargo fmt -- --check
+      - name: "Check clippy warnings"
+        run: cargo clippy -- -Dwarnings
+      - name: "Run tests"
+        run: cargo test
