@@ -90,8 +90,8 @@ impl SettingsScene {
 }
 
 impl Scene for SettingsScene {
-    fn event(&mut self, _ctx: &mut Context, event: Event) -> Transition {
-        easy_back(event).unwrap_or(Transition::DoNothing)
+    fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
+        easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
     fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {

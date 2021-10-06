@@ -233,11 +233,11 @@ fn is_pressed_key_with_mod(ctx: &mut Context, key: Key, key_mod: Option<KeyModif
 }
 
 impl Update for Button {
-    fn update(&mut self, ctx: &mut Context) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, focused: bool) -> Option<Transition> {
         if self.is_disabled {
             return None;
         }
-        if !self.keys.is_empty() {
+        if !self.keys.is_empty() && !focused {
             let mut on_pressed = false;
             let mut off_pressed = false;
             for (key, key_mod) in self.keys.iter() {

@@ -27,7 +27,8 @@ pub trait Positionate {
 }
 
 pub trait Update {
-    fn update(&mut self, _ctx: &mut Context) -> Option<Transition> {
+    // focused means there is some focused sprite on the scene
+    fn update(&mut self, _ctx: &mut Context, _focused: bool) -> Option<Transition> {
         None
     }
 }
@@ -58,4 +59,9 @@ pub trait Press {
     fn unpress(&mut self);
 }
 
-pub trait Sprite: Draw + Positionate + Update {}
+pub trait Sprite: Draw + Positionate + Update {
+    fn focused(&self) -> bool {
+        false
+    }
+    fn set_focused(&mut self, _focused: bool) {}
+}

@@ -158,7 +158,7 @@ impl Positionate for HoverableMesh {
 }
 
 impl Update for HoverableMesh {
-    fn update(&mut self, ctx: &mut Context) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, _focused: bool) -> Option<Transition> {
         let mouse = input::get_mouse_position(ctx);
         let rect = self.rect.unwrap();
         let collides = rect.contains_point(mouse);

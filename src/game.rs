@@ -128,13 +128,15 @@ impl Game {
 impl State for Game {
     fn update(&mut self, ctx: &mut Context) -> Result {
         self.show_fps(ctx);
-        // TODO: provide a way to get sprites and scene to know if there are focused input selected
-        // for example: not calling easy_back() if text input is focused
         let transition = if let Some(scene) = self.scenes.last_mut() {
             let mut button_clicked = None;
+            let focused = scene
+                .sprites()
+                .map(|sprites| sprites.iter().any(|s| s.borrow().focused()))
+                .unwrap_or(false);
             if let Some(sprites) = scene.sprites() {
                 for sprite in sprites.iter() {
-                    if let Some(transition) = sprite.borrow_mut().update(ctx) {
+                    if let Some(transition) = sprite.borrow_mut().update(ctx, focused) {
                         button_clicked = Some(transition);
                     }
                 }
@@ -142,7 +144,7 @@ impl State for Game {
             if let Some(t) = button_clicked {
                 t
             } else {
-                scene.update(ctx)
+                scene.update(ctx, focused)
             }
         } else {
             Transition::Quit
@@ -187,7 +189,11 @@ impl State for Game {
             _ => {}
         }
         if let Some(scene) = self.scenes.last_mut() {
-            let t = scene.event(ctx, event);
+            let focused = scene
+                .sprites()
+                .map(|sprites| sprites.iter().any(|s| s.borrow().focused()))
+                .unwrap_or(false);
+            let t = scene.event(ctx, event, focused);
             self.transit(ctx, t);
         }
         Ok(())

@@ -220,7 +220,7 @@ impl Positionate for TextInput {
 }
 
 impl Update for TextInput {
-    fn update(&mut self, ctx: &mut Context) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, _focused: bool) -> Option<Transition> {
         let mouse = input::get_mouse_position(ctx);
         let collides = self.rect.unwrap().contains_point(mouse);
         if !self.is_hovered && collides {
@@ -338,4 +338,16 @@ impl Press for TextInput {
     }
 }
 
-impl Sprite for TextInput {}
+impl Sprite for TextInput {
+    fn focused(&self) -> bool {
+        self.is_focused
+    }
+
+    fn set_focused(&mut self, focused: bool) {
+        if focused {
+            self.on_pressed();
+        } else {
+            self.off_pressed();
+        }
+    }
+}

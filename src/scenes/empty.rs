@@ -5,8 +5,8 @@ use tetra::{graphics, Context, Event};
 pub struct Empty {}
 
 impl Scene for Empty {
-    fn event(&mut self, _ctx: &mut Context, event: Event) -> Transition {
-        easy_back(event).unwrap_or(Transition::DoNothing)
+    fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
+        easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
     fn draw(&mut self, ctx: &mut Context) {

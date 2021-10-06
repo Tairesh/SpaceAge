@@ -4,7 +4,7 @@ use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::{DrawParams, NineSlice, Texture};
-use tetra::input::MouseButton;
+use tetra::input::{Key, MouseButton};
 use tetra::{input, Context};
 
 pub struct Alert {
@@ -86,7 +86,13 @@ impl Positionate for Alert {
 }
 
 impl Update for Alert {
-    fn update(&mut self, ctx: &mut Context) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, focused: bool) -> Option<Transition> {
+        if focused {
+            return None;
+        }
+        if input::is_key_pressed(ctx, Key::Escape) {
+            return Some(Transition::Pop);
+        }
         if input::is_mouse_button_pressed(ctx, MouseButton::Left) {
             let mouse = input::get_mouse_position(ctx);
             if !self.rect.unwrap().contains_point(mouse) {

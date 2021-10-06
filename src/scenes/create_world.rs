@@ -173,7 +173,7 @@ impl CreateWorld {
 }
 
 impl Scene for CreateWorld {
-    fn update(&mut self, _ctx: &mut Context) -> Transition {
+    fn update(&mut self, _ctx: &mut Context, _focused: bool) -> Transition {
         let name = self.name_input.borrow();
         let mut name_empty = self.name_empty.borrow_mut();
         let mut name_error = self.name_error.borrow_mut();
@@ -191,8 +191,8 @@ impl Scene for CreateWorld {
         Transition::DoNothing
     }
 
-    fn event(&mut self, _ctx: &mut Context, event: Event) -> Transition {
-        easy_back(event).unwrap_or(Transition::DoNothing)
+    fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
+        easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
     fn draw(&mut self, ctx: &mut Context) {

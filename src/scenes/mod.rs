@@ -53,7 +53,10 @@ pub enum Transition {
     Quit,
 }
 
-pub(crate) fn easy_back(event: Event) -> Option<Transition> {
+pub(crate) fn easy_back(event: Event, focused: bool) -> Option<Transition> {
+    if focused {
+        return None;
+    }
     if matches!(
         event,
         Event::MouseButtonPressed {
@@ -70,10 +73,10 @@ pub(crate) fn easy_back(event: Event) -> Option<Transition> {
 }
 
 pub trait Scene {
-    fn update(&mut self, _ctx: &mut Context) -> Transition {
+    fn update(&mut self, _ctx: &mut Context, _focused: bool) -> Transition {
         Transition::DoNothing
     }
-    fn event(&mut self, _ctx: &mut Context, _event: Event) -> Transition {
+    fn event(&mut self, _ctx: &mut Context, _event: Event, _focused: bool) -> Transition {
         Transition::DoNothing
     }
     fn draw(&mut self, _ctx: &mut Context) {}
