@@ -24,6 +24,6 @@ jobs:
       - name: "Check codestyle"
         run: cargo fmt -- --check
       - name: "Check clippy warnings"
-        run: cargo clippy -- -Dwarnings
+        run: SPACEAGE_VERSION_POSTFIX=-test cargo clippy -- -Dwarnings
       - name: "Run tests"
-        run: cargo test
+        run: SPACEAGE_VERSION_POSTFIX=-test cargo test
