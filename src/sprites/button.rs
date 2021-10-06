@@ -37,6 +37,7 @@ impl ButtonState {
             ButtonState::Hovered => Colors::DARK_ORANGE_RED,
             ButtonState::Disabled => Colors::GRAY,
         }
+        .with_alpha(0.8)
     }
 
     fn border_color(&self) -> Color {

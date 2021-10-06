@@ -65,7 +65,7 @@ impl MainMenu {
                 y: Vertical::AtWindowCenter { offset: 50.0 },
             },
             assets.fonts.consolab.clone(),
-            Transition::Push(GameScene::Empty),
+            Transition::Push(GameScene::CreateWorld),
         )));
         let settings_btn = Rc::new(RefCell::new(Button::new(
             "settings",

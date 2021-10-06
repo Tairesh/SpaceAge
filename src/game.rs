@@ -1,8 +1,9 @@
 use crate::assets::Assets;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::{Scene, Transition};
-use crate::settings::Settings;
+use crate::settings::{Settings, WindowMode};
 use tetra::input::Key;
+use tetra::window::WindowPosition;
 use tetra::{time, window, Context, Event, Result, State};
 
 pub struct Game {
@@ -80,13 +81,45 @@ impl Game {
                 self.on_open(ctx);
             }
             Transition::CustomEvent(str) => {
-                self.scenes
+                if let Some(t) = self
+                    .scenes
                     .last_mut()
                     .unwrap()
-                    .custom_event(ctx, str.as_str(), &mut self.settings);
+                    .custom_event(ctx, str.as_str())
+                {
+                    self.transit(ctx, t);
+                }
             }
             Transition::Quit => {
                 window::quit(ctx);
+            }
+            Transition::ChangeWindowMode(wm) => {
+                if self.settings.window_mode() != wm {
+                    match wm {
+                        WindowMode::Fullscreen => {
+                            self.settings.fullscreen = true;
+                            window::set_fullscreen(ctx, true).ok();
+                        }
+                        WindowMode::Window => {
+                            self.settings.fullscreen = false;
+                            if window::is_fullscreen(ctx) {
+                                window::set_fullscreen(ctx, false).ok();
+                            }
+                            window::set_decorated(ctx, true);
+                            window::set_size(
+                                ctx,
+                                self.settings.width as i32,
+                                self.settings.height as i32,
+                            )
+                            .ok();
+                            window::set_position(
+                                ctx,
+                                WindowPosition::Centered(0),
+                                WindowPosition::Centered(0),
+                            );
+                        }
+                    }
+                }
             }
         }
     }
@@ -95,6 +128,8 @@ impl Game {
 impl State for Game {
     fn update(&mut self, ctx: &mut Context) -> Result {
         self.show_fps(ctx);
+        // TODO: provide a way to get sprites and scene to know if there are focused input selected
+        // for example: not calling easy_back() if text input is focused
         let transition = if let Some(scene) = self.scenes.last_mut() {
             let mut button_clicked = None;
             if let Some(sprites) = scene.sprites() {

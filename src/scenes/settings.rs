@@ -1,6 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
-use crate::scenes::{Scene, Transition};
+use crate::scenes::{easy_back, Scene, Transition};
 use crate::settings::{Settings, WindowMode};
 use crate::sprites::button::Button;
 use crate::sprites::image::Image;
@@ -9,9 +9,8 @@ use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Positionate, Press, Sprite};
 use std::cell::RefCell;
 use std::rc::Rc;
-use tetra::input::{Key, KeyModifier, MouseButton};
-use tetra::window::WindowPosition;
-use tetra::{window, Context, Event};
+use tetra::input::{Key, KeyModifier};
+use tetra::{Context, Event};
 
 pub struct SettingsScene {
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
@@ -92,19 +91,14 @@ impl SettingsScene {
 
 impl Scene for SettingsScene {
     fn event(&mut self, _ctx: &mut Context, event: Event) -> Transition {
-        match event {
-            Event::MouseButtonPressed {
-                button: MouseButton::X1,
-            } => Transition::Pop,
-            _ => Transition::DoNothing,
-        }
+        easy_back(event).unwrap_or(Transition::DoNothing)
     }
 
     fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
         Some(&self.sprites)
     }
 
-    fn custom_event(&mut self, ctx: &mut Context, event: &str, settings: &mut Settings) {
+    fn custom_event(&mut self, _ctx: &mut Context, event: &str) -> Option<Transition> {
         for sprite in self.radio_buttons.iter() {
             if !sprite.borrow().id().ends_with(event) {
                 sprite.borrow_mut().unpress();
@@ -112,22 +106,10 @@ impl Scene for SettingsScene {
         }
         match event {
             "window" => {
-                settings.fullscreen = false;
-                if window::is_fullscreen(ctx) {
-                    window::set_fullscreen(ctx, false).ok();
-                }
-                window::set_decorated(ctx, true);
-                window::set_size(ctx, settings.width as i32, settings.height as i32).ok();
-                window::set_position(
-                    ctx,
-                    WindowPosition::Centered(0),
-                    WindowPosition::Centered(0),
-                );
+                println!("window");
+                Some(Transition::ChangeWindowMode(WindowMode::Window))
             }
-            "fullscreen" => {
-                settings.fullscreen = true;
-                window::set_fullscreen(ctx, true).ok();
-            }
+            "fullscreen" => Some(Transition::ChangeWindowMode(WindowMode::Fullscreen)),
             _ => unreachable!(),
         }
     }

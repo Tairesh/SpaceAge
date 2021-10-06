@@ -4,7 +4,7 @@ use std::path::Path;
 
 const PATH: &str = "settings.json";
 
-#[derive(Hash, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum WindowMode {
     Fullscreen,
     Window,

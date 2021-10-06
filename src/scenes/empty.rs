@@ -1,19 +1,12 @@
 use crate::colors::Colors;
-use crate::scenes::{Scene, Transition};
-use tetra::input::{Key, MouseButton};
+use crate::scenes::{easy_back, Scene, Transition};
 use tetra::{graphics, Context, Event};
 
 pub struct Empty {}
 
 impl Scene for Empty {
     fn event(&mut self, _ctx: &mut Context, event: Event) -> Transition {
-        match event {
-            Event::MouseButtonPressed {
-                button: MouseButton::X1,
-            }
-            | Event::KeyPressed { key: Key::Escape } => Transition::Pop,
-            _ => Transition::DoNothing,
-        }
+        easy_back(event).unwrap_or(Transition::DoNothing)
     }
 
     fn draw(&mut self, ctx: &mut Context) {

@@ -68,25 +68,23 @@ impl TextInput {
 
     fn border_color(&self) -> Color {
         if self.is_danger {
-            Colors::DARK_RED
+            Colors::RED
         } else if self.is_disabled {
-            Colors::DARK_GRAY
+            Colors::GRAY
         } else if self.is_focused {
-            Colors::DARK_GREEN
+            Colors::ORANGE_RED
         } else {
-            Colors::DARK_BROWN
+            Colors::DARK_ORANGE_RED
         }
     }
 
     fn bg_color(&self) -> Option<Color> {
         if self.is_danger && self.is_focused {
-            Some(Colors::RED.with_alpha(0.8))
+            Some(Colors::DARK_RED.with_alpha(0.8))
         } else if self.is_disabled {
             Some(Colors::DARK_GRAY.with_alpha(0.8))
-        } else if self.is_focused {
-            Some(Colors::DARK_GREEN.with_alpha(0.8))
-        } else if self.is_hovered {
-            Some(Colors::DARK_BROWN.with_alpha(0.2))
+        } else if self.is_focused || self.is_hovered {
+            Some(Colors::SPACE_VIOLET.with_alpha(0.8))
         } else {
             None
         }
@@ -98,7 +96,7 @@ impl TextInput {
         } else if self.is_focused {
             Colors::LIGHT_YELLOW
         } else {
-            Colors::DARK_BROWN
+            Colors::ORANGE_RED
         }
     }
 
@@ -147,13 +145,11 @@ impl Draw for TextInput {
             .get_bounds(ctx)
             .map(|r| r.width + 3.0)
             .unwrap_or(-1.0f32);
+        let y = (rect.y + rect.h / 2.0 - 15.0).round();
         let text_pos = if !self.is_focused || self.is_disabled {
-            Vec2::new(
-                rect.x + rect.w / 2.0 - text_width / 2.0,
-                rect.y + rect.h / 2.0 - 18.0,
-            )
+            Vec2::new(rect.x + rect.w / 2.0 - text_width / 2.0, y)
         } else {
-            Vec2::new(rect.x + 7.0, rect.y + rect.h / 2.0 - 18.0)
+            Vec2::new(rect.x + 7.0, y)
         };
         self.text.draw(
             ctx,
