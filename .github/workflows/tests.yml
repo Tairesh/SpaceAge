@@ -11,6 +11,8 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-18.04
+    env:
+      SPACEAGE_VERSION_POSTFIX: "-test"
     steps:
       - uses: actions/checkout@v1
       - name: "Install dependencies"
@@ -24,6 +26,6 @@ jobs:
       - name: "Check codestyle"
         run: cargo fmt -- --check
       - name: "Check clippy warnings"
-        run: SPACEAGE_VERSION_POSTFIX=-test cargo clippy -- -Dwarnings
+        run: cargo clippy -- -Dwarnings
       - name: "Run tests"
-        run: SPACEAGE_VERSION_POSTFIX=-test cargo test
+        run: cargo test
