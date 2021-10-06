@@ -107,8 +107,14 @@ pub fn savefiles_exists() -> bool {
         path.read_dir()
             .map(|mut p| {
                 p.any(|f| {
-                    f.map(|f| f.path().ends_with(".save") && !f.file_type().unwrap().is_dir())
-                        .unwrap_or(false)
+                    f.map(|f| {
+                        f.path()
+                            .extension()
+                            .map(|ext| ext == "save")
+                            .unwrap_or(false)
+                            && !f.file_type().unwrap().is_dir()
+                    })
+                    .unwrap_or(false)
                 })
             })
             .unwrap_or(false)
