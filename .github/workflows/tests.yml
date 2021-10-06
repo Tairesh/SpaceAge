@@ -4,9 +4,13 @@ on:
   push:
     paths:
       - '**/*.rs'
+      - '**/*.yml'
+      - '**/*.toml'
   pull_request:
     paths:
       - '**/*.rs'
+      - '**/*.yml'
+      - '**/*.toml'
 
 jobs:
   tests:
