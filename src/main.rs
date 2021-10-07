@@ -2,6 +2,7 @@
 
 mod action;
 mod assets;
+mod astro;
 mod avatar;
 mod colors;
 mod direction;
