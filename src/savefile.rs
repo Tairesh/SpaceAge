@@ -103,24 +103,22 @@ impl SaveFile {
 
 pub fn savefiles_exists() -> bool {
     let path = Path::new("save");
-    if path.exists() && path.is_dir() {
-        path.read_dir()
-            .map(|mut p| {
-                p.any(|f| {
-                    f.map(|f| {
-                        f.path()
-                            .extension()
-                            .map(|ext| ext == "save")
-                            .unwrap_or(false)
-                            && !f.file_type().unwrap().is_dir()
+    path.read_dir()
+        .map(|mut read_dir| {
+            read_dir.any(|entry| {
+                entry
+                    .map(|entry| {
+                        entry.file_type().map(|t| t.is_file()).unwrap_or(false)
+                            && entry
+                                .path()
+                                .extension()
+                                .map(|ext| ext == "save")
+                                .unwrap_or(false)
                     })
                     .unwrap_or(false)
-                })
             })
-            .unwrap_or(false)
-    } else {
-        false
-    }
+        })
+        .unwrap_or(false)
 }
 
 pub fn savefiles() -> Vec<SaveFile> {
