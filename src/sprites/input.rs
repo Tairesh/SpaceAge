@@ -36,10 +36,11 @@ pub struct TextInput {
 }
 
 impl TextInput {
-    pub fn new(value: &str, width: f32, font: Font, position: Position) -> Self {
+    pub fn new<C: Into<String>>(value: C, width: f32, font: Font, position: Position) -> Self {
+        let value = value.into();
         Self {
             value_type: ValueType::String { max_length: 16 },
-            text: Text::new(value, font.clone()),
+            text: Text::new(value.clone(), font.clone()),
             text_with_spaces: Text::new(value.replace(" ", "_"), font),
             position,
             width,

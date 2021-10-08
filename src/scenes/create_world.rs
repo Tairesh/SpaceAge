@@ -13,7 +13,7 @@ use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Stringify};
 use rand::distributions::Standard;
-use rand::{Rng, RngCore};
+use rand::{thread_rng, Rng};
 use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -21,9 +21,18 @@ use std::rc::Rc;
 use tetra::input::{Key, KeyModifier};
 use tetra::{graphics, window, Context, Event};
 
-// TODO: random world name
-fn random_seed() -> String {
-    rand::thread_rng().next_u32().to_string()
+fn random_seed<R: Rng + ?Sized>(rng: &mut R) -> String {
+    rng.next_u32().to_string()
+}
+
+fn random_name<R: Rng + ?Sized>(rng: &mut R) -> String {
+    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    format!(
+        "{}{}-{}",
+        char::from(CHARSET[rng.gen_range(0..CHARSET.len())]),
+        char::from(CHARSET[rng.gen_range(0..CHARSET.len())]),
+        rng.gen_range(100..9999)
+    )
 }
 
 pub struct CreateWorld {
@@ -65,8 +74,9 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: -122.0 },
             },
         )));
+        let mut rng = thread_rng();
         let name_input = Rc::new(RefCell::new(TextInput::new(
-            "Tadek",
+            random_name(&mut rng),
             right_column_width,
             assets.fonts.nasa.clone(),
             Position {
@@ -105,9 +115,8 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: -52.0 },
             },
         )));
-        let seed = random_seed();
         let seed_input = Rc::new(RefCell::new(TextInput::new(
-            seed.as_str(),
+            random_seed(&mut rng),
             right_column_width,
             assets.fonts.nasa.clone(),
             Position {
@@ -388,17 +397,20 @@ impl Scene for CreateWorld {
                 None
             }
             "randomize" => {
-                // TODO: randomize world name
-                self.galaxy_class = rand::thread_rng().sample(Standard);
+                let mut rng = thread_rng();
+                self.galaxy_class = rng.sample(Standard);
                 self.class_name
                     .borrow_mut()
                     .set_value(self.galaxy_class.name());
                 self.class_name
                     .borrow_mut()
                     .positionate(ctx, window::get_size(ctx));
+                self.name_input
+                    .borrow_mut()
+                    .set_value(random_name(&mut rng));
                 self.seed_input
                     .borrow_mut()
-                    .set_value(random_seed().as_str());
+                    .set_value(random_seed(&mut rng));
                 None
             }
             "preview" => {
