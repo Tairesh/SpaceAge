@@ -29,7 +29,7 @@ impl MainMenu {
             assets.fonts.logo.clone(),
             Colors::ORANGE,
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByBottom { offset: -200.0 },
             },
         )));
@@ -38,7 +38,7 @@ impl MainMenu {
             assets.fonts.consolab.clone(),
             Colors::DARK_ORANGE,
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByBottom { offset: -180.0 },
             },
         )));
@@ -48,8 +48,8 @@ impl MainMenu {
                 vec![(Key::E, None)],
                 "[e] Select world",
                 Position {
-                    x: Horizontal::AtWindowCenter { offset: 0.0 },
-                    y: Vertical::AtWindowCenter { offset: 0.0 },
+                    x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+                    y: Vertical::AtWindowCenterByCenter { offset: 0.0 },
                 },
                 assets.fonts.consolab.clone(),
                 Transition::DoNothing,
@@ -61,8 +61,8 @@ impl MainMenu {
             vec![(Key::C, None)],
             "[c] Create new world",
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenter { offset: 50.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 50.0 },
             },
             assets.fonts.consolab.clone(),
             Transition::Push(GameScene::CreateWorld),
@@ -72,8 +72,8 @@ impl MainMenu {
             vec![(Key::S, None)],
             "[s] Settings",
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenter { offset: 100.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 100.0 },
             },
             assets.fonts.consolab.clone(),
             Transition::Push(GameScene::Settings),
@@ -83,8 +83,8 @@ impl MainMenu {
             vec![(Key::X, None)],
             "[x] Exit",
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenter { offset: 150.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 150.0 },
             },
             assets.fonts.consolab.clone(),
             Transition::Quit,

@@ -1,5 +1,6 @@
 pub mod alert;
 pub mod button;
+pub mod galaxy;
 pub mod image;
 pub mod input;
 pub mod label;

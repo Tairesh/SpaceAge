@@ -34,12 +34,13 @@ pub enum SkinTone {
 }
 
 impl SkinTone {
-    pub const COUNT: u8 = 16;
+    const COUNT: u8 = 16;
 
     pub fn name(&self) -> &str {
         (*self).into()
     }
 
+    // TODO: use enums::next()
     pub fn next(&self) -> Self {
         let mut i: u8 = (*self).into();
         if i < Self::COUNT - 1 {

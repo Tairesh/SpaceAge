@@ -28,11 +28,13 @@ pub trait Positionate {
 
 pub trait Update {
     // focused means there is some focused sprite on the scene
+    // TODO: add alert bool means there is object like yes-no-alert and other objects should not be clickable
     fn update(&mut self, _ctx: &mut Context, _focused: bool) -> Option<Transition> {
         None
     }
 }
 
+// TODO: add return &mut self for all these set_something()
 pub trait Disable {
     fn disabled(&self) -> bool;
     fn set_disabled(&mut self, disabled: bool);

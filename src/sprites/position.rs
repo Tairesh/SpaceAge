@@ -7,10 +7,12 @@ pub enum Horizontal {
     ByLeft { x: f32 },
     ByCenter { x: f32 },
     ByRight { x: f32 },
-    AtWindowCenter { offset: f32 },
     AtWindowCenterByLeft { offset: f32 },
+    AtWindowCenterByCenter { offset: f32 },
     AtWindowCenterByRight { offset: f32 },
-    AtWindowRight { offset: f32 },
+    AtWindowRightByLeft { offset: f32 },
+    AtWindowRightByCenter { offset: f32 },
+    AtWindowRightByRight { offset: f32 },
 }
 
 #[derive(Copy, Clone)]
@@ -18,10 +20,12 @@ pub enum Vertical {
     ByTop { y: f32 },
     ByCenter { y: f32 },
     ByBottom { y: f32 },
-    AtWindowCenter { offset: f32 },
     AtWindowCenterByTop { offset: f32 },
+    AtWindowCenterByCenter { offset: f32 },
     AtWindowCenterByBottom { offset: f32 },
-    AtWindowBottom { offset: f32 },
+    AtWindowBottomByTop { offset: f32 },
+    AtWindowBottomByCenter { offset: f32 },
+    AtWindowBottomByBottom { offset: f32 },
 }
 
 #[derive(Copy, Clone)]
@@ -87,14 +91,14 @@ impl Position {
 
     pub fn center() -> Position {
         Position {
-            x: Horizontal::AtWindowCenter { offset: 0.0 },
-            y: Vertical::AtWindowCenter { offset: 0.0 },
+            x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+            y: Vertical::AtWindowCenterByCenter { offset: 0.0 },
         }
     }
 
     pub fn horizontal_center(offset: f32, y: f32, anchor_y: AnchorY) -> Position {
         Position {
-            x: Horizontal::AtWindowCenter { offset },
+            x: Horizontal::AtWindowCenterByCenter { offset },
             y: anchor_y.to_position(y),
         }
     }
@@ -102,7 +106,7 @@ impl Position {
     pub fn vertical_center(offset: f32, x: f32, anchor_x: AnchorX) -> Position {
         Position {
             x: anchor_x.to_position(x),
-            y: Vertical::AtWindowCenter { offset },
+            y: Vertical::AtWindowCenterByCenter { offset },
         }
     }
 
@@ -111,28 +115,40 @@ impl Position {
             Horizontal::ByLeft { x } => x,
             Horizontal::ByCenter { x } => x - owner_size.x / 2.0,
             Horizontal::ByRight { x } => x - owner_size.x,
-            Horizontal::AtWindowCenter { offset } => {
+            Horizontal::AtWindowCenterByCenter { offset } => {
                 (window_size.0 / 2) as f32 - (owner_size.x / 2.0) + offset
             }
             Horizontal::AtWindowCenterByLeft { offset } => (window_size.0 / 2) as f32 + offset,
             Horizontal::AtWindowCenterByRight { offset } => {
                 (window_size.0 / 2) as f32 - owner_size.x + offset
             }
-            Horizontal::AtWindowRight { offset } => window_size.0 as f32 - owner_size.x + offset,
+            Horizontal::AtWindowRightByLeft { offset } => window_size.0 as f32 + offset,
+            Horizontal::AtWindowRightByCenter { offset } => {
+                window_size.0 as f32 - (owner_size.x / 2.0) + offset
+            }
+            Horizontal::AtWindowRightByRight { offset } => {
+                window_size.0 as f32 - owner_size.x + offset
+            }
         };
         let y = match self.y {
             Vertical::ByTop { y } => y,
             Vertical::ByCenter { y } => y - owner_size.y / 2.0,
             Vertical::ByBottom { y } => y - owner_size.y,
-            Vertical::AtWindowCenter { offset } => {
+            Vertical::AtWindowCenterByCenter { offset } => {
                 (window_size.1 / 2) as f32 - (owner_size.y / 2.0) + offset
             }
             Vertical::AtWindowCenterByTop { offset } => (window_size.1 / 2) as f32 + offset,
             Vertical::AtWindowCenterByBottom { offset } => {
                 (window_size.1 / 2) as f32 - owner_size.y + offset
             }
-            Vertical::AtWindowBottom { offset } => window_size.1 as f32 - owner_size.y + offset,
+            Vertical::AtWindowBottomByTop { offset } => window_size.1 as f32 + offset,
+            Vertical::AtWindowBottomByCenter { offset } => {
+                window_size.1 as f32 - (owner_size.y / 2.0) + offset
+            }
+            Vertical::AtWindowBottomByBottom { offset } => {
+                window_size.1 as f32 - owner_size.y + offset
+            }
         };
-        Vec2::new(x, y)
+        Vec2::new(x.round(), y.round())
     }
 }

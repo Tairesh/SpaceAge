@@ -28,7 +28,7 @@ impl SettingsScene {
             assets.fonts.astrolab.clone(),
             Colors::DARK_ORANGE_RED,
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByBottom { offset: -200.0 },
             },
         )));
@@ -65,7 +65,7 @@ impl SettingsScene {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: 90.0 - window_size.x,
                 },
-                y: Vertical::AtWindowCenter {
+                y: Vertical::AtWindowCenterByCenter {
                     offset: -102.0 + window_size.y / 2.0,
                 },
             },
@@ -75,8 +75,8 @@ impl SettingsScene {
             vec![(Key::Escape, None)],
             "[Esc] Back",
             Position {
-                x: Horizontal::AtWindowCenter { offset: 0.0 },
-                y: Vertical::AtWindowBottom { offset: -200.0 },
+                x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
+                y: Vertical::AtWindowBottomByBottom { offset: -200.0 },
             },
             assets.fonts.consolab.clone(),
             Transition::Pop,

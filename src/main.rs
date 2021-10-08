@@ -6,6 +6,7 @@ mod astro;
 mod avatar;
 mod colors;
 mod direction;
+mod enums;
 mod game;
 mod geometry;
 mod human;

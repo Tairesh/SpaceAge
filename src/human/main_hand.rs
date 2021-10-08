@@ -17,6 +17,7 @@ impl MainHand {
         }
     }
 
+    // TODO: use enums::next()
     pub fn next(&self) -> Self {
         match self {
             MainHand::Left => MainHand::Right,
