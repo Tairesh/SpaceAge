@@ -15,9 +15,7 @@ impl Tile {
     pub fn off_step(&mut self) {}
 
     /// Calls when avatar walks on tile
-    pub fn on_step(&mut self) {
-        // TODO: (for future) footprints
-    }
+    pub fn on_step(&mut self) {}
 
     pub fn top_item(&self) -> Option<&Item> {
         self.items.first()

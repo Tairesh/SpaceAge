@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+use crate::astro::galaxy_class::GalaxyClass;
+use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
 use crate::world::{World, WorldMeta};
 use crate::VERSION;
@@ -14,7 +16,8 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
-    pub meta: WorldMeta, // TODO: also save view params like current zoom, etc. ptbly through struct like GameView
+    pub meta: WorldMeta,
+    // TODO: also save view params like current zoom, etc. ptbly through struct like GameView
     pub units_data: Vec<String>,
     // pub chunks_data: Vec<String>,
 }
@@ -26,7 +29,7 @@ pub enum CreateFileError {
 }
 
 impl SaveFile {
-    pub fn new(name: &str, seed: &str) -> Self {
+    pub fn new(name: &str, seed: &str, size: GalaxySize, class: GalaxyClass) -> Self {
         let name = name
             .trim()
             .replace("\n", "")
@@ -44,6 +47,8 @@ impl SaveFile {
             meta: WorldMeta {
                 name,
                 seed,
+                size,
+                class,
                 current_tick: 0,
             },
             units_data: Vec::new(),

@@ -440,8 +440,12 @@ impl Scene for CreateWorld {
                     self.name_empty.borrow_mut().set_visible(true);
                     None
                 } else {
-                    // TODO: save galaxy size and types
-                    let mut file = SaveFile::new(name.as_str(), seed.as_str());
+                    let mut file = SaveFile::new(
+                        name.as_str(),
+                        seed.as_str(),
+                        self.galaxy_size,
+                        self.galaxy_class,
+                    );
                     match file.create() {
                         Ok(_) => Some(Transition::Pop),
                         Err(err) => {

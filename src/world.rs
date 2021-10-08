@@ -1,12 +1,17 @@
+use crate::astro::galaxy_class::GalaxyClass;
+use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
 use crate::direction::Direction;
 use crate::savefile::save;
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WorldMeta {
     pub name: String,
     pub seed: u64,
+    pub size: GalaxySize,
+    pub class: GalaxyClass,
     pub current_tick: u64,
 }
 

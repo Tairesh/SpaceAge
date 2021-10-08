@@ -1,8 +1,11 @@
 use crate::enums;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
+use serde::{Deserialize, Serialize};
 use variant_count::VariantCount;
 
-#[derive(Debug, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone)]
+#[derive(
+    Debug, Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone,
+)]
 #[repr(u8)]
 pub enum GalaxySize {
     Tiny,
