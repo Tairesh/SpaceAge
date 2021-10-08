@@ -6,9 +6,9 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
 
-pub fn generate(seed: u64, size: usize, typ: GalaxyClass) -> Vec<u32> {
+pub fn generate(seed: u64, size: usize, class: GalaxyClass) -> Vec<u32> {
     let mut rng = StdRng::seed_from_u64(seed);
-    let mut values = match typ {
+    let mut values = match class {
         GalaxyClass::Spiral => fill_spiral(&mut rng, size, true),
         GalaxyClass::BaredSpiral => fill_bared_spiral(&mut rng, size),
         GalaxyClass::Elliptical => fill_elliptical(&mut rng, size),
@@ -283,10 +283,6 @@ mod tests {
         assert_eq!(spiral.as_slice()[64 * 128 + 64], 260472);
         assert_eq!(spiral.as_slice()[127 * 128 + 127], 0);
         assert!(*spiral.iter().max().unwrap() <= CORE_MAX_STARS);
-        assert_eq!(
-            spiral.iter().copied().map(u64::from).sum::<u64>(),
-            477046880
-        );
     }
 
     #[test]
@@ -296,7 +292,6 @@ mod tests {
         assert_eq!(bared.as_slice()[64 * 128 + 64], 259395);
         assert_eq!(bared.as_slice()[127 * 128 + 127], 0);
         assert!(*bared.iter().max().unwrap() <= CORE_MAX_STARS);
-        assert_eq!(bared.iter().copied().map(u64::from).sum::<u64>(), 466941569);
     }
 
     #[test]
@@ -306,10 +301,6 @@ mod tests {
         assert_eq!(elliptic.as_slice()[64 * 128 + 64], 240656);
         assert_eq!(elliptic.as_slice()[127 * 128 + 127], 0);
         assert!(*elliptic.iter().max().unwrap() <= CORE_MAX_STARS);
-        assert_eq!(
-            elliptic.iter().copied().map(u64::from).sum::<u64>(),
-            468482083
-        );
     }
 
     #[test]
@@ -320,10 +311,6 @@ mod tests {
         assert_eq!(circular.as_slice()[64 * 128 + 64], 0);
         assert_eq!(circular.as_slice()[127 * 128 + 127], 0);
         assert!(*circular.iter().max().unwrap() <= CORE_MAX_STARS);
-        assert_eq!(
-            circular.iter().copied().map(u64::from).sum::<u64>(),
-            262665921
-        );
     }
 
     #[test]
@@ -333,9 +320,5 @@ mod tests {
         assert_eq!(irregular.as_slice()[64 * 128 + 64], 157761);
         assert_eq!(irregular.as_slice()[127 * 128 + 127], 0);
         assert!(*irregular.iter().max().unwrap() <= CORE_MAX_STARS);
-        assert_eq!(
-            irregular.iter().copied().map(u64::from).sum::<u64>(),
-            205167846
-        );
     }
 }

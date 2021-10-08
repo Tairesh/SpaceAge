@@ -18,12 +18,18 @@ pub struct WorldMeta {
 pub struct World {
     path: PathBuf,
     pub meta: WorldMeta,
+    pub sectors: Vec<u32>,
     pub avatar: Avatar,
 }
 
 impl World {
-    pub fn new(path: PathBuf, meta: WorldMeta, avatar: Avatar) -> Self {
-        Self { path, meta, avatar }
+    pub fn new(path: PathBuf, meta: WorldMeta, sectors: Vec<u32>, avatar: Avatar) -> Self {
+        Self {
+            path,
+            meta,
+            sectors,
+            avatar,
+        }
     }
 
     pub fn save(&mut self) {

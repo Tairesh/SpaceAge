@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 use crate::astro::galaxy_class::GalaxyClass;
+use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
 use crate::world::{World, WorldMeta};
@@ -158,12 +159,18 @@ pub fn create(path: &Path, meta: &WorldMeta) -> Result<(), CreateFileError> {
         let mut file =
             File::create(&path).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
         let data = format!(
-            "{}\n{}\n{}\n/units\n/chunks",
+            "{}\n{}\n{}\n{}\n/units\n/chunks",
             serde_json::to_string(meta).unwrap(),
             VERSION,
             time.duration_since(SystemTime::UNIX_EPOCH)
                 .map_err(|e| CreateFileError::SystemError(e.to_string()))?
                 .as_secs(),
+            serde_json::to_string(&galaxy_generator::generate(
+                meta.seed,
+                meta.size.into(),
+                meta.class
+            ))
+            .unwrap()
         );
         file.write_all(data.as_bytes())
             .map_err(|e| CreateFileError::SystemError(e.to_string()))?;
@@ -179,12 +186,13 @@ pub fn save(path: &Path, world: &mut World) -> Result<(), String> {
     let time = SystemTime::now();
     let mut file = File::create(path).map_err(|e| e.to_string())?;
     let mut data = format!(
-        "{}\n{}\n{}\n{}",
+        "{}\n{}\n{}\n{}\n{}",
         serde_json::to_string(&world.meta).map_err(|e| e.to_string())?,
         VERSION,
         time.duration_since(SystemTime::UNIX_EPOCH)
             .map_err(|e| e.to_string())?
             .as_secs(),
+        serde_json::to_string(&world.sectors).map_err(|e| e.to_string())?,
         serde_json::to_string(&world.avatar).map_err(|e| e.to_string())?
     );
     data.push_str("\n/units");
