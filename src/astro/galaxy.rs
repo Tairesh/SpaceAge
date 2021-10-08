@@ -6,8 +6,10 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
+use variant_count::VariantCount;
 
-#[derive(Debug, IntoPrimitive, TryFromPrimitive, Copy, Clone)]
+// TODO: implement rng distribution
+#[derive(Debug, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone)]
 #[repr(u8)]
 pub enum GalaxyClass {
     Spiral,
@@ -30,22 +32,21 @@ impl From<GalaxyClass> for &str {
 }
 
 impl GalaxyClass {
-    const COUNT: u8 = 5;
-
     pub fn name(&self) -> &str {
         (*self).into()
     }
 
     pub fn next(&self) -> Self {
-        enums::next(*self, Self::COUNT)
+        enums::next(*self, Self::VARIANT_COUNT)
     }
 
     pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::COUNT)
+        enums::prev(*self, Self::VARIANT_COUNT)
     }
 }
 
-#[derive(Debug, IntoPrimitive, TryFromPrimitive, Copy, Clone)]
+// TODO: implement rng distribution
+#[derive(Debug, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone)]
 #[repr(u8)]
 pub enum GalaxySize {
     Tiny,
@@ -80,18 +81,16 @@ impl From<GalaxySize> for &str {
 }
 
 impl GalaxySize {
-    const COUNT: u8 = 5;
-
     pub fn name(&self) -> &str {
         (*self).into()
     }
 
     pub fn next(&self) -> Self {
-        enums::next(*self, Self::COUNT)
+        enums::next(*self, Self::VARIANT_COUNT)
     }
 
     pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::COUNT)
+        enums::prev(*self, Self::VARIANT_COUNT)
     }
 }
 

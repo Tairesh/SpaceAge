@@ -1,7 +1,14 @@
+use crate::enums;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
+use variant_count::VariantCount;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Copy, Clone)]
+#[derive(
+    Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Debug, Copy, Clone,
+)]
+#[repr(u8)]
 pub enum MainHand {
     Left,
     Right,
@@ -10,27 +17,24 @@ pub enum MainHand {
 
 impl MainHand {
     pub fn name(&self) -> &str {
-        match self {
-            MainHand::Left => "Left",
-            MainHand::Right => "Right",
-            MainHand::Ambidexter => "Ambidexter",
-        }
+        (*self).into()
     }
 
-    // TODO: use enums::next()
     pub fn next(&self) -> Self {
-        match self {
-            MainHand::Left => MainHand::Right,
-            MainHand::Right => MainHand::Ambidexter,
-            MainHand::Ambidexter => MainHand::Left,
-        }
+        enums::next(*self, Self::VARIANT_COUNT)
     }
 
     pub fn prev(&self) -> Self {
-        match self {
-            MainHand::Left => MainHand::Ambidexter,
-            MainHand::Right => MainHand::Left,
-            MainHand::Ambidexter => MainHand::Right,
+        enums::prev(*self, Self::VARIANT_COUNT)
+    }
+}
+
+impl From<MainHand> for &str {
+    fn from(s: MainHand) -> Self {
+        match s {
+            MainHand::Left => "Left",
+            MainHand::Right => "Right",
+            MainHand::Ambidexter => "Ambidexter",
         }
     }
 }

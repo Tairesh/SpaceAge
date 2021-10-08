@@ -1,17 +1,14 @@
 use crate::colors::Colors;
+use crate::enums;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
-use std::convert::TryFrom;
+use serde::{Deserialize, Serialize};
 use tetra::graphics::Color;
+use variant_count::VariantCount;
 
 #[derive(
-    serde::Serialize,
-    serde::Deserialize,
-    num_enum::IntoPrimitive,
-    num_enum::TryFromPrimitive,
-    Debug,
-    Copy,
-    Clone,
+    Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Debug, Copy, Clone,
 )]
 #[repr(u8)]
 pub enum SkinTone {
@@ -34,31 +31,16 @@ pub enum SkinTone {
 }
 
 impl SkinTone {
-    const COUNT: u8 = 16;
-
     pub fn name(&self) -> &str {
         (*self).into()
     }
 
-    // TODO: use enums::next()
     pub fn next(&self) -> Self {
-        let mut i: u8 = (*self).into();
-        if i < Self::COUNT - 1 {
-            i += 1;
-        } else {
-            i = 0;
-        }
-        Self::try_from(i).unwrap()
+        enums::next(*self, Self::VARIANT_COUNT)
     }
 
     pub fn prev(&self) -> Self {
-        let mut i: u8 = (*self).into();
-        if i > 0 {
-            i -= 1;
-        } else {
-            i = Self::COUNT - 1;
-        }
-        Self::try_from(i).unwrap()
+        enums::prev(*self, Self::VARIANT_COUNT)
     }
 
     pub fn text_color(&self) -> Color {

@@ -22,6 +22,7 @@ extern crate num_enum;
 extern crate rand;
 extern crate serde;
 extern crate tetra;
+extern crate variant_count;
 
 use crate::game::Game;
 use crate::settings::Settings;
