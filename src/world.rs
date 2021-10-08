@@ -2,8 +2,9 @@ use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
 use crate::direction::Direction;
-use crate::savefile::save;
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -15,7 +16,28 @@ pub struct WorldMeta {
     pub current_tick: u64,
 }
 
+impl WorldMeta {
+    pub fn new(name: String, seed: String, size: GalaxySize, class: GalaxyClass) -> Self {
+        let name = name
+            .trim()
+            .replace("\n", "")
+            .replace("/", "")
+            .replace("\\", "");
+        let mut hasher = DefaultHasher::new();
+        seed.hash(&mut hasher);
+        let seed = hasher.finish();
+        Self {
+            name,
+            seed,
+            size,
+            class,
+            current_tick: 0,
+        }
+    }
+}
+
 pub struct World {
+    #[allow(dead_code)]
     path: PathBuf,
     pub meta: WorldMeta,
     pub sectors: Vec<u32>,
@@ -32,12 +54,13 @@ impl World {
         }
     }
 
-    pub fn save(&mut self) {
-        let path = self.path.clone();
-        save(&path, self)
-            .map_err(|e| panic!("Error on saving world to {:?}: {}", self.path, e))
-            .ok();
-    }
+    // TODO: save
+    // pub fn save(&mut self) {
+    //     let path = self.path.clone();
+    //     save(&path, self)
+    //         .map_err(|e| panic!("Error on saving world to {:?}: {}", self.path, e))
+    //         .ok();
+    // }
 
     // TODO: load tiles
 

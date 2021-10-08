@@ -3,7 +3,7 @@ use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
-use crate::savefile::{CreateFileError, SaveFile};
+use crate::savefile::{CreateFileError, SaveFileMeta};
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::galaxy::Galaxy;
@@ -12,6 +12,7 @@ use crate::sprites::input::TextInput;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Stringify};
+use crate::world::WorldMeta;
 use rand::distributions::Standard;
 use rand::{thread_rng, Rng};
 use std::cell::RefCell;
@@ -417,13 +418,9 @@ impl Scene for CreateWorld {
                     self.name_empty.borrow_mut().set_visible(true);
                     None
                 } else {
-                    let mut file = SaveFile::new(
-                        name.as_str(),
-                        seed.as_str(),
-                        self.galaxy_size,
-                        self.galaxy_class,
-                    );
-                    match file.create() {
+                    let world_meta =
+                        WorldMeta::new(name, seed, self.galaxy_size, self.galaxy_class);
+                    match SaveFileMeta::new(world_meta).create() {
                         Ok(_) => Some(Transition::Pop),
                         Err(err) => {
                             match err {

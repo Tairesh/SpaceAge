@@ -1,109 +1,11 @@
-#![allow(dead_code)]
-use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_generator;
-use crate::astro::galaxy_size::GalaxySize;
-use crate::avatar::Avatar;
-use crate::world::{World, WorldMeta};
+use crate::world::WorldMeta;
 use crate::VERSION;
-use std::collections::hash_map::DefaultHasher;
-use std::fs::{create_dir, remove_file, File};
-use std::hash::{Hash, Hasher};
+use serde::{Deserialize, Serialize};
+use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
-use std::time::{Duration, SystemTime};
-
-// TODO: load only metadata. load full data only when World is creating
-
-#[derive(Debug, Clone)]
-pub struct SaveFile {
-    pub path: PathBuf,
-    pub version: String,
-    pub time: SystemTime,
-    pub meta: WorldMeta,
-    pub sectors: Vec<u32>,
-    // TODO: also save view params like current zoom, etc. ptbly through struct like GameView
-    pub units_data: Vec<String>,
-    // pub chunks_data: Vec<String>,
-}
-
-#[derive(Debug)]
-pub enum CreateFileError {
-    SystemError(String),
-    FileExists,
-}
-
-impl SaveFile {
-    pub fn new(name: &str, seed: &str, size: GalaxySize, class: GalaxyClass) -> Self {
-        let name = name
-            .trim()
-            .replace("\n", "")
-            .replace("/", "")
-            .replace("\\", "");
-        let file_name = name.replace(" ", "_");
-        let path: PathBuf = ["save", (file_name + ".save").as_str()].iter().collect();
-        let mut hasher = DefaultHasher::new();
-        seed.hash(&mut hasher);
-        let seed = hasher.finish();
-        SaveFile {
-            path,
-            version: VERSION.to_string(),
-            time: SystemTime::now(),
-            meta: WorldMeta {
-                name,
-                seed,
-                size,
-                class,
-                current_tick: 0,
-            },
-            sectors: galaxy_generator::generate(seed, size.into(), class),
-            units_data: Vec::new(),
-            // chunks_data: Vec::new(),
-        }
-    }
-
-    pub fn load(path: PathBuf) -> Option<Self> {
-        let file = File::open(&path).ok()?;
-        let mut lines = BufReader::new(&file).lines();
-        let meta = lines.next()?.ok()?;
-        if meta.is_empty() {
-            return None;
-        }
-        let meta = serde_json::from_str(meta.as_str()).ok()?;
-        let version = lines.next()?.ok()?;
-        if version.is_empty() {
-            return None;
-        }
-        let time = lines.next()?.ok()?.parse::<u64>().ok()?;
-        let time = SystemTime::UNIX_EPOCH + Duration::new(time, 0);
-        let sectors = serde_json::from_str(lines.next()?.ok()?.as_str()).ok()?;
-        let mut units_data = Vec::new();
-        loop {
-            let unit = lines.next()?.ok()?;
-            if unit.eq("/units") {
-                break;
-            }
-            units_data.push(unit);
-        }
-
-        Some(SaveFile {
-            path,
-            version,
-            time,
-            meta,
-            sectors,
-            units_data,
-            // chunks_data,
-        })
-    }
-
-    pub fn create(&mut self) -> Result<(), CreateFileError> {
-        create(&self.path, &self.meta, &self.sectors)
-    }
-
-    pub fn load_avatar(&self) -> Avatar {
-        serde_json::from_str(self.units_data.get(0).unwrap().as_str()).unwrap()
-    }
-}
+use std::time::SystemTime;
 
 pub fn savefiles_exists() -> bool {
     let path = Path::new("save");
@@ -125,80 +27,85 @@ pub fn savefiles_exists() -> bool {
         .unwrap_or(false)
 }
 
-pub fn savefiles() -> Vec<SaveFile> {
-    let path = Path::new("save");
-    let mut files = Vec::new();
-    if path.exists() {
-        for p in path.read_dir().unwrap() {
-            if let Some(s) = SaveFile::load(p.unwrap().path()) {
-                files.push(s);
-            }
-        }
-    }
-    files.sort_by(|s1, s2| s2.time.cmp(&s1.time));
-    files
-}
-
 pub fn delete(path: &Path) {
     if path.exists() {
-        remove_file(path).ok();
+        std::fs::remove_file(path).ok();
     }
 }
 
-pub fn create(path: &Path, meta: &WorldMeta, sectors: &[u32]) -> Result<(), CreateFileError> {
-    let dir = Path::new("save");
-    if !dir.exists() {
-        create_dir(dir).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
+#[derive(Debug)]
+pub enum CreateFileError {
+    SystemError(String),
+    FileExists,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SaveFileMeta {
+    pub version: String,
+    pub time: SystemTime,
+    world_meta: WorldMeta,
+}
+
+impl SaveFileMeta {
+    pub fn new(world_meta: WorldMeta) -> Self {
+        Self {
+            version: VERSION.to_string(),
+            time: SystemTime::now(),
+            world_meta,
+        }
     }
-    if path.is_file() {
-        Err(CreateFileError::FileExists)
-    } else {
-        let time = SystemTime::now();
+
+    pub fn create(&mut self) -> Result<(), CreateFileError> {
+        let dir = Path::new("save");
+        if !dir.exists() {
+            std::fs::create_dir(dir).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
+        }
+        let file_name = self.world_meta.name.replace(" ", "_");
+        let path: PathBuf = ["save", (file_name + ".save").as_str()].iter().collect();
+        if path.is_file() {
+            return Err(CreateFileError::FileExists);
+        }
+        self.time = SystemTime::now();
         let mut file =
             File::create(&path).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
-        let data = format!(
-            "{}\n{}\n{}\n{}\n/units",
-            serde_json::to_string(meta).unwrap(),
-            VERSION,
-            time.duration_since(SystemTime::UNIX_EPOCH)
-                .map_err(|e| CreateFileError::SystemError(e.to_string()))?
-                .as_secs(),
-            serde_json::to_string(sectors).unwrap()
-        );
+        let data = [
+            serde_json::to_string(self).map_err(|e| CreateFileError::SystemError(e.to_string()))?,
+            serde_json::to_string(&galaxy_generator::generate(
+                self.world_meta.seed,
+                self.world_meta.size.into(),
+                self.world_meta.class,
+            ))
+            .map_err(|e| CreateFileError::SystemError(e.to_string()))?,
+        ]
+        .join("\n");
         file.write_all(data.as_bytes())
             .map_err(|e| CreateFileError::SystemError(e.to_string()))?;
         Ok(())
     }
+
+    pub fn load(path: &Path) -> Option<Self> {
+        let file = File::open(path).ok()?;
+        let mut lines = BufReader::new(&file).lines();
+        let meta = lines.next()?.ok()?;
+        serde_json::from_str(meta.as_str()).ok()
+    }
+
+    pub fn name(&self) -> &str {
+        self.world_meta.name.as_str()
+    }
 }
 
-pub fn save(path: &Path, world: &mut World) -> Result<(), String> {
-    let dir = Path::new("save");
-    if !dir.exists() {
-        create_dir(dir).map_err(|e| e.to_string())?;
+pub fn savefiles() -> Vec<(PathBuf, SaveFileMeta)> {
+    let path = Path::new("save");
+    let mut files = Vec::new();
+    if path.exists() {
+        for p in path.read_dir().unwrap() {
+            let p = p.unwrap().path();
+            if let Some(s) = SaveFileMeta::load(&p) {
+                files.push((p, s));
+            }
+        }
     }
-    let time = SystemTime::now();
-    let mut file = File::create(path).map_err(|e| e.to_string())?;
-    let mut data = format!(
-        "{}\n{}\n{}\n{}\n{}",
-        serde_json::to_string(&world.meta).map_err(|e| e.to_string())?,
-        VERSION,
-        time.duration_since(SystemTime::UNIX_EPOCH)
-            .map_err(|e| e.to_string())?
-            .as_secs(),
-        serde_json::to_string(&world.sectors).map_err(|e| e.to_string())?,
-        serde_json::to_string(&world.avatar).map_err(|e| e.to_string())?
-    );
-    data.push_str("\n/units");
-    // for coords in world.changed.clone().iter() {
-    //     let chunk = world.load_chunk(*coords);
-    //     data.push('\n');
-    //     data.push_str(
-    //         serde_json::to_string(chunk)
-    //             .map_err(|e| e.to_string())?
-    //             .as_str(),
-    //     );
-    // }
-    // data.push_str("\n/chunks");
-    file.write_all(data.as_bytes()).map_err(|e| e.to_string())?;
-    Ok(())
+    files.sort_by(|(_, s1), (_, s2)| s2.time.cmp(&s1.time));
+    files
 }

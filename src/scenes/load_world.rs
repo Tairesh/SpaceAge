@@ -38,8 +38,9 @@ impl LoadWorld {
                 y: Vertical::AtWindowCenterByBottom { offset: -200.0 },
             },
         ))));
-        let height = savefiles.len() as f32 * 50.0 + 33.0;
-        let mut y = -height / 2.0;
+        let height = savefiles.len() as f32 * 50.0;
+        // TODO: Add scroll if there are too many savefiles
+        let mut y = f32::max(-height / 2.0, -155.0);
         const KEYS: [Key; 10] = [
             Key::Num1,
             Key::Num2,
@@ -52,7 +53,7 @@ impl LoadWorld {
             Key::Num9,
             Key::Num0,
         ];
-        for (i, savefile) in savefiles.iter().enumerate() {
+        for (i, (path, savefile)) in savefiles.iter().enumerate() {
             sprites.push(Rc::new(RefCell::new(Button::empty(
                 // TODO: add some hint for this shortkeys
                 if i <= 10 {
@@ -65,7 +66,7 @@ impl LoadWorld {
                     x: Horizontal::AtWindowCenterByCenter { offset: -20.0 },
                     y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
-                Transition::CustomEvent(format!("load:{}", savefile.path.to_str().unwrap())),
+                Transition::CustomEvent(format!("load:{}", path.to_str().unwrap())),
             ))));
             sprites.push(Rc::new(RefCell::new(Button::new(
                 if i <= 10 {
@@ -79,10 +80,10 @@ impl LoadWorld {
                     y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
                 assets.fonts.consolab18.clone(),
-                Transition::CustomEvent(format!("del:{}", savefile.path.to_str().unwrap())),
+                Transition::CustomEvent(format!("del:{}", path.to_str().unwrap())),
             ))));
             let name = Rc::new(RefCell::new(Label::new(
-                &savefile.meta.name,
+                savefile.name(),
                 assets.fonts.nasa24.clone(),
                 Colors::LIGHT_YELLOW,
                 Position {
