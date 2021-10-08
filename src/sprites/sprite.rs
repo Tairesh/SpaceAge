@@ -41,7 +41,6 @@ pub trait Update {
     }
 }
 
-// TODO: add return &mut self for all these set_something()
 pub trait Disable {
     fn disabled(&self) -> bool;
     fn set_disabled(&mut self, disabled: bool);

@@ -358,53 +358,38 @@ impl Scene for CreateWorld {
         match event {
             "size:left" => {
                 self.galaxy_size = self.galaxy_size.prev();
-                self.size_name
-                    .borrow_mut()
-                    .set_value(self.galaxy_size.name());
-                self.size_name
-                    .borrow_mut()
-                    .positionate(ctx, window::get_size(ctx));
+                let mut label = self.size_name.borrow_mut();
+                label.set_value(self.galaxy_size.name());
+                label.positionate(ctx, window::get_size(ctx));
                 None
             }
             "size:right" => {
                 self.galaxy_size = self.galaxy_size.next();
-                self.size_name
-                    .borrow_mut()
-                    .set_value(self.galaxy_size.name());
-                self.size_name
-                    .borrow_mut()
-                    .positionate(ctx, window::get_size(ctx));
+                let mut label = self.size_name.borrow_mut();
+                label.set_value(self.galaxy_size.name());
+                label.positionate(ctx, window::get_size(ctx));
                 None
             }
             "class:left" => {
                 self.galaxy_class = self.galaxy_class.prev();
-                self.class_name
-                    .borrow_mut()
-                    .set_value(self.galaxy_class.name());
-                self.class_name
-                    .borrow_mut()
-                    .positionate(ctx, window::get_size(ctx));
+                let mut label = self.class_name.borrow_mut();
+                label.set_value(self.galaxy_class.name());
+                label.positionate(ctx, window::get_size(ctx));
                 None
             }
             "class:right" => {
                 self.galaxy_class = self.galaxy_class.next();
-                self.class_name
-                    .borrow_mut()
-                    .set_value(self.galaxy_class.name());
-                self.class_name
-                    .borrow_mut()
-                    .positionate(ctx, window::get_size(ctx));
+                let mut label = self.class_name.borrow_mut();
+                label.set_value(self.galaxy_class.name());
+                label.positionate(ctx, window::get_size(ctx));
                 None
             }
             "randomize" => {
                 let mut rng = thread_rng();
                 self.galaxy_class = rng.sample(Standard);
-                self.class_name
-                    .borrow_mut()
-                    .set_value(self.galaxy_class.name());
-                self.class_name
-                    .borrow_mut()
-                    .positionate(ctx, window::get_size(ctx));
+                let mut label = self.class_name.borrow_mut();
+                label.set_value(self.galaxy_class.name());
+                label.positionate(ctx, window::get_size(ctx));
                 self.name_input
                     .borrow_mut()
                     .set_value(random_name(&mut rng));
