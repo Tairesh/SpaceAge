@@ -86,6 +86,10 @@ impl Positionate for Image {
         Vec2::new(size.0 * self.scale.x, size.1 * self.scale.y)
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }

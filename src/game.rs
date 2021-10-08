@@ -135,9 +135,14 @@ impl State for Game {
                 .map(|sprites| sprites.iter().any(|s| s.borrow().focused()))
                 .unwrap_or(false);
             if let Some(sprites) = scene.sprites() {
-                for sprite in sprites.iter() {
-                    if let Some(transition) = sprite.borrow_mut().update(ctx, focused) {
+                let mut blocked = Vec::with_capacity(sprites.len());
+                for sprite in sprites.iter().rev() {
+                    let mut sprite = sprite.borrow_mut();
+                    if let Some(transition) = sprite.update(ctx, focused, &blocked) {
                         button_clicked = Some(transition);
+                    }
+                    if sprite.block_mouse() {
+                        blocked.push(sprite.rect());
                     }
                 }
             }

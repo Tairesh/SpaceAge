@@ -80,13 +80,17 @@ impl Positionate for Alert {
         Vec2::new(self.width, self.height)
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }
 }
 
 impl Update for Alert {
-    fn update(&mut self, ctx: &mut Context, focused: bool) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, focused: bool, blocked: &[Rect]) -> Option<Transition> {
         if focused {
             return None;
         }
@@ -96,6 +100,9 @@ impl Update for Alert {
         if input::is_mouse_button_pressed(ctx, MouseButton::Left) {
             let mouse = input::get_mouse_position(ctx);
             if !self.rect.unwrap().contains_point(mouse) {
+                if blocked.iter().any(|r| r.contains_point(mouse)) {
+                    return None;
+                }
                 return Some(Transition::Pop);
             }
         }

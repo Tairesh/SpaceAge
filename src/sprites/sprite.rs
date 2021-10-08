@@ -14,6 +14,7 @@ pub trait Positionate {
     fn position(&self) -> Position;
     fn set_position(&mut self, position: Position);
     fn calc_size(&mut self, ctx: &mut Context) -> Vec2;
+    fn rect(&self) -> Rect;
     fn set_rect(&mut self, rect: Rect);
     fn calc_rect(&mut self, owner_size: Vec2, window_size: (i32, i32)) -> Rect {
         let left_top = self.position().as_vec(owner_size, window_size);
@@ -28,8 +29,14 @@ pub trait Positionate {
 
 pub trait Update {
     // focused means there is some focused sprite on the scene
-    // TODO: add alert bool means there is object like yes-no-alert and other objects should not be clickable
-    fn update(&mut self, _ctx: &mut Context, _focused: bool) -> Option<Transition> {
+    // blocked is rects of sprites above current one
+    // TODO: implement a way to tell there is an yes-or-no-style alert, blocking even hovering
+    fn update(
+        &mut self,
+        _ctx: &mut Context,
+        _focused: bool,
+        _blocked: &[Rect],
+    ) -> Option<Transition> {
         None
     }
 }
@@ -62,6 +69,9 @@ pub trait Press {
 }
 
 pub trait Sprite: Draw + Positionate + Update {
+    fn block_mouse(&self) -> bool {
+        self.visible()
+    }
     fn focused(&self) -> bool {
         false
     }

@@ -70,6 +70,10 @@ impl Positionate for Label {
         Vec2::new(rect.width, rect.height)
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }

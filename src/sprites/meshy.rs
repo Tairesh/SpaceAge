@@ -65,6 +65,10 @@ impl Positionate for JustMesh {
         self.size * self.scale
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }
@@ -152,16 +156,26 @@ impl Positionate for HoverableMesh {
         self.size
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }
 }
 
 impl Update for HoverableMesh {
-    fn update(&mut self, ctx: &mut Context, _focused: bool) -> Option<Transition> {
+    fn update(
+        &mut self,
+        ctx: &mut Context,
+        _focused: bool,
+        _blocked: &[Rect],
+    ) -> Option<Transition> {
         let mouse = input::get_mouse_position(ctx);
         let rect = self.rect.unwrap();
         let collides = rect.contains_point(mouse);
+        // no check for blocking cause it uses as background light
         if !self.is_hovered && collides {
             self.on_hovered();
         } else if self.is_hovered && !collides {

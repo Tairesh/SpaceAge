@@ -169,13 +169,22 @@ impl Positionate for Galaxy {
         }
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect)
     }
 }
 
 impl Update for Galaxy {
-    fn update(&mut self, ctx: &mut Context, _focused: bool) -> Option<Transition> {
+    fn update(
+        &mut self,
+        ctx: &mut Context,
+        _focused: bool,
+        _blocked: &[Rect],
+    ) -> Option<Transition> {
         if self.focused() {
             if input::is_key_pressed(ctx, Key::Escape)
                 || input::is_mouse_button_down(ctx, MouseButton::X1)
@@ -183,8 +192,8 @@ impl Update for Galaxy {
                 self.set_focused(false);
             }
             if input::is_mouse_button_down(ctx, MouseButton::Left) {
-                let pos = input::get_mouse_position(ctx);
-                if !self.rect.unwrap().contains_point(pos) {
+                let mouse = input::get_mouse_position(ctx);
+                if !self.rect.unwrap().contains_point(mouse) {
                     self.set_focused(false)
                 }
             }

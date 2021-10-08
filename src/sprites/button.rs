@@ -214,6 +214,10 @@ impl Positionate for Button {
         Vec2::new(content_size.x + offset_x, 42.0)
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }
@@ -233,7 +237,7 @@ fn is_pressed_key_with_mod(ctx: &mut Context, key: Key, key_mod: Option<KeyModif
 }
 
 impl Update for Button {
-    fn update(&mut self, ctx: &mut Context, focused: bool) -> Option<Transition> {
+    fn update(&mut self, ctx: &mut Context, focused: bool, blocked: &[Rect]) -> Option<Transition> {
         if self.is_disabled {
             return None;
         }
@@ -258,6 +262,9 @@ impl Update for Button {
         let mouse = input::get_mouse_position(ctx);
         let rect = self.rect.unwrap();
         let collides = rect.contains_point(mouse);
+        if collides && blocked.iter().any(|r| r.contains_point(mouse)) {
+            return None;
+        }
         if !self.is_hovered && collides {
             self.on_hovered();
         } else if self.is_hovered && !collides {

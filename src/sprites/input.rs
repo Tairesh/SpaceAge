@@ -215,15 +215,27 @@ impl Positionate for TextInput {
         Vec2::new(w, h)
     }
 
+    fn rect(&self) -> Rect {
+        self.rect.unwrap()
+    }
+
     fn set_rect(&mut self, rect: Rect) {
         self.rect = Some(rect);
     }
 }
 
 impl Update for TextInput {
-    fn update(&mut self, ctx: &mut Context, _focused: bool) -> Option<Transition> {
+    fn update(
+        &mut self,
+        ctx: &mut Context,
+        _focused: bool,
+        blocked: &[Rect],
+    ) -> Option<Transition> {
         let mouse = input::get_mouse_position(ctx);
         let collides = self.rect.unwrap().contains_point(mouse);
+        if collides && blocked.iter().any(|r| r.contains_point(mouse)) {
+            return None;
+        }
         if !self.is_hovered && collides {
             self.on_hovered();
         } else if self.is_hovered && !collides {
