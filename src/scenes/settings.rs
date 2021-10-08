@@ -14,7 +14,8 @@ use tetra::{Context, Event};
 
 pub struct SettingsScene {
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
-    radio_buttons: Vec<Rc<RefCell<Button>>>,
+    window: Rc<RefCell<Button>>,
+    fullscreen: Rc<RefCell<Button>>,
 }
 
 impl SettingsScene {
@@ -25,15 +26,14 @@ impl SettingsScene {
         )));
         let title = Rc::new(RefCell::new(Label::new(
             "Settings",
-            assets.fonts.astrolab.clone(),
-            Colors::DARK_ORANGE_RED,
+            assets.fonts.astrolab32.clone(),
+            Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByBottom { offset: -200.0 },
             },
         )));
         let fullscreen_btn = Rc::new(RefCell::new(Button::fixed(
-            "window_mode:fullscreen",
             vec![(Key::F, Some(KeyModifier::Alt))],
             "[Alt+F] Fullscreen",
             matches!(settings.window_mode(), WindowMode::Fullscreen),
@@ -41,11 +41,10 @@ impl SettingsScene {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
                 y: Vertical::AtWindowCenterByTop { offset: -100.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("fullscreen".to_string()),
         )));
         let window_btn = Rc::new(RefCell::new(Button::fixed(
-            "window_mode:window",
             vec![(Key::W, Some(KeyModifier::Alt))],
             "[Alt+W] Window",
             matches!(settings.window_mode(), WindowMode::Window),
@@ -53,13 +52,13 @@ impl SettingsScene {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
                 y: Vertical::AtWindowCenterByTop { offset: -100.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("window".to_string()),
         )));
         let window_size = window_btn.borrow_mut().calc_size(ctx);
         let window_mode = Rc::new(RefCell::new(Label::new(
             "Window mode:",
-            assets.fonts.nasa.clone(),
+            assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
@@ -71,19 +70,19 @@ impl SettingsScene {
             },
         )));
         let back_btn = Rc::new(RefCell::new(Button::new(
-            "back",
             vec![(Key::Escape, None)],
             "[Esc] Back",
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowBottomByBottom { offset: -200.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::Pop,
         )));
 
         SettingsScene {
-            radio_buttons: vec![window_btn.clone(), fullscreen_btn.clone()],
+            window: window_btn.clone(),
+            fullscreen: fullscreen_btn.clone(),
             sprites: vec![bg, title, window_mode, window_btn, fullscreen_btn, back_btn],
         }
     }
@@ -99,17 +98,15 @@ impl Scene for SettingsScene {
     }
 
     fn custom_event(&mut self, _ctx: &mut Context, event: &str) -> Option<Transition> {
-        for sprite in self.radio_buttons.iter() {
-            if !sprite.borrow().id().ends_with(event) {
-                sprite.borrow_mut().unpress();
-            }
-        }
         match event {
             "window" => {
-                println!("window");
+                self.fullscreen.borrow_mut().unpress();
                 Some(Transition::ChangeWindowMode(WindowMode::Window))
             }
-            "fullscreen" => Some(Transition::ChangeWindowMode(WindowMode::Fullscreen)),
+            "fullscreen" => {
+                self.window.borrow_mut().unpress();
+                Some(Transition::ChangeWindowMode(WindowMode::Fullscreen))
+            }
             _ => unreachable!(),
         }
     }

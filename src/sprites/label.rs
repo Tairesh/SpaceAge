@@ -99,5 +99,9 @@ impl Stringify for Label {
     }
 }
 
-impl Update for Label {}
+impl Update for Label {
+    fn block_mouse(&self) -> bool {
+        false
+    }
+}
 impl Sprite for Label {}

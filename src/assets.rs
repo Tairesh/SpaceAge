@@ -3,9 +3,11 @@ use tetra::graphics::Texture;
 use tetra::Context;
 
 pub struct Fonts {
-    pub consolab: Font,
-    pub astrolab: Font,
-    pub nasa: Font,
+    pub consolab18: Font,
+    pub consolab12: Font,
+    pub astrolab32: Font,
+    pub nasa24: Font,
+    pub nasa14: Font,
     pub logo: Font,
 }
 
@@ -15,9 +17,11 @@ impl Fonts {
         let astrolab = include_bytes!("../inc/fonts/astrolab.ttf");
         let nasa = include_bytes!("../inc/fonts/nasalization.ttf");
         Self {
-            consolab: Font::from_vector_file_data(ctx, consolab, 18.0).unwrap(),
-            astrolab: Font::from_vector_file_data(ctx, astrolab, 32.0).unwrap(),
-            nasa: Font::from_vector_file_data(ctx, nasa, 24.0).unwrap(),
+            consolab18: Font::from_vector_file_data(ctx, consolab, 18.0).unwrap(),
+            consolab12: Font::from_vector_file_data(ctx, consolab, 12.0).unwrap(),
+            astrolab32: Font::from_vector_file_data(ctx, astrolab, 32.0).unwrap(),
+            nasa24: Font::from_vector_file_data(ctx, nasa, 24.0).unwrap(),
+            nasa14: Font::from_vector_file_data(ctx, nasa, 14.0).unwrap(),
             logo: Font::from_vector_file_data(ctx, nasa, 72.0).unwrap(),
         }
     }

@@ -35,7 +35,7 @@ impl MainMenu {
         )));
         let version = Rc::new(RefCell::new(Label::new(
             VERSION,
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -44,49 +44,45 @@ impl MainMenu {
         )));
         let select_btn = Rc::new(RefCell::new(
             Button::new(
-                "select_world",
                 vec![(Key::E, None)],
                 "[e] Select world",
                 Position {
                     x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                     y: Vertical::AtWindowCenterByCenter { offset: 0.0 },
                 },
-                assets.fonts.consolab.clone(),
-                Transition::DoNothing,
+                assets.fonts.consolab18.clone(),
+                Transition::Push(GameScene::LoadWorld),
             )
             .with_disabled(true),
         ));
         let create_btn = Rc::new(RefCell::new(Button::new(
-            "create_world",
             vec![(Key::C, None)],
             "[c] Create new world",
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 50.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::Push(GameScene::CreateWorld),
         )));
         let settings_btn = Rc::new(RefCell::new(Button::new(
-            "settings",
             vec![(Key::S, None)],
             "[s] Settings",
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 100.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::Push(GameScene::Settings),
         )));
         let exit_btn = Rc::new(RefCell::new(Button::new(
-            "exit",
             vec![(Key::X, None)],
             "[x] Exit",
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 150.0 },
             },
-            assets.fonts.consolab.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::Quit,
         )));
         Self {

@@ -11,6 +11,16 @@ use tetra::{input, Context};
 
 enum ButtonContent {
     Text(Text),
+    Empty(Vec2),
+}
+
+impl ButtonContent {
+    pub fn height(&self) -> f32 {
+        match self {
+            ButtonContent::Text(_) => 20.0,
+            ButtonContent::Empty(size) => size.y,
+        }
+    }
 }
 
 enum ButtonState {
@@ -51,11 +61,9 @@ impl ButtonState {
 }
 
 pub struct Button {
-    id: String,
     keys: Vec<(Key, Option<KeyModifier>)>,
     content: ButtonContent,
     on_click: Transition,
-    content_height: f32,
     position: Position,
     border: Option<Mesh>,
     bg: Option<Mesh>,
@@ -69,7 +77,6 @@ pub struct Button {
 
 impl Button {
     pub fn new(
-        id: &str,
         keys: Vec<(Key, Option<KeyModifier>)>,
         text: &str,
         position: Position,
@@ -77,11 +84,31 @@ impl Button {
         on_click: Transition,
     ) -> Self {
         Self {
-            id: id.to_string(),
             keys,
             content: ButtonContent::Text(Text::new(text, font)),
             on_click,
-            content_height: 20.0,
+            position,
+            border: None,
+            bg: None,
+            rect: None,
+            is_pressed: false,
+            is_hovered: false,
+            is_disabled: false,
+            fixable: false,
+            visible: true,
+        }
+    }
+
+    pub fn empty(
+        keys: Vec<(Key, Option<KeyModifier>)>,
+        size: Vec2,
+        position: Position,
+        on_click: Transition,
+    ) -> Self {
+        Self {
+            keys,
+            content: ButtonContent::Empty(size),
+            on_click,
             position,
             border: None,
             bg: None,
@@ -95,7 +122,6 @@ impl Button {
     }
 
     pub fn fixed(
-        id: &str,
         keys: Vec<(Key, Option<KeyModifier>)>,
         text: &str,
         state: bool,
@@ -103,7 +129,7 @@ impl Button {
         font: Font,
         on_click: Transition,
     ) -> Self {
-        let mut s = Self::new(id, keys, text, position, font, on_click);
+        let mut s = Self::new(keys, text, position, font, on_click);
         s.fixable = true;
         s.is_pressed = state;
         s
@@ -114,18 +140,15 @@ impl Button {
         self
     }
 
-    pub fn id(&self) -> String {
-        self.id.clone()
-    }
-
     fn content_size(&mut self, ctx: &mut Context) -> (Vec2, f32) {
         match &mut self.content {
             ButtonContent::Text(text) => (
                 text.get_bounds(ctx)
-                    .map(|b| Vec2::new(b.width, self.content_height))
+                    .map(|b| Vec2::new(b.width, self.content.height()))
                     .unwrap(),
-                30.0f32,
+                20.0,
             ),
+            ButtonContent::Empty(size) => (*size, 10.0),
         }
     }
 
@@ -170,6 +193,7 @@ impl Draw for Button {
                 }
                 text.draw(ctx, DrawParams::new().position(vec).color(text_color));
             }
+            ButtonContent::Empty(..) => {}
         }
     }
 

@@ -1,11 +1,13 @@
 mod create_world;
 mod empty;
+mod load_world;
 pub mod main_menu;
 mod settings;
 
 use crate::assets::Assets;
 use crate::scenes::create_world::CreateWorld;
 use crate::scenes::empty::Empty;
+use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
 use crate::settings::{Settings, WindowMode};
@@ -22,6 +24,7 @@ pub enum GameScene {
     Empty,
     Settings,
     CreateWorld,
+    LoadWorld,
 }
 
 impl GameScene {
@@ -36,6 +39,7 @@ impl GameScene {
             GameScene::Empty => Box::new(Empty {}),
             GameScene::Settings => Box::new(SettingsScene::new(assets, settings, ctx)),
             GameScene::CreateWorld => Box::new(CreateWorld::new(assets, ctx)),
+            GameScene::LoadWorld => Box::new(LoadWorld::new(assets, ctx)),
         }
     }
 }

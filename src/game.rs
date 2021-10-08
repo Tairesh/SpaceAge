@@ -141,7 +141,7 @@ impl State for Game {
                     if let Some(transition) = sprite.update(ctx, focused, &blocked) {
                         button_clicked = Some(transition);
                     }
-                    if sprite.block_mouse() {
+                    if sprite.visible() && sprite.block_mouse() {
                         blocked.push(sprite.rect());
                     }
                 }

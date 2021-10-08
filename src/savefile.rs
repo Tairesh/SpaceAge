@@ -12,12 +12,15 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
 
+// TODO: load only metadata. load full data only when World is creating
+
 #[derive(Debug, Clone)]
 pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
     pub meta: WorldMeta,
+    pub sectors: Vec<u32>,
     // TODO: also save view params like current zoom, etc. ptbly through struct like GameView
     pub units_data: Vec<String>,
     // pub chunks_data: Vec<String>,
@@ -52,6 +55,7 @@ impl SaveFile {
                 class,
                 current_tick: 0,
             },
+            sectors: galaxy_generator::generate(seed, size.into(), class),
             units_data: Vec::new(),
             // chunks_data: Vec::new(),
         }
@@ -71,6 +75,7 @@ impl SaveFile {
         }
         let time = lines.next()?.ok()?.parse::<u64>().ok()?;
         let time = SystemTime::UNIX_EPOCH + Duration::new(time, 0);
+        let sectors = serde_json::from_str(lines.next()?.ok()?.as_str()).ok()?;
         let mut units_data = Vec::new();
         loop {
             let unit = lines.next()?.ok()?;
@@ -79,27 +84,20 @@ impl SaveFile {
             }
             units_data.push(unit);
         }
-        // let mut chunks_data = Vec::new();
-        // loop {
-        //     let chunk = lines.next()?.ok()?;
-        //     if chunk.eq("/chunks") {
-        //         break;
-        //     }
-        //     chunks_data.push(chunk);
-        // }
 
         Some(SaveFile {
             path,
             version,
             time,
             meta,
+            sectors,
             units_data,
             // chunks_data,
         })
     }
 
     pub fn create(&mut self) -> Result<(), CreateFileError> {
-        create(&self.path, &self.meta)
+        create(&self.path, &self.meta, &self.sectors)
     }
 
     pub fn load_avatar(&self) -> Avatar {
@@ -147,7 +145,7 @@ pub fn delete(path: &Path) {
     }
 }
 
-pub fn create(path: &Path, meta: &WorldMeta) -> Result<(), CreateFileError> {
+pub fn create(path: &Path, meta: &WorldMeta, sectors: &[u32]) -> Result<(), CreateFileError> {
     let dir = Path::new("save");
     if !dir.exists() {
         create_dir(dir).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
@@ -159,18 +157,13 @@ pub fn create(path: &Path, meta: &WorldMeta) -> Result<(), CreateFileError> {
         let mut file =
             File::create(&path).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
         let data = format!(
-            "{}\n{}\n{}\n{}\n/units\n/chunks",
+            "{}\n{}\n{}\n{}\n/units",
             serde_json::to_string(meta).unwrap(),
             VERSION,
             time.duration_since(SystemTime::UNIX_EPOCH)
                 .map_err(|e| CreateFileError::SystemError(e.to_string()))?
                 .as_secs(),
-            serde_json::to_string(&galaxy_generator::generate(
-                meta.seed,
-                meta.size.into(),
-                meta.class
-            ))
-            .unwrap()
+            serde_json::to_string(sectors).unwrap()
         );
         file.write_all(data.as_bytes())
             .map_err(|e| CreateFileError::SystemError(e.to_string()))?;

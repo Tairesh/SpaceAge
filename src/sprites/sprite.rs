@@ -39,6 +39,9 @@ pub trait Update {
     ) -> Option<Transition> {
         None
     }
+    fn block_mouse(&self) -> bool {
+        true
+    }
 }
 
 pub trait Disable {
@@ -68,9 +71,6 @@ pub trait Press {
 }
 
 pub trait Sprite: Draw + Positionate + Update {
-    fn block_mouse(&self) -> bool {
-        self.visible()
-    }
     fn focused(&self) -> bool {
         false
     }
