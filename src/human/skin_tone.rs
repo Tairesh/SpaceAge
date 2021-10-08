@@ -50,8 +50,8 @@ impl SkinTone {
             | SkinTone::Bronze
             | SkinTone::Golden
             | SkinTone::Espresso
-            | SkinTone::Chocolate => Colors::LIGHT_YELLOW,
-            _ => Colors::DARK_BROWN,
+            | SkinTone::Chocolate => Colors::LIGHT_GRAY,
+            _ => Colors::DARK_GRAY,
         }
     }
 }

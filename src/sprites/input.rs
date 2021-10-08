@@ -39,7 +39,7 @@ impl TextInput {
     pub fn new<C: Into<String>>(value: C, width: f32, font: Font, position: Position) -> Self {
         let value = value.into();
         Self {
-            value_type: ValueType::String { max_length: 16 },
+            value_type: ValueType::String { max_length: 32 },
             text: Text::new(value.clone(), font.clone()),
             text_with_spaces: Text::new(value.replace(" ", "_"), font),
             position,
@@ -59,7 +59,7 @@ impl TextInput {
     }
 
     pub fn int(value: u32, clamps: (u32, u32), width: f32, font: Font, position: Position) -> Self {
-        let mut s = Self::new(format!("{}", value).as_str(), width, font, position);
+        let mut s = Self::new(value.to_string(), width, font, position);
         s.value_type = ValueType::Unsigned {
             min: clamps.0,
             max: clamps.1,
@@ -109,7 +109,9 @@ impl TextInput {
             } else if val > max {
                 val = max;
             }
-            self.text.set_content(format!("{}", val));
+            self.text.set_content(val.to_string());
+            self.text_with_spaces
+                .set_content(self.text.content().replace(" ", "_"));
         }
     }
 
@@ -152,6 +154,7 @@ impl Draw for TextInput {
         } else {
             Vec2::new(rect.x + 7.0, y)
         };
+        // TODO: horizontal scroll if text width is more than sprite width
         self.text.draw(
             ctx,
             DrawParams::new()
@@ -253,6 +256,9 @@ impl Update for TextInput {
                 self.text.pop();
                 self.text_with_spaces.pop();
                 self.is_danger = false;
+            }
+            if input::is_key_pressed(ctx, Key::Enter) {
+                self.set_focused(false);
             }
             if let Some(text_input) = input::get_text_input(ctx) {
                 let allow = match self.value_type {

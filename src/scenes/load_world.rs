@@ -1,6 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
-use crate::savefile::{delete, savefiles, savefiles_exists};
+use crate::savefile::{delete, savefiles, savefiles_exists, SaveFileMeta};
 use crate::scenes::{easy_back, GameScene, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::image::Image;
@@ -12,6 +12,7 @@ use chrono::{DateTime, Local};
 use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
+use std::str::FromStr;
 use tetra::input::{Key, KeyModifier};
 use tetra::{Context, Event};
 
@@ -98,7 +99,7 @@ impl LoadWorld {
                 &savefile.version,
                 assets.fonts.consolab12.clone(),
                 if savefile.version.as_str() == VERSION {
-                    Colors::GREEN
+                    Colors::LIME
                 } else {
                     Colors::RED
                 },
@@ -139,10 +140,15 @@ impl Scene for LoadWorld {
     fn custom_event(&mut self, _ctx: &mut Context, event: &str) -> Option<Transition> {
         let mut parts = event.split(':');
         match (parts.next(), parts.next()) {
-            (Some("load"), Some(path)) => {
-                dbg!(path);
-                None
-            }
+            (Some("load"), Some(path)) => SaveFileMeta::load(path.as_ref()).map(|s| {
+                if s.has_avatar() {
+                    Transition::DoNothing
+                } else {
+                    Transition::Replace(GameScene::CreateCharacter(
+                        PathBuf::from_str(path).unwrap(),
+                    ))
+                }
+            }),
             (Some("del"), Some(path)) => {
                 let path = path.parse::<PathBuf>().unwrap();
                 delete(&path);

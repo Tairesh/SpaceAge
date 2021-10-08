@@ -4,7 +4,7 @@ use crate::human::body::Body;
 use crate::human::character::Character;
 use crate::map::pos::TilePos;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub struct Avatar {
     pub character: Character,
     pub body: Body,

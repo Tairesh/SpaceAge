@@ -71,7 +71,7 @@ impl CreateWorld {
             assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
-                x: Horizontal::AtWindowCenterByRight { offset: -10.0 },
+                x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -122.0 },
             },
         )));
@@ -81,7 +81,7 @@ impl CreateWorld {
             right_column_width,
             assets.fonts.nasa24.clone(),
             Position {
-                x: Horizontal::AtWindowCenterByLeft { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -120.0 },
             },
         )));
@@ -91,7 +91,7 @@ impl CreateWorld {
             Colors::RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
-                    offset: right_column_width / 2.0,
+                    offset: right_column_width / 2.0 - 50.0,
                 },
                 y: Vertical::AtWindowCenterByBottom { offset: -151.0 },
             },
@@ -102,7 +102,7 @@ impl CreateWorld {
             Colors::RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
-                    offset: right_column_width / 2.0,
+                    offset: right_column_width / 2.0 - 50.0,
                 },
                 y: Vertical::AtWindowCenterByBottom { offset: -151.0 },
             },
@@ -112,7 +112,7 @@ impl CreateWorld {
             assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
-                x: Horizontal::AtWindowCenterByRight { offset: -10.0 },
+                x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -52.0 },
             },
         )));
@@ -121,7 +121,7 @@ impl CreateWorld {
             right_column_width,
             assets.fonts.nasa24.clone(),
             Position {
-                x: Horizontal::AtWindowCenterByLeft { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
         )));
@@ -131,7 +131,7 @@ impl CreateWorld {
             Colors::RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
-                    offset: right_column_width / 2.0,
+                    offset: right_column_width / 2.0 - 50.0,
                 },
                 y: Vertical::AtWindowCenterByBottom { offset: -81.0 },
             },
@@ -141,7 +141,7 @@ impl CreateWorld {
             assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
-                x: Horizontal::AtWindowCenterByRight { offset: -10.0 },
+                x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 18.0 },
             },
         )));
@@ -149,7 +149,7 @@ impl CreateWorld {
             vec![],
             "<", // TODO: use icon buttons
             Position {
-                x: Horizontal::AtWindowCenterByLeft { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
             assets.fonts.nasa24.clone(),
@@ -162,7 +162,7 @@ impl CreateWorld {
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
-                    offset: right_column_width / 2.0,
+                    offset: right_column_width / 2.0 - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 18.0 },
             },
@@ -172,7 +172,7 @@ impl CreateWorld {
             ">",
             Position {
                 x: Horizontal::AtWindowCenterByRight {
-                    offset: right_column_width,
+                    offset: right_column_width - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
@@ -184,7 +184,7 @@ impl CreateWorld {
             assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
-                x: Horizontal::AtWindowCenterByRight { offset: -10.0 },
+                x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
             },
         )));
@@ -192,7 +192,7 @@ impl CreateWorld {
             vec![],
             "<",
             Position {
-                x: Horizontal::AtWindowCenterByLeft { offset: 0.0 },
+                x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
             assets.fonts.nasa24.clone(),
@@ -205,7 +205,7 @@ impl CreateWorld {
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
-                    offset: right_column_width / 2.0,
+                    offset: right_column_width / 2.0 - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
             },
@@ -215,7 +215,7 @@ impl CreateWorld {
             ">",
             Position {
                 x: Horizontal::AtWindowCenterByRight {
-                    offset: right_column_width,
+                    offset: right_column_width - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
@@ -229,7 +229,7 @@ impl CreateWorld {
             ],
             "[*] Randomize",
             Position {
-                x: Horizontal::AtWindowCenterByLeft { offset: 5.0 },
+                x: Horizontal::AtWindowCenterByLeft { offset: -45.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
             assets.fonts.consolab18.clone(),
@@ -240,7 +240,7 @@ impl CreateWorld {
             vec![(Key::P, None)],
             "[P] Preview",
             Position {
-                x: Horizontal::AtWindowCenterByRight { offset: -5.0 },
+                x: Horizontal::AtWindowCenterByRight { offset: -55.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
             assets.fonts.consolab18.clone(),
@@ -252,7 +252,7 @@ impl CreateWorld {
             "[Esc] Back",
             Position {
                 x: Horizontal::AtWindowCenterByRight {
-                    offset: -15.0 - preview_size.x,
+                    offset: -65.0 - preview_size.x,
                 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
@@ -264,7 +264,7 @@ impl CreateWorld {
             "[Alt+Enter] Create",
             Position {
                 x: Horizontal::AtWindowCenterByLeft {
-                    offset: randomize_size.x + 15.0,
+                    offset: randomize_size.x - 35.0,
                 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },

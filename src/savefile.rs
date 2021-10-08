@@ -1,4 +1,5 @@
 use crate::astro::galaxy_generator;
+use crate::avatar::Avatar;
 use crate::world::WorldMeta;
 use crate::VERSION;
 use serde::{Deserialize, Serialize};
@@ -39,11 +40,12 @@ pub enum CreateFileError {
     FileExists,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SaveFileMeta {
     pub version: String,
     pub time: SystemTime,
     world_meta: WorldMeta,
+    avatar: Option<Avatar>,
 }
 
 impl SaveFileMeta {
@@ -52,6 +54,7 @@ impl SaveFileMeta {
             version: VERSION.to_string(),
             time: SystemTime::now(),
             world_meta,
+            avatar: None,
         }
     }
 
@@ -83,6 +86,19 @@ impl SaveFileMeta {
         Ok(())
     }
 
+    pub fn save(&mut self, path: &Path) -> Result<(), String> {
+        let file = File::open(path).ok().unwrap();
+        let lines = BufReader::new(&file).lines();
+        let mut data: Vec<String> = lines.skip(1).map(Result::unwrap).collect();
+        self.time = SystemTime::now();
+        self.version = VERSION.to_string();
+        data.insert(0, serde_json::to_string(self).map_err(|e| e.to_string())?);
+        let mut file = File::create(&path).map_err(|e| e.to_string())?;
+        file.write_all(data.join("\n").as_bytes())
+            .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
     pub fn load(path: &Path) -> Option<Self> {
         let file = File::open(path).ok()?;
         let mut lines = BufReader::new(&file).lines();
@@ -92,6 +108,15 @@ impl SaveFileMeta {
 
     pub fn name(&self) -> &str {
         self.world_meta.name.as_str()
+    }
+
+    pub fn has_avatar(&self) -> bool {
+        self.avatar.is_some()
+    }
+
+    pub fn set_avatar(&mut self, avatar: Avatar) -> &mut Self {
+        self.avatar = Some(avatar);
+        self
     }
 }
 
