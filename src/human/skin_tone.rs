@@ -104,7 +104,7 @@ impl From<SkinTone> for Color {
 
 impl Distribution<SkinTone> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> SkinTone {
-        match rng.gen_range(0..=15) {
+        match rng.gen_range(0..SkinTone::VARIANT_COUNT) {
             0 => SkinTone::PaleIvory,
             1 => SkinTone::WarmIvory,
             2 => SkinTone::Sand,
@@ -121,9 +121,7 @@ impl Distribution<SkinTone> for Standard {
             13 => SkinTone::Golden,
             14 => SkinTone::Espresso,
             15 => SkinTone::Chocolate,
-            _ => {
-                panic!("Rust is the memory safe language with zero cost abstractions!");
-            }
+            _ => unreachable!(),
         }
     }
 }

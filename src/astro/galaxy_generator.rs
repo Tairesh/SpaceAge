@@ -1,98 +1,10 @@
 #![allow(dead_code)]
 
-use crate::enums;
+use crate::astro::galaxy_class::GalaxyClass;
 use crate::geometry::DIR8;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
-use variant_count::VariantCount;
-
-// TODO: implement rng distribution
-#[derive(Debug, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone)]
-#[repr(u8)]
-pub enum GalaxyClass {
-    Spiral,
-    BaredSpiral,
-    Elliptical,
-    Circular,
-    Irregular,
-}
-
-impl From<GalaxyClass> for &str {
-    fn from(s: GalaxyClass) -> Self {
-        match s {
-            GalaxyClass::Spiral => "Spiral",
-            GalaxyClass::BaredSpiral => "Bared Spiral",
-            GalaxyClass::Elliptical => "Elliptical",
-            GalaxyClass::Circular => "Circular",
-            GalaxyClass::Irregular => "Irregular",
-        }
-    }
-}
-
-impl GalaxyClass {
-    pub fn name(&self) -> &str {
-        (*self).into()
-    }
-
-    pub fn next(&self) -> Self {
-        enums::next(*self, Self::VARIANT_COUNT)
-    }
-
-    pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::VARIANT_COUNT)
-    }
-}
-
-// TODO: implement rng distribution
-#[derive(Debug, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone)]
-#[repr(u8)]
-pub enum GalaxySize {
-    Tiny,
-    Small,
-    Normal,
-    Big,
-    Huge,
-}
-
-impl From<GalaxySize> for usize {
-    fn from(s: GalaxySize) -> usize {
-        match s {
-            GalaxySize::Tiny => 64,
-            GalaxySize::Small => 128,
-            GalaxySize::Normal => 256,
-            GalaxySize::Big => 512,
-            GalaxySize::Huge => 1024,
-        }
-    }
-}
-
-impl From<GalaxySize> for &str {
-    fn from(s: GalaxySize) -> Self {
-        match s {
-            GalaxySize::Tiny => "Tiny",
-            GalaxySize::Small => "Small",
-            GalaxySize::Normal => "Normal",
-            GalaxySize::Big => "Big",
-            GalaxySize::Huge => "Huge",
-        }
-    }
-}
-
-impl GalaxySize {
-    pub fn name(&self) -> &str {
-        (*self).into()
-    }
-
-    pub fn next(&self) -> Self {
-        enums::next(*self, Self::VARIANT_COUNT)
-    }
-
-    pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::VARIANT_COUNT)
-    }
-}
 
 pub fn generate(seed: u64, size: usize, typ: GalaxyClass) -> Vec<u32> {
     let mut rng = StdRng::seed_from_u64(seed);
@@ -361,7 +273,8 @@ fn fill_irregular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
 
 #[cfg(test)]
 mod tests {
-    use crate::astro::galaxy::{generate, GalaxyClass, CORE_MAX_STARS};
+    use crate::astro::galaxy_class::GalaxyClass;
+    use crate::astro::galaxy_generator::{generate, CORE_MAX_STARS};
 
     #[test]
     fn test_spiral() {

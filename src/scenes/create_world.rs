@@ -1,6 +1,7 @@
 use crate::assets::Assets;
-use crate::astro::galaxy;
-use crate::astro::galaxy::{GalaxyClass, GalaxySize};
+use crate::astro::galaxy_class::GalaxyClass;
+use crate::astro::galaxy_generator;
+use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
 use crate::savefile::{CreateFileError, SaveFile};
 use crate::scenes::{easy_back, Scene, Transition};
@@ -11,7 +12,8 @@ use crate::sprites::input::TextInput;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Stringify};
-use rand::RngCore;
+use rand::distributions::Standard;
+use rand::{Rng, RngCore};
 use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -386,7 +388,14 @@ impl Scene for CreateWorld {
                 None
             }
             "randomize" => {
-                // TODO: randomize world name, type and size
+                // TODO: randomize world name
+                self.galaxy_class = rand::thread_rng().sample(Standard);
+                self.class_name
+                    .borrow_mut()
+                    .set_value(self.galaxy_class.name());
+                self.class_name
+                    .borrow_mut()
+                    .positionate(ctx, window::get_size(ctx));
                 self.seed_input
                     .borrow_mut()
                     .set_value(random_seed().as_str());
@@ -402,7 +411,7 @@ impl Scene for CreateWorld {
                 self.preview.borrow_mut().redraw(
                     ctx,
                     size,
-                    galaxy::generate(seed, size, self.galaxy_class),
+                    galaxy_generator::generate(seed, size, self.galaxy_class),
                     name.as_str(),
                 );
                 None
