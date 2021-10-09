@@ -4,5 +4,29 @@
     "id": "frame",
     "name": "Main frame",
     "description": "Holds other parts on it."
+  },
+  {
+    "type": "part",
+    "id": "wall_outer",
+    "name": "Outer wall",
+    "description": "Block some damage."
+  },
+  {
+    "type": "part",
+    "id": "wall_inner",
+    "name": "Inner wall",
+    "description": "Block crew and oxygen from leaving."
+  },
+  {
+    "type": "part",
+    "id": "door_outer",
+    "name": "Outer door",
+    "description": "DOOR"
+  },
+  {
+    "type": "part",
+    "id": "door_inner",
+    "name": "Inner door",
+    "description": "door"
   }
 ]

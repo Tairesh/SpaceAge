@@ -6,6 +6,7 @@ pub mod main_menu;
 mod settings;
 
 use crate::assets::Assets;
+use crate::savefile::SaveFileMeta;
 use crate::scenes::create_character::CreateCharacter;
 use crate::scenes::create_world::CreateWorld;
 use crate::scenes::empty::Empty;
@@ -15,7 +16,6 @@ use crate::scenes::settings::SettingsScene;
 use crate::settings::{Settings, WindowMode};
 use crate::sprites::sprite::Sprite;
 use std::cell::RefCell;
-use std::path::PathBuf;
 use std::rc::Rc;
 use tetra::input::{Key, MouseButton};
 use tetra::{Context, Event};
@@ -28,7 +28,7 @@ pub enum GameScene {
     Settings,
     CreateWorld,
     LoadWorld,
-    CreateCharacter(PathBuf),
+    CreateCharacter(SaveFileMeta),
 }
 
 impl GameScene {
@@ -44,7 +44,7 @@ impl GameScene {
             GameScene::Settings => Box::new(SettingsScene::new(assets, settings, ctx)),
             GameScene::CreateWorld => Box::new(CreateWorld::new(assets, ctx)),
             GameScene::LoadWorld => Box::new(LoadWorld::new(assets, ctx)),
-            GameScene::CreateCharacter(p) => Box::new(CreateCharacter::new(p, assets, ctx)),
+            GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(s, assets, ctx)),
         }
     }
 }

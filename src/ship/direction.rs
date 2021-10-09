@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
+use std::convert::TryFrom;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum Direction {
     Here,
     North,
@@ -13,14 +15,8 @@ pub enum Direction {
     NorthWest,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug)]
-pub enum TwoDimDirection {
-    East,
-    West,
-}
-
 impl Direction {
-    pub fn dx(&self) -> i8 {
+    pub fn dx(&self) -> i32 {
         match self {
             Direction::NorthWest | Direction::West | Direction::SouthWest => -1,
             Direction::NorthEast | Direction::East | Direction::SouthEast => 1,
@@ -28,7 +24,7 @@ impl Direction {
         }
     }
 
-    pub fn dy(&self) -> i8 {
+    pub fn dy(&self) -> i32 {
         match self {
             Direction::NorthEast | Direction::North | Direction::NorthWest => -1,
             Direction::SouthEast | Direction::South | Direction::SouthWest => 1,
@@ -36,52 +32,8 @@ impl Direction {
         }
     }
 
-    pub fn as_two_dimensional(&self) -> Option<TwoDimDirection> {
-        match self {
-            Direction::NorthEast | Direction::East | Direction::SouthEast => {
-                Some(TwoDimDirection::East)
-            }
-            Direction::SouthWest | Direction::West | Direction::NorthWest => {
-                Some(TwoDimDirection::West)
-            }
-            Direction::North | Direction::South | Direction::Here => None,
-        }
-    }
-
     pub fn is_here(&self) -> bool {
         matches!(self, Direction::Here)
-    }
-}
-
-impl From<Direction> for &str {
-    fn from(d: Direction) -> &'static str {
-        match d {
-            Direction::Here => "here",
-            Direction::North => "N",
-            Direction::NorthEast => "NE",
-            Direction::East => "E",
-            Direction::SouthEast => "SE",
-            Direction::South => "S",
-            Direction::SouthWest => "SW",
-            Direction::West => "W",
-            Direction::NorthWest => "NW",
-        }
-    }
-}
-
-impl From<&str> for Direction {
-    fn from(s: &str) -> Self {
-        match s {
-            "N" => Direction::North,
-            "NE" => Direction::NorthEast,
-            "NW" => Direction::NorthWest,
-            "S" => Direction::South,
-            "SE" => Direction::SouthEast,
-            "SW" => Direction::SouthWest,
-            "E" => Direction::East,
-            "W" => Direction::West,
-            _ => Direction::Here,
-        }
     }
 }
 
@@ -104,6 +56,37 @@ impl From<(i32, i32)> for Direction {
                 Ordering::Equal => Direction::East,
                 Ordering::Greater => Direction::SouthEast,
             },
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum TwoDimDirection {
+    East,
+    West,
+}
+
+#[derive(Debug)]
+pub enum DirectionConvertError {
+    North,
+    South,
+    Here,
+}
+
+impl TryFrom<Direction> for TwoDimDirection {
+    type Error = DirectionConvertError;
+
+    fn try_from(value: Direction) -> Result<Self, Self::Error> {
+        match value {
+            Direction::NorthEast | Direction::East | Direction::SouthEast => {
+                Ok(TwoDimDirection::East)
+            }
+            Direction::SouthWest | Direction::West | Direction::NorthWest => {
+                Ok(TwoDimDirection::West)
+            }
+            Direction::North => Err(DirectionConvertError::North),
+            Direction::South => Err(DirectionConvertError::South),
+            Direction::Here => Err(DirectionConvertError::Here),
         }
     }
 }

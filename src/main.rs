@@ -1,19 +1,24 @@
 #![windows_subsystem = "windows"]
 
+use tetra::graphics::ImageData;
+use tetra::{window, ContextBuilder};
+
+use crate::game::Game;
+use crate::settings::Settings;
+
 mod assets;
 mod astro;
 mod avatar;
 mod colors;
 mod data;
-mod direction;
 mod enums;
 mod game;
 mod geometry;
 mod human;
-mod map;
 mod savefile;
 mod scenes;
 mod settings;
+mod ship;
 mod sprites;
 mod world;
 
@@ -23,11 +28,6 @@ extern crate rand;
 extern crate serde;
 extern crate tetra;
 extern crate variant_count;
-
-use crate::game::Game;
-use crate::settings::Settings;
-use tetra::graphics::ImageData;
-use tetra::{window, ContextBuilder};
 
 const TITLE: &str = "Space Age";
 const VERSION: &str = concat!(

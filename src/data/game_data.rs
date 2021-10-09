@@ -6,12 +6,6 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
-#[derive(Debug)]
-pub struct GameData {
-    items: HashMap<String, Item>,
-    parts: HashMap<String, Part>,
-}
-
 fn load_file(path: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMap<String, Part>) {
     if let Ok(file) = File::open(path) {
         if let Ok(entities) = serde_json::from_reader::<_, Vec<DataEntity>>(BufReader::new(file)) {
@@ -33,6 +27,12 @@ fn load_folder(dir: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMa
     for entry in dir.read_dir().unwrap() {
         load_file(&entry.unwrap().path(), items, parts);
     }
+}
+
+#[derive(Debug)]
+pub struct GameData {
+    items: HashMap<String, Item>,
+    parts: HashMap<String, Part>,
 }
 
 impl GameData {

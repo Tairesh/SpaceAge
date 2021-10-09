@@ -12,7 +12,6 @@ use chrono::{DateTime, Local};
 use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
-use std::str::FromStr;
 use tetra::input::{Key, KeyModifier};
 use tetra::{Context, Event};
 
@@ -54,7 +53,7 @@ impl LoadWorld {
             Key::Num9,
             Key::Num0,
         ];
-        for (i, (path, savefile)) in savefiles.iter().enumerate() {
+        for (i, savefile) in savefiles.iter().enumerate() {
             sprites.push(Rc::new(RefCell::new(Button::empty(
                 // TODO: add some hint for this shortkeys
                 if i <= 10 {
@@ -67,7 +66,7 @@ impl LoadWorld {
                     x: Horizontal::AtWindowCenterByCenter { offset: -20.0 },
                     y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
-                Transition::CustomEvent(format!("load:{}", path.to_str().unwrap())),
+                Transition::CustomEvent(format!("load:{}", savefile.path.to_str().unwrap())),
             ))));
             sprites.push(Rc::new(RefCell::new(Button::new(
                 if i <= 10 {
@@ -81,7 +80,7 @@ impl LoadWorld {
                     y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
                 assets.fonts.consolab18.clone(),
-                Transition::CustomEvent(format!("del:{}", path.to_str().unwrap())),
+                Transition::CustomEvent(format!("del:{}", savefile.path.to_str().unwrap())),
             ))));
             let name = Rc::new(RefCell::new(Label::new(
                 savefile.name(),
@@ -142,11 +141,13 @@ impl Scene for LoadWorld {
         match (parts.next(), parts.next()) {
             (Some("load"), Some(path)) => SaveFileMeta::load(path.as_ref()).map(|s| {
                 if s.has_avatar() {
+                    // let mut world: World = (&s).into();
+                    // dbg!(&world);
+                    // world.avatar.pos = world.avatar.pos.add((1, 0));
+                    // save_world(&world);
                     Transition::DoNothing
                 } else {
-                    Transition::Replace(GameScene::CreateCharacter(
-                        PathBuf::from_str(path).unwrap(),
-                    ))
+                    Transition::Replace(GameScene::CreateCharacter(s))
                 }
             }),
             (Some("del"), Some(path)) => {

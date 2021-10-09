@@ -2,7 +2,7 @@
 use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
-use crate::direction::Direction;
+use crate::ship::direction::Direction;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -37,8 +37,9 @@ impl WorldMeta {
     }
 }
 
+#[derive(Debug)]
 pub struct World {
-    path: PathBuf,
+    pub path: PathBuf,
     pub meta: WorldMeta,
     pub sectors: Vec<u32>,
     pub avatar: Avatar,

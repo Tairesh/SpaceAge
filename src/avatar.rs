@@ -1,16 +1,16 @@
-use crate::direction::Direction;
 use crate::human::character::Character;
-use crate::map::pos::TilePos;
+use crate::ship::direction::Direction;
+use crate::ship::pos::Pos;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub struct Avatar {
     pub character: Character,
-    pub pos: TilePos,
+    pub pos: Pos,
     pub vision: Direction,
 }
 
 impl Avatar {
-    pub fn new(character: Character, pos: TilePos) -> Self {
+    pub fn new(character: Character, pos: Pos) -> Self {
         Avatar {
             character,
             pos,
