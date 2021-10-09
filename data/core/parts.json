@@ -1,0 +1,8 @@
+[
+  {
+    "type": "part",
+    "id": "frame",
+    "name": "Main frame",
+    "description": "Holds other parts on it."
+  }
+]

@@ -408,25 +408,23 @@ impl Scene for CreateCharacter {
                 }
             }
             "randomize" => {
-                let mut gender = self.gender_input.borrow_mut();
                 let mut rng = rand::thread_rng();
-                gender.set_value(if rng.gen_bool(0.49) { "Male" } else { "Female" });
-                // TODO: Random name generator
-                // self.name_input.borrow_mut().set_value(name);
+                let window_size = window::get_size(ctx);
+                let character: Character = rng.sample(Standard);
+                self.gender_input.borrow_mut().set_value(character.gender);
                 self.age_input
                     .borrow_mut()
-                    .set_value(rng.gen_range(16..=199).to_string());
-                self.main_hand = rng.sample(Standard);
+                    .set_value(character.age.to_string());
+                self.main_hand = character.main_hand;
                 let mut hand = self.hand_label.borrow_mut();
                 hand.set_value(self.main_hand.name());
-                let window_size = window::get_size(ctx);
                 hand.positionate(ctx, window_size);
-                self.skin_tone = rng.sample(Standard);
-                self.skin_mesh.borrow_mut().set_color(self.skin_tone.into());
-                let mut label = self.skin_label.borrow_mut();
-                label.set_value(self.skin_tone.name());
-                label.set_color(self.skin_tone.text_color());
-                label.positionate(ctx, window_size);
+                self.skin_tone = character.skin_tone;
+                let mut skin = self.skin_label.borrow_mut();
+                skin.set_value(self.skin_tone.name());
+                skin.set_color(self.skin_tone.text_color());
+                skin.positionate(ctx, window_size);
+                self.skin_mesh.borrow_mut().set_color(self.skin_tone);
                 None
             }
             "gender:left" | "gender:right" => {
@@ -464,7 +462,7 @@ impl Scene for CreateCharacter {
                 } else {
                     self.skin_tone.prev()
                 };
-                self.skin_mesh.borrow_mut().set_color(self.skin_tone.into());
+                self.skin_mesh.borrow_mut().set_color(self.skin_tone);
                 let mut label = self.skin_label.borrow_mut();
                 label.set_value(self.skin_tone.name());
                 label.set_color(self.skin_tone.text_color());

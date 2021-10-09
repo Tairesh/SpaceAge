@@ -1,6 +1,4 @@
-pub mod item;
 pub mod pos;
-pub mod tile;
 
 #[allow(dead_code)]
 #[derive(Debug)]

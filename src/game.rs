@@ -1,4 +1,5 @@
 use crate::assets::Assets;
+use crate::data::game_data::GameData;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::{Scene, Transition};
 use crate::settings::{Settings, WindowMode};
@@ -10,6 +11,8 @@ pub struct Game {
     scenes: Vec<Box<dyn Scene>>,
     settings: Settings,
     assets: Assets,
+    #[allow(dead_code)]
+    data: GameData,
     default_title: String,
     current_fps: u8,
 }
@@ -17,10 +20,12 @@ pub struct Game {
 impl Game {
     pub fn new(ctx: &mut Context, settings: Settings, default_title: String) -> Self {
         let assets = Assets::new(ctx);
+        let data = GameData::load();
         let mut game = Self {
             scenes: vec![Box::new(MainMenu::new(&assets))],
             settings,
             assets,
+            data,
             default_title,
             current_fps: 60,
         };

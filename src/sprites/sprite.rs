@@ -51,7 +51,7 @@ pub trait Disable {
 
 pub trait Colorize {
     fn color(&self) -> Color;
-    fn set_color(&mut self, color: Color);
+    fn set_color<C: Into<Color>>(&mut self, value: C);
 }
 
 pub trait Stringify {

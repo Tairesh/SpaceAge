@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
@@ -37,7 +38,6 @@ impl WorldMeta {
 }
 
 pub struct World {
-    #[allow(dead_code)]
     path: PathBuf,
     pub meta: WorldMeta,
     pub sectors: Vec<u32>,
@@ -74,23 +74,21 @@ impl World {
 
     /// Doing actions that should be done
     fn act(&mut self) {
-        if let Some(action) = self.avatar.action {
-            if action.finish <= self.meta.current_tick {
-                action.act(self);
-            }
-        }
+        // if let Some(action) = self.avatar.action {
+        //     if action.finish <= self.meta.current_tick {
+        //         action.act(self);
+        //     }
+        // }
     }
 
-    pub const SPEND_LIMIT: u32 = 100;
-
     pub fn tick(&mut self) {
-        self.act();
-        let mut spend = 0;
-        while self.avatar.action.is_some() && spend < World::SPEND_LIMIT {
-            self.meta.current_tick += 1;
-            spend += 1;
-            self.act();
-        }
-        // println!("{}", self.meta.current_tick);
+        // self.act();
+        // const SPEND_LIMIT: u32 = 100;
+        // let mut spend = 0;
+        // while self.avatar.action.is_some() && spend < SPEND_LIMIT {
+        //     self.meta.current_tick += 1;
+        //     spend += 1;
+        //     self.act();
+        // }
     }
 }

@@ -84,8 +84,8 @@ impl Colorize for Label {
         self.color
     }
 
-    fn set_color(&mut self, color: Color) {
-        self.color = color;
+    fn set_color<C: Into<Color>>(&mut self, value: C) {
+        self.color = value.into();
     }
 }
 

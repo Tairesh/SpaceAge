@@ -79,8 +79,8 @@ impl Colorize for JustMesh {
         self.color.unwrap_or(Color::WHITE)
     }
 
-    fn set_color(&mut self, value: Color) {
-        self.color = Some(value);
+    fn set_color<C: Into<Color>>(&mut self, value: C) {
+        self.color = Some(value.into());
     }
 }
 

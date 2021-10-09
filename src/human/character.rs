@@ -1,10 +1,11 @@
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
-use rand::distributions::Standard;
+use rand::distributions::{Distribution, Standard};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Character {
     pub name: String,
     pub gender: Gender,
@@ -29,10 +30,12 @@ impl Character {
             skin_tone,
         }
     }
+}
 
-    pub fn random<R: Rng + ?Sized>(rng: &mut R) -> Self {
+impl Distribution<Character> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Character {
         let gender = rng.sample(Standard);
-        Self::new(
+        Character::new(
             "Ashley",
             gender,
             rng.gen_range(0..=199),

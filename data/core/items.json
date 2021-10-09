@@ -1,0 +1,8 @@
+[
+  {
+    "type": "item",
+    "id": "heart",
+    "name": "Human heart",
+    "tags": [ "BODY_PART" ]
+  }
+]

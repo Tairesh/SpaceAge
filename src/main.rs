@@ -1,10 +1,10 @@
 #![windows_subsystem = "windows"]
 
-mod action;
 mod assets;
 mod astro;
 mod avatar;
 mod colors;
+mod data;
 mod direction;
 mod enums;
 mod game;

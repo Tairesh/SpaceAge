@@ -100,8 +100,8 @@ impl Colorize for Image {
         self.color.unwrap_or(Color::WHITE)
     }
 
-    fn set_color(&mut self, color: Color) {
-        self.color = Some(color);
+    fn set_color<C: Into<Color>>(&mut self, value: C) {
+        self.color = Some(value.into());
     }
 }
 
