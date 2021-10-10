@@ -3,7 +3,7 @@ use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
-use crate::savefile::{self, SaveError};
+use crate::savefile::{create, SaveError};
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::galaxy::Galaxy;
@@ -418,7 +418,7 @@ impl Scene for CreateWorld {
                     self.name_empty.borrow_mut().set_visible(true);
                     None
                 } else {
-                    match savefile::create(WorldMeta::new(
+                    match create(WorldMeta::new(
                         name,
                         seed,
                         self.galaxy_size,

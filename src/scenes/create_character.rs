@@ -5,7 +5,7 @@ use crate::human::character::Character;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
-use crate::savefile::SaveFile;
+use crate::savefile::{save, SaveFile};
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::ship::pos::Pos;
 use crate::sprites::button::Button;
@@ -15,8 +15,7 @@ use crate::sprites::label::Label;
 use crate::sprites::meshy::JustMesh;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify};
-use crate::world::World;
-use crate::{savefile, Vec2};
+use crate::Vec2;
 use rand::distributions::Standard;
 use rand::Rng;
 use std::cell::RefCell;
@@ -398,10 +397,12 @@ impl Scene for CreateCharacter {
                     self.main_hand,
                     self.skin_tone,
                 );
-                self.savefile
-                    .set_avatar(Avatar::new(character, Pos::new(0, 0)));
-                let world: World = (&self.savefile).into();
-                match savefile::save(&world) {
+                match save(
+                    &self
+                        .savefile
+                        .set_avatar(Avatar::new(character, Pos::new(0, 0)))
+                        .as_world(),
+                ) {
                     Ok(_) => Some(Transition::Pop),
                     Err(err) => panic!("Can't save file: {:?}", err),
                 }

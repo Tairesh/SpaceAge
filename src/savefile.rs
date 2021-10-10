@@ -92,6 +92,15 @@ pub fn create(world_meta: WorldMeta) -> Result<(), SaveError> {
         .map_err(|e| e.into())
 }
 
+pub fn load(path: &Path) -> Option<SaveFile> {
+    let file = File::open(path).ok()?;
+    let mut lines = BufReader::new(&file).lines();
+    let meta = lines.next()?.ok()?;
+    serde_json::from_str(meta.as_str())
+        .ok()
+        .map(|s: SaveFile| s.with_path(path))
+}
+
 pub fn save(world: &World) -> Result<(), SaveError> {
     let savefile: SaveFile = world.into();
     make_dir()?;
@@ -113,19 +122,10 @@ pub struct SaveFile {
 impl SaveFile {
     // there are 3 ways to create SaveFile
     // 1. WorldMeta::into(), uses in create()
-    // 2. SaveFile::load(&Path) uses in savefiles() for loading only first string
+    // 2. load(&Path) uses in savefiles() and LoadWorld scene for loading only first string
     // 3. World::into(), uses in save()
 
-    pub fn load(path: &Path) -> Option<Self> {
-        let file = File::open(path).ok()?;
-        let mut lines = BufReader::new(&file).lines();
-        let meta = lines.next()?.ok()?;
-        serde_json::from_str(meta.as_str())
-            .ok()
-            .map(|s: SaveFile| s.with_path(path))
-    }
-
-    pub fn with_path(mut self, path: &Path) -> Self {
+    fn with_path(mut self, path: &Path) -> Self {
         self.path = path.into();
         self
     }
@@ -143,12 +143,8 @@ impl SaveFile {
         self
     }
 
-    // TODO: wrap with Result<>
-    pub fn load_sectors(&self) -> Vec<u32> {
-        let file = File::open(&self.path).unwrap();
-        let mut lines = BufReader::new(&file).lines();
-        let data = lines.nth(1).unwrap().ok().unwrap();
-        serde_json::from_str(data.as_str()).unwrap()
+    pub fn as_world(&self) -> World {
+        self.into()
     }
 }
 
@@ -186,13 +182,16 @@ impl From<WorldMeta> for SaveFile {
 }
 
 impl From<&SaveFile> for World {
-    fn from(meta: &SaveFile) -> Self {
-        let sectors = meta.load_sectors();
+    fn from(savefile: &SaveFile) -> Self {
+        // TODO: too many unwrap() here
+        let file = File::open(&savefile.path).unwrap();
+        let mut lines = BufReader::new(&file).lines();
+        let sectors = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
         World::new(
-            meta.path.clone(),
-            meta.world_meta.clone(),
+            savefile.path.clone(),
+            savefile.world_meta.clone(),
             sectors,
-            meta.avatar.as_ref().unwrap().clone(),
+            savefile.avatar.as_ref().unwrap().clone(),
         )
     }
 }
@@ -215,7 +214,7 @@ pub fn savefiles() -> Vec<SaveFile> {
     if path.exists() {
         for p in path.read_dir().unwrap() {
             let p = p.unwrap().path();
-            if let Some(s) = SaveFile::load(&p) {
+            if let Some(s) = load(&p) {
                 files.push(s);
             }
         }
