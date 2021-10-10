@@ -6,7 +6,7 @@ pub mod main_menu;
 mod settings;
 
 use crate::assets::Assets;
-use crate::savefile::SaveFileMeta;
+use crate::savefile::SaveFile;
 use crate::scenes::create_character::CreateCharacter;
 use crate::scenes::create_world::CreateWorld;
 use crate::scenes::empty::Empty;
@@ -28,7 +28,7 @@ pub enum GameScene {
     Settings,
     CreateWorld,
     LoadWorld,
-    CreateCharacter(SaveFileMeta),
+    CreateCharacter(SaveFile),
 }
 
 impl GameScene {

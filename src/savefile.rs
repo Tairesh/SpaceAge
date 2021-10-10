@@ -3,6 +3,7 @@ use crate::avatar::Avatar;
 use crate::world::{World, WorldMeta};
 use crate::VERSION;
 use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
@@ -35,13 +36,72 @@ pub fn delete(path: &Path) {
 }
 
 #[derive(Debug)]
-pub enum CreateFileError {
+pub enum SaveError {
     SystemError(String),
+    SerializeError(String),
     FileExists,
 }
 
+impl From<serde_json::Error> for SaveError {
+    fn from(e: serde_json::Error) -> Self {
+        SaveError::SerializeError(e.to_string())
+    }
+}
+
+impl From<std::io::Error> for SaveError {
+    fn from(e: std::io::Error) -> Self {
+        SaveError::SystemError(e.to_string())
+    }
+}
+
+fn make_data(savefile: &SaveFile, world: Option<&World>) -> Result<String, SaveError> {
+    let data = [
+        serde_json::to_string(savefile).map_err(SaveError::from)?,
+        if let Some(world) = world {
+            serde_json::to_string(&world.sectors)
+        } else {
+            serde_json::to_string(&galaxy_generator::generate(
+                savefile.world_meta.seed,
+                savefile.world_meta.size.into(),
+                savefile.world_meta.class,
+            ))
+        }
+        .map_err(SaveError::from)?,
+        // TODO: ship, other units, sectors data
+    ]
+    .join("\n");
+    Ok(data)
+}
+
+fn make_dir() -> Result<(), SaveError> {
+    let dir = Path::new("save");
+    if !dir.exists() {
+        std::fs::create_dir(dir).map_err(SaveError::from)?;
+    }
+    Ok(())
+}
+
+pub fn create(world_meta: WorldMeta) -> Result<(), SaveError> {
+    let savefile: SaveFile = world_meta.into();
+    make_dir()?;
+    if savefile.path.is_file() {
+        return Err(SaveError::FileExists);
+    }
+    let mut file = File::create(&savefile.path).map_err(SaveError::from)?;
+    file.write_all(make_data(&savefile, None)?.as_bytes())
+        .map_err(|e| e.into())
+}
+
+pub fn save(world: &World) -> Result<(), SaveError> {
+    let savefile: SaveFile = world.into();
+    make_dir()?;
+    let mut file = File::create(&savefile.path).map_err(SaveError::from)?;
+    file.write_all(make_data(&savefile, Some(world))?.as_bytes())
+        .map_err(SaveError::from)
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SaveFileMeta {
+pub struct SaveFile {
     #[serde(skip)]
     pub path: PathBuf,
     pub version: String,
@@ -50,62 +110,11 @@ pub struct SaveFileMeta {
     avatar: Option<Avatar>,
 }
 
-impl SaveFileMeta {
-    pub fn new(world_meta: WorldMeta) -> Self {
-        let file_name = world_meta.name.replace(" ", "_");
-        let path: PathBuf = ["save", (file_name + ".save").as_str()].iter().collect();
-        Self {
-            path,
-            version: VERSION.to_string(),
-            time: SystemTime::now(),
-            world_meta,
-            avatar: None,
-        }
-    }
-
-    pub fn create(&mut self) -> Result<(), CreateFileError> {
-        let dir = Path::new("save");
-        if !dir.exists() {
-            std::fs::create_dir(dir).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
-        }
-        if self.path.is_file() {
-            return Err(CreateFileError::FileExists);
-        }
-        self.time = SystemTime::now();
-        let mut file =
-            File::create(&self.path).map_err(|e| CreateFileError::SystemError(e.to_string()))?;
-        let data = [
-            serde_json::to_string(self).map_err(|e| CreateFileError::SystemError(e.to_string()))?,
-            serde_json::to_string(&galaxy_generator::generate(
-                self.world_meta.seed,
-                self.world_meta.size.into(),
-                self.world_meta.class,
-            ))
-            .map_err(|e| CreateFileError::SystemError(e.to_string()))?,
-        ]
-        .join("\n");
-        file.write_all(data.as_bytes())
-            .map_err(|e| CreateFileError::SystemError(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn save(&mut self) -> Result<(), String> {
-        let file = File::open(&self.path).ok().unwrap();
-        let lines = BufReader::new(&file).lines();
-        let mut data: Vec<String> = lines.skip(1).map(Result::unwrap).collect();
-        self.time = SystemTime::now();
-        self.version = VERSION.to_string();
-        data.insert(0, serde_json::to_string(self).map_err(|e| e.to_string())?);
-        let mut file = File::create(&self.path).map_err(|e| e.to_string())?;
-        file.write_all(data.join("\n").as_bytes())
-            .map_err(|e| e.to_string())?;
-        Ok(())
-    }
-
-    pub fn with_path(mut self, path: &Path) -> Self {
-        self.path = path.into();
-        self
-    }
+impl SaveFile {
+    // there are 3 ways to create SaveFile
+    // 1. WorldMeta::into(), uses in create()
+    // 2. SaveFile::load(&Path) uses in savefiles() for loading only first string
+    // 3. World::into(), uses in save()
 
     pub fn load(path: &Path) -> Option<Self> {
         let file = File::open(path).ok()?;
@@ -113,7 +122,12 @@ impl SaveFileMeta {
         let meta = lines.next()?.ok()?;
         serde_json::from_str(meta.as_str())
             .ok()
-            .map(|s: SaveFileMeta| s.with_path(path))
+            .map(|s: SaveFile| s.with_path(path))
+    }
+
+    pub fn with_path(mut self, path: &Path) -> Self {
+        self.path = path.into();
+        self
     }
 
     pub fn name(&self) -> &str {
@@ -138,8 +152,41 @@ impl SaveFileMeta {
     }
 }
 
-impl From<&SaveFileMeta> for World {
-    fn from(meta: &SaveFileMeta) -> Self {
+impl Eq for SaveFile {}
+
+impl PartialEq<Self> for SaveFile {
+    fn eq(&self, other: &Self) -> bool {
+        self.path == other.path
+    }
+}
+
+impl PartialOrd<Self> for SaveFile {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for SaveFile {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.time.cmp(&other.time)
+    }
+}
+
+impl From<WorldMeta> for SaveFile {
+    fn from(world_meta: WorldMeta) -> Self {
+        let file_name = world_meta.name.replace(" ", "_");
+        Self {
+            path: ["save", (file_name + ".save").as_str()].iter().collect(),
+            version: VERSION.to_string(),
+            time: SystemTime::now(),
+            world_meta,
+            avatar: None,
+        }
+    }
+}
+
+impl From<&SaveFile> for World {
+    fn from(meta: &SaveFile) -> Self {
         let sectors = meta.load_sectors();
         World::new(
             meta.path.clone(),
@@ -150,9 +197,9 @@ impl From<&SaveFileMeta> for World {
     }
 }
 
-impl From<&World> for SaveFileMeta {
+impl From<&World> for SaveFile {
     fn from(world: &World) -> Self {
-        SaveFileMeta {
+        SaveFile {
             path: world.path.clone(),
             version: VERSION.to_string(),
             time: SystemTime::now(),
@@ -162,30 +209,17 @@ impl From<&World> for SaveFileMeta {
     }
 }
 
-pub fn savefiles() -> Vec<SaveFileMeta> {
+pub fn savefiles() -> Vec<SaveFile> {
     let path = Path::new("save");
     let mut files = Vec::new();
     if path.exists() {
         for p in path.read_dir().unwrap() {
             let p = p.unwrap().path();
-            if let Some(s) = SaveFileMeta::load(&p) {
-                dbg!(&s);
+            if let Some(s) = SaveFile::load(&p) {
                 files.push(s);
             }
         }
     }
-    files.sort_by(|s1, s2| s2.time.cmp(&s1.time));
+    files.sort();
     files
-}
-
-// TODO: wrap with Result<>
-#[allow(dead_code)]
-pub fn save_world(world: &World) {
-    let savefile: SaveFileMeta = world.into();
-    let data = [
-        serde_json::to_string(&savefile).unwrap(),
-        serde_json::to_string(&world.sectors).unwrap(),
-    ];
-    let mut file = File::create(&savefile.path).unwrap();
-    file.write_all(data.join("\n").as_bytes()).ok();
 }

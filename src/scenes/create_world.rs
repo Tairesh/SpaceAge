@@ -3,7 +3,7 @@ use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
-use crate::savefile::{CreateFileError, SaveFileMeta};
+use crate::savefile::{self, SaveError};
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::galaxy::Galaxy;
@@ -418,19 +418,20 @@ impl Scene for CreateWorld {
                     self.name_empty.borrow_mut().set_visible(true);
                     None
                 } else {
-                    let world_meta =
-                        WorldMeta::new(name, seed, self.galaxy_size, self.galaxy_class);
-                    match SaveFileMeta::new(world_meta).create() {
+                    match savefile::create(WorldMeta::new(
+                        name,
+                        seed,
+                        self.galaxy_size,
+                        self.galaxy_class,
+                    )) {
                         Ok(_) => Some(Transition::Pop),
                         Err(err) => {
                             match err {
-                                CreateFileError::SystemError(err) => {
-                                    panic!("Can't create savefile: {}", err)
-                                }
-                                CreateFileError::FileExists => {
+                                SaveError::FileExists => {
                                     self.name_input.borrow_mut().set_danger(true);
                                     self.name_error.borrow_mut().set_visible(true);
                                 }
+                                _ => panic!("Can't create savefile: {:?}", err),
                             }
                             None
                         }

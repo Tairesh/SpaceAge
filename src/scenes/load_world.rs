@@ -1,6 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
-use crate::savefile::{delete, savefiles, savefiles_exists, SaveFileMeta};
+use crate::savefile::{delete, savefiles, savefiles_exists, SaveFile};
 use crate::scenes::{easy_back, GameScene, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::image::Image;
@@ -139,7 +139,7 @@ impl Scene for LoadWorld {
     fn custom_event(&mut self, _ctx: &mut Context, event: &str) -> Option<Transition> {
         let mut parts = event.split(':');
         match (parts.next(), parts.next()) {
-            (Some("load"), Some(path)) => SaveFileMeta::load(path.as_ref()).map(|s| {
+            (Some("load"), Some(path)) => SaveFile::load(path.as_ref()).map(|s| {
                 if s.has_avatar() {
                     // let mut world: World = (&s).into();
                     // dbg!(&world);

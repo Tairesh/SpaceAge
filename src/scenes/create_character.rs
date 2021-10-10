@@ -5,7 +5,7 @@ use crate::human::character::Character;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
-use crate::savefile::SaveFileMeta;
+use crate::savefile::SaveFile;
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::ship::pos::Pos;
 use crate::sprites::button::Button;
@@ -15,7 +15,8 @@ use crate::sprites::label::Label;
 use crate::sprites::meshy::JustMesh;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify};
-use crate::Vec2;
+use crate::world::World;
+use crate::{savefile, Vec2};
 use rand::distributions::Standard;
 use rand::Rng;
 use std::cell::RefCell;
@@ -26,7 +27,7 @@ use tetra::input::{Key, KeyModifier};
 use tetra::{window, Context, Event};
 
 pub struct CreateCharacter {
-    savefile: SaveFileMeta,
+    savefile: SaveFile,
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
     name_input: Rc<RefCell<TextInput>>,
     name_empty: Rc<RefCell<Label>>,
@@ -40,7 +41,7 @@ pub struct CreateCharacter {
 }
 
 impl CreateCharacter {
-    pub fn new(savefile: SaveFileMeta, assets: &Assets, ctx: &mut Context) -> Self {
+    pub fn new(savefile: SaveFile, assets: &Assets, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
         let bg = Rc::new(RefCell::new(Image::new(
             assets.images.bg.clone(),
@@ -397,10 +398,12 @@ impl Scene for CreateCharacter {
                     self.main_hand,
                     self.skin_tone,
                 );
-                let avatar = Avatar::new(character, Pos::new(0, 0));
-                match self.savefile.set_avatar(avatar).save() {
+                self.savefile
+                    .set_avatar(Avatar::new(character, Pos::new(0, 0)));
+                let world: World = (&self.savefile).into();
+                match savefile::save(&world) {
                     Ok(_) => Some(Transition::Pop),
-                    Err(err) => panic!("Can't save file: {}", err),
+                    Err(err) => panic!("Can't save file: {:?}", err),
                 }
             }
             "randomize" => {
