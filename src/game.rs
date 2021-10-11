@@ -1,8 +1,11 @@
 use crate::assets::Assets;
 use crate::data::game_data::GameData;
 use crate::scenes::main_menu::MainMenu;
-use crate::scenes::{Scene, Transition};
+use crate::scenes::{GameScene, Scene, Transition};
 use crate::settings::{Settings, WindowMode};
+use crate::world::World;
+use std::cell::RefCell;
+use std::rc::Rc;
 use tetra::input::Key;
 use tetra::window::WindowPosition;
 use tetra::{time, window, Context, Event, Result, State};
@@ -13,6 +16,7 @@ pub struct Game {
     assets: Assets,
     #[allow(dead_code)]
     data: GameData,
+    world: Option<Rc<RefCell<World>>>,
     default_title: String,
     current_fps: u8,
 }
@@ -28,6 +32,7 @@ impl Game {
             data,
             default_title,
             current_fps: 60,
+            world: None,
         };
         game.on_open(ctx);
         game
@@ -62,13 +67,21 @@ impl Game {
         }
     }
 
+    fn push_scene(&mut self, ctx: &mut Context, scene: GameScene) {
+        self.scenes
+            .push(scene.into_scene(&self.world, &self.assets, &self.settings, ctx));
+        self.on_open(ctx);
+    }
+
     fn transit(&mut self, ctx: &mut Context, transition: Transition) {
         match transition {
             Transition::DoNothing => {}
+            Transition::LoadWorldAndPush(savefile, scene) => {
+                self.world = Some(Rc::new(RefCell::new(savefile.as_world())));
+                self.push_scene(ctx, scene);
+            }
             Transition::Push(s) => {
-                self.scenes
-                    .push(s.into_scene(&self.assets, &self.settings, ctx));
-                self.on_open(ctx);
+                self.push_scene(ctx, s);
             }
             Transition::Pop => {
                 self.scenes.pop();
@@ -81,9 +94,7 @@ impl Game {
             }
             Transition::Replace(s) => {
                 self.scenes.pop();
-                self.scenes
-                    .push(s.into_scene(&self.assets, &self.settings, ctx));
-                self.on_open(ctx);
+                self.push_scene(ctx, s);
             }
             Transition::CustomEvent(str) => {
                 if let Some(t) = self

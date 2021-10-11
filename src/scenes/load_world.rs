@@ -141,11 +141,7 @@ impl Scene for LoadWorld {
         match (parts.next(), parts.next()) {
             (Some("load"), Some(path)) => load(path.as_ref()).map(|s| {
                 if s.has_avatar() {
-                    // let mut world = s.as_world();
-                    // dbg!(&world);
-                    // world.avatar.pos = world.avatar.pos.add((1, 0));
-                    // save(&world).ok();
-                    Transition::DoNothing
+                    Transition::LoadWorldAndPush(s, GameScene::ShipWalk)
                 } else {
                     Transition::Replace(GameScene::CreateCharacter(s))
                 }

@@ -3,7 +3,7 @@ use crate::sprites::position::Position;
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::{Color, DrawParams, NineSlice, Rectangle, Texture};
-use tetra::Context;
+use tetra::{window, Context};
 
 pub struct Image {
     texture: Texture,
@@ -14,6 +14,7 @@ pub struct Image {
     position: Position,
     rect: Option<Rect>,
     visible: bool,
+    repeat: bool,
 }
 
 impl Image {
@@ -27,6 +28,21 @@ impl Image {
             position,
             rect: None,
             visible: true,
+            repeat: false,
+        }
+    }
+
+    pub fn repeat(texture: Texture) -> Self {
+        Self {
+            texture,
+            region: None,
+            color: None,
+            nine_slice: None,
+            scale: Vec2::new(1.0, 1.0),
+            position: Position::center(),
+            rect: None,
+            visible: true,
+            repeat: true,
         }
     }
 
@@ -53,6 +69,16 @@ impl Draw for Image {
                 .draw_nine_slice(ctx, nine_slice, *width, *height, params);
         } else if let Some(region) = self.region {
             self.texture.draw_region(ctx, region, params);
+        } else if self.repeat {
+            let (w, h) = window::get_size(ctx);
+            let w_count = ((w as f32 / rect.w).ceil() / 2.0) as i32;
+            let h_count = ((h as f32 / rect.h).ceil() / 2.0) as i32;
+            for i in -w_count..=w_count {
+                for j in -h_count..=h_count {
+                    let pos = Vec2::new(rect.x + i as f32 * rect.w, rect.y + j as f32 * rect.h);
+                    self.texture.draw(ctx, params.clone().position(pos));
+                }
+            }
         } else {
             self.texture.draw(ctx, params);
         }

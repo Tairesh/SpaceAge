@@ -4,6 +4,7 @@ mod empty;
 mod load_world;
 pub mod main_menu;
 mod settings;
+mod ship_walk;
 
 use crate::assets::Assets;
 use crate::savefile::SaveFile;
@@ -13,8 +14,10 @@ use crate::scenes::empty::Empty;
 use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
+use crate::scenes::ship_walk::ShipWalk;
 use crate::settings::{Settings, WindowMode};
 use crate::sprites::sprite::Sprite;
+use crate::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, MouseButton};
@@ -29,11 +32,13 @@ pub enum GameScene {
     CreateWorld,
     LoadWorld,
     CreateCharacter(SaveFile),
+    ShipWalk,
 }
 
 impl GameScene {
     pub fn into_scene(
         self,
+        world: &Option<Rc<RefCell<World>>>,
         assets: &Assets,
         settings: &Settings,
         ctx: &mut Context,
@@ -45,6 +50,9 @@ impl GameScene {
             GameScene::CreateWorld => Box::new(CreateWorld::new(assets, ctx)),
             GameScene::LoadWorld => Box::new(LoadWorld::new(assets, ctx)),
             GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(s, assets, ctx)),
+            GameScene::ShipWalk => {
+                Box::new(ShipWalk::new(world.as_ref().unwrap().clone(), assets, ctx))
+            }
         }
     }
 }
@@ -54,6 +62,7 @@ impl GameScene {
 pub enum Transition {
     DoNothing,
     Push(GameScene),
+    LoadWorldAndPush(SaveFile, GameScene),
     Pop,
     Pop2,               // two times
     Replace(GameScene), // pop and push
