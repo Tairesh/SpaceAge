@@ -1,7 +1,8 @@
 use crate::geometry::direction::Direction;
 use crate::Vec2;
+use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::ops::{Add, AddAssign, Mul, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, Range, Sub, SubAssign};
 
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Point {
@@ -19,6 +20,14 @@ impl Point {
         Point { x: 0, y: 0 }
     }
 
+    pub fn random<R: Rng + ?Sized>(
+        rng: &mut R,
+        horizontal: Range<i32>,
+        vertical: Range<i32>,
+    ) -> Self {
+        Self::new(rng.gen_range(horizontal), rng.gen_range(vertical))
+    }
+
     /// Helper for map index conversion
     pub fn to_index(self, width: usize) -> usize {
         (self.y as usize * width) + self.x as usize
@@ -27,6 +36,17 @@ impl Point {
     /// Direction to other point
     pub fn dir_to(&self, other: &Point) -> Direction {
         Direction::from(*other - *self)
+    }
+
+    /// Square distance to other point
+    pub fn square_distance(&self, other: &Self) -> i32 {
+        let p = *self - *other;
+        p.x * p.x + p.y * p.y
+    }
+
+    /// Distance (pythagorean) to other point
+    pub fn distance(&self, other: &Self) -> f32 {
+        f32::sqrt(self.square_distance(other) as f32)
     }
 }
 
@@ -342,5 +362,13 @@ mod tests {
         let pt2 = pt * Vec2::new(3.0, 4.0);
         assert_eq!(pt2.x, 3);
         assert_eq!(pt2.y, 8);
+    }
+
+    #[test]
+    fn test_dist() {
+        let pt = Point::new(1, 2);
+        let pt2 = Point::new(3, 4);
+        assert_eq!(pt.square_distance(&pt2), 8);
+        assert!(f32::abs(pt.distance(&pt2) - 2.828_427) < f32::EPSILON);
     }
 }
