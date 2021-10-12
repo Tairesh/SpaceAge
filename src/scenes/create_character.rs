@@ -1,13 +1,13 @@
 use crate::assets::Assets;
 use crate::avatar::Avatar;
 use crate::colors::Colors;
+use crate::geometry::point::Point;
 use crate::human::character::Character;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
 use crate::savefile::{save, SaveFile};
 use crate::scenes::{easy_back, Scene, Transition};
-use crate::ship::pos::Pos;
 use crate::sprites::button::Button;
 use crate::sprites::image::Image;
 use crate::sprites::input::TextInput;
@@ -400,7 +400,7 @@ impl Scene for CreateCharacter {
                 match save(
                     &self
                         .savefile
-                        .set_avatar(Avatar::new(character, Pos::new(0, 0)))
+                        .set_avatar(Avatar::new(character, Point::zero()))
                         .as_world(),
                 ) {
                     Ok(_) => Some(Transition::Pop),

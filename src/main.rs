@@ -18,7 +18,6 @@ mod human;
 mod savefile;
 mod scenes;
 mod settings;
-mod ship;
 mod sprites;
 mod world;
 

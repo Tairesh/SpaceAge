@@ -2,7 +2,7 @@
 use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::avatar::Avatar;
-use crate::ship::direction::Direction;
+use crate::geometry::direction::Direction;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};

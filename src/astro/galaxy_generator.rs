@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::astro::galaxy_class::GalaxyClass;
-use crate::geometry::DIR8;
+use crate::geometry::direction::DIR8;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
@@ -28,9 +28,8 @@ fn smooth(size: usize, values: &mut Vec<u32>, count: usize) {
                 let val = slice[i] as f32;
                 let nvals: f32 = DIR8
                     .iter()
-                    .copied()
-                    .map(|(dx, dy)| {
-                        let j = (x as i32 + dx) * size as i32 + y as i32 + dy;
+                    .map(|dir| {
+                        let j = (x as i32 + dir.dx()) * size as i32 + y as i32 + dir.dy();
                         if j < 0 || j >= (size * size) as i32 {
                             0.0
                         } else {
