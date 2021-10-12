@@ -58,9 +58,10 @@ fn make_data(savefile: &SaveFile, world: Option<&World>) -> Result<String, SaveE
     let data = [
         serde_json::to_string(savefile).map_err(SaveError::from)?,
         if let Some(world) = world {
-            serde_json::to_string(&world.sectors)
+            serde_json::to_string(&world.quadrants)
         } else {
-            serde_json::to_string(&galaxy_generator::generate(
+            // TODO: Galaxy structure, not vector of ints
+            serde_json::to_string(&galaxy_generator::generate_quadrants(
                 savefile.world_meta.seed,
                 savefile.world_meta.size.into(),
                 savefile.world_meta.class,
@@ -115,7 +116,7 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
-    world_meta: WorldMeta,
+    world_meta: WorldMeta, // TODO: save whole World instead
     avatar: Option<Avatar>,
 }
 

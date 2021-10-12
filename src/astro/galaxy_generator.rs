@@ -6,7 +6,7 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
 
-pub fn generate(seed: u64, size: usize, class: GalaxyClass) -> Vec<u32> {
+pub fn generate_quadrants(seed: u64, size: usize, class: GalaxyClass) -> Vec<u32> {
     let mut rng = StdRng::seed_from_u64(seed);
     let mut values = match class {
         GalaxyClass::Spiral => fill_spiral(&mut rng, size, true),
@@ -273,11 +273,11 @@ fn fill_irregular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
 #[cfg(test)]
 mod tests {
     use crate::astro::galaxy_class::GalaxyClass;
-    use crate::astro::galaxy_generator::{generate, CORE_MAX_STARS};
+    use crate::astro::galaxy_generator::{generate_quadrants, CORE_MAX_STARS};
 
     #[test]
     fn test_spiral() {
-        let spiral = generate(42, 128, GalaxyClass::Spiral);
+        let spiral = generate_quadrants(42, 128, GalaxyClass::Spiral);
         assert_eq!(spiral.as_slice()[0], 0);
         assert_eq!(spiral.as_slice()[64 * 128 + 64], 260472);
         assert_eq!(spiral.as_slice()[127 * 128 + 127], 0);
@@ -286,7 +286,7 @@ mod tests {
 
     #[test]
     fn test_bared_spiral() {
-        let bared = generate(42, 128, GalaxyClass::BaredSpiral);
+        let bared = generate_quadrants(42, 128, GalaxyClass::BaredSpiral);
         assert_eq!(bared.as_slice()[0], 0);
         assert_eq!(bared.as_slice()[64 * 128 + 64], 259395);
         assert_eq!(bared.as_slice()[127 * 128 + 127], 0);
@@ -295,7 +295,7 @@ mod tests {
 
     #[test]
     fn test_elliptic() {
-        let elliptic = generate(42, 128, GalaxyClass::Elliptical);
+        let elliptic = generate_quadrants(42, 128, GalaxyClass::Elliptical);
         assert_eq!(elliptic.as_slice()[0], 0);
         assert_eq!(elliptic.as_slice()[64 * 128 + 64], 240656);
         assert_eq!(elliptic.as_slice()[127 * 128 + 127], 0);
@@ -304,7 +304,7 @@ mod tests {
 
     #[test]
     fn test_circular() {
-        let circular = generate(42, 128, GalaxyClass::Circular);
+        let circular = generate_quadrants(42, 128, GalaxyClass::Circular);
         assert_eq!(circular.as_slice()[0], 0);
         assert_eq!(circular.as_slice()[32 * 128 + 64], 66684);
         assert_eq!(circular.as_slice()[64 * 128 + 64], 0);
@@ -314,7 +314,7 @@ mod tests {
 
     #[test]
     fn test_irregular() {
-        let irregular = generate(42, 128, GalaxyClass::Irregular);
+        let irregular = generate_quadrants(42, 128, GalaxyClass::Irregular);
         assert_eq!(irregular.as_slice()[0], 0);
         assert_eq!(irregular.as_slice()[64 * 128 + 64], 157761);
         assert_eq!(irregular.as_slice()[127 * 128 + 127], 0);

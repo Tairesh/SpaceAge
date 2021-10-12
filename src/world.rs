@@ -10,11 +10,11 @@ use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WorldMeta {
-    pub name: String,
+    pub name: String, // TODO: should be moved to GalaxyConfig (for creating) and Galaxy (for loading) struct
     pub seed: u64,
     pub size: GalaxySize,
     pub class: GalaxyClass,
-    pub current_tick: u64,
+    pub current_tick: u64, // TODO: should be moved to World
 }
 
 impl WorldMeta {
@@ -41,16 +41,17 @@ impl WorldMeta {
 pub struct World {
     pub path: PathBuf,
     pub meta: WorldMeta,
-    pub sectors: Vec<u32>,
+    // TODO: Galaxy structure
+    pub quadrants: Vec<u32>,
     pub avatar: Avatar,
 }
 
 impl World {
-    pub fn new(path: PathBuf, meta: WorldMeta, sectors: Vec<u32>, avatar: Avatar) -> Self {
+    pub fn new(path: PathBuf, meta: WorldMeta, quadrants: Vec<u32>, avatar: Avatar) -> Self {
         Self {
             path,
             meta,
-            sectors,
+            quadrants,
             avatar,
         }
     }

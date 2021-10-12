@@ -12,7 +12,7 @@ use tetra::{graphics, input, window, Context};
 fn draw_galaxy(
     ctx: &mut Context,
     size: usize,
-    sectors: &[u32],
+    quadrants: &[u32],
     name: &str,
     font_title: Font,
     font_bottom: Font,
@@ -43,7 +43,7 @@ fn draw_galaxy(
     for x in 0..size {
         for y in 0..size {
             let i = x * size + y;
-            let d = sectors[i] as f32 / max;
+            let d = quadrants[i] as f32 / max;
             mesh.draw(
                 ctx,
                 DrawParams::new()
@@ -75,9 +75,9 @@ fn draw_galaxy(
             ))
             .color(Colors::ORANGE),
     );
-    let sum: u64 = sectors.iter().copied().map(u64::from).sum();
+    let sum: u64 = quadrants.iter().copied().map(u64::from).sum();
     let mut text = Text::new(
-        format!("{} stars in {}x{} sectors", sum, size, size),
+        format!("{} stars in {}x{} quadrants", sum, size, size),
         font_bottom,
     );
     let bounds = text.get_bounds(ctx).unwrap();
@@ -118,12 +118,12 @@ impl Galaxy {
         }
     }
 
-    pub fn redraw(&mut self, ctx: &mut Context, size: usize, sectors: Vec<u32>, name: &str) {
+    pub fn redraw(&mut self, ctx: &mut Context, size: usize, quadrants: Vec<u32>, name: &str) {
         self.size = size;
         self.canvas = Some(draw_galaxy(
             ctx,
             size,
-            &sectors,
+            &quadrants,
             name,
             self.font_title.clone(),
             self.font_bottom.clone(),

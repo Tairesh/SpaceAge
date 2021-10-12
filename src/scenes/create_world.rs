@@ -401,7 +401,7 @@ impl Scene for CreateWorld {
                 self.preview.borrow_mut().redraw(
                     ctx,
                     size,
-                    galaxy_generator::generate(seed, size, self.galaxy_class),
+                    galaxy_generator::generate_quadrants(seed, size, self.galaxy_class),
                     name.as_str(),
                 );
                 None
