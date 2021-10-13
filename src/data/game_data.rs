@@ -1,21 +1,25 @@
 use crate::data::entity::DataEntity;
 use crate::data::item::Item;
 use crate::data::part::Part;
+use crate::data::ship::Ship;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
-fn load_file(path: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMap<String, Part>) {
+fn load_file(path: &Path, data: &mut GameData) {
     if let Ok(file) = File::open(path) {
         if let Ok(entities) = serde_json::from_reader::<_, Vec<DataEntity>>(BufReader::new(file)) {
             for entity in entities {
                 match entity {
                     DataEntity::Part(part) => {
-                        parts.insert(part.id.clone(), part);
+                        data.parts.insert(part.id.clone(), part);
                     }
                     DataEntity::Item(item) => {
-                        items.insert(item.id.clone(), item);
+                        data.items.insert(item.id.clone(), item);
+                    }
+                    DataEntity::Ship(ship) => {
+                        data.ships.insert(ship.id.clone(), ship);
                     }
                 }
             }
@@ -23,9 +27,9 @@ fn load_file(path: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMap
     }
 }
 
-fn load_folder(dir: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMap<String, Part>) {
+fn load_folder(dir: &Path, data: &mut GameData) {
     for entry in dir.read_dir().unwrap() {
-        load_file(&entry.unwrap().path(), items, parts);
+        load_file(&entry.unwrap().path(), data);
     }
 }
 
@@ -33,16 +37,20 @@ fn load_folder(dir: &Path, items: &mut HashMap<String, Item>, parts: &mut HashMa
 pub struct GameData {
     items: HashMap<String, Item>,
     parts: HashMap<String, Part>,
+    ships: HashMap<String, Ship>,
 }
 
 impl GameData {
     pub fn load() -> GameData {
         let path: PathBuf = ["data", "core"].iter().collect();
-        // TODO: adjust total amount of entities
-        let mut items = HashMap::with_capacity(10);
-        let mut parts = HashMap::with_capacity(10);
-        load_folder(&path, &mut items, &mut parts);
-        GameData { items, parts }
+        let mut data = GameData {
+            // TODO: adjust amount of entities
+            items: HashMap::with_capacity(10),
+            parts: HashMap::with_capacity(10),
+            ships: HashMap::with_capacity(1),
+        };
+        load_folder(&path, &mut data);
+        data
     }
 }
 
@@ -62,5 +70,9 @@ mod tests {
         let frame = data.parts.get("frame").unwrap();
         assert_eq!(frame.id, "frame");
         assert_eq!(frame.name, "Main frame");
+        let dugong = data.ships.get("dugong").unwrap();
+        assert_eq!(dugong.name, "Dugong");
+        assert_eq!(dugong.tiles.len(), dugong.bounds.0 * dugong.bounds.1);
+        assert_eq!(dugong.tiles.as_slice()[30], "@");
     }
 }

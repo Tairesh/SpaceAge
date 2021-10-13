@@ -1,5 +1,6 @@
 use crate::data::item::Item;
 use crate::data::part::Part;
+use crate::data::ship::Ship;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -8,6 +9,7 @@ use serde::Deserialize;
 pub enum DataEntity {
     Part(Part),
     Item(Item),
+    Ship(Ship),
 }
 
 #[cfg(test)]
@@ -30,6 +32,18 @@ mod tests {
             "id": "heart",
             "name": "Human heart",
             "tags": [ "BODY_PART" ]
+          },
+          {
+            "type": "ship",
+            "id": "dugong",
+            "name": "Dugong",
+            "tiles": [
+                " ", "^", " ",
+                "|", "h", "|",
+                "|", ".", "|",
+                "E", "+", "E"
+            ],
+            "bounds": [3, 4]
           }
         ]
         "#;
@@ -48,6 +62,14 @@ mod tests {
             assert!(item.tags.contains(&ItemTag::BodyPart));
         } else {
             unreachable!("Second DataEntity is not Item!");
+        }
+        assert!(matches!(slice[2], DataEntity::Ship(..)));
+        if let DataEntity::Ship(ship) = &slice[2] {
+            assert!(ship.id.eq("dugong"));
+            assert_eq!(ship.bounds, (3, 4));
+            assert_eq!(ship.tiles.len(), 3 * 4);
+        } else {
+            unreachable!("Second DataEntity is not Ship!");
         }
     }
 }
