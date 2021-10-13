@@ -36,6 +36,7 @@ impl ShipWalk {
 
 impl Scene for ShipWalk {
     fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
+        // TODO: go back only with Transition::UnloadWorld
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 

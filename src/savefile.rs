@@ -1,6 +1,6 @@
-use crate::astro::galaxy_generator;
+use crate::astro::galaxy::{Galaxy, GalaxyMeta};
 use crate::avatar::Avatar;
-use crate::world::{World, WorldMeta};
+use crate::world::World;
 use crate::VERSION;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -27,6 +27,23 @@ pub fn savefiles_exists() -> bool {
             })
         })
         .unwrap_or(false)
+}
+
+pub fn savefiles() -> Vec<SaveFile> {
+    let path = Path::new("save");
+    let mut files = Vec::new();
+    if path.exists() {
+        for p in path.read_dir().unwrap() {
+            let p = p.unwrap().path();
+            if let Some(s) = load(&p) {
+                // TODO: some implementation for invalid (old) savefiles
+                files.push(s);
+            }
+        }
+    }
+    files.sort();
+    files.reverse();
+    files
 }
 
 pub fn delete(path: &Path) {
@@ -56,16 +73,13 @@ impl From<std::io::Error> for SaveError {
 
 fn make_data(savefile: &SaveFile, world: Option<&World>) -> Result<String, SaveError> {
     let data = [
+        // Avatar serializes inside Savefile
+        // GalaxyMeta in Savefile AND in Galaxy, probably it isn't the best way to do it
         serde_json::to_string(savefile).map_err(SaveError::from)?,
         if let Some(world) = world {
-            serde_json::to_string(&world.quadrants)
+            serde_json::to_string(&world.galaxy)
         } else {
-            // TODO: Galaxy structure, not vector of ints
-            serde_json::to_string(&galaxy_generator::generate_quadrants(
-                savefile.world_meta.seed,
-                savefile.world_meta.size.into(),
-                savefile.world_meta.class,
-            ))
+            serde_json::to_string(&Galaxy::from(savefile.galaxy_meta.clone()))
         }
         .map_err(SaveError::from)?,
         // TODO: ship, other units, sectors data
@@ -82,8 +96,8 @@ fn make_dir() -> Result<(), SaveError> {
     Ok(())
 }
 
-pub fn create(world_meta: WorldMeta) -> Result<(), SaveError> {
-    let savefile: SaveFile = world_meta.into();
+pub fn create(galaxy_meta: GalaxyMeta) -> Result<(), SaveError> {
+    let savefile: SaveFile = galaxy_meta.into();
     make_dir()?;
     if savefile.path.is_file() {
         return Err(SaveError::FileExists);
@@ -116,13 +130,13 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
-    world_meta: WorldMeta, // TODO: save whole World instead
+    galaxy_meta: GalaxyMeta,
     avatar: Option<Avatar>,
 }
 
 impl SaveFile {
     // there are 3 ways to create SaveFile
-    // 1. WorldMeta::into(), uses in create()
+    // 1. GalaxyMeta::into(), uses in create()
     // 2. load(&Path) uses in savefiles() and LoadWorld scene for loading only first string
     // 3. World::into(), uses in save()
 
@@ -131,8 +145,16 @@ impl SaveFile {
         self
     }
 
-    pub fn name(&self) -> &str {
-        self.world_meta.name.as_str()
+    pub fn galaxy_name(&self) -> &str {
+        self.galaxy_meta.name.as_str()
+    }
+
+    pub fn avatar_name(&self) -> &str {
+        if let Some(avatar) = &self.avatar {
+            avatar.character.name.as_str()
+        } else {
+            "no character"
+        }
     }
 
     pub fn has_avatar(&self) -> bool {
@@ -169,14 +191,14 @@ impl Ord for SaveFile {
     }
 }
 
-impl From<WorldMeta> for SaveFile {
-    fn from(world_meta: WorldMeta) -> Self {
-        let file_name = world_meta.name.replace(" ", "_");
+impl From<GalaxyMeta> for SaveFile {
+    fn from(galaxy_meta: GalaxyMeta) -> Self {
+        let file_name = galaxy_meta.name.replace(" ", "_");
         Self {
             path: ["save", (file_name + ".save").as_str()].iter().collect(),
             version: VERSION.to_string(),
             time: SystemTime::now(),
-            world_meta,
+            galaxy_meta,
             avatar: None,
         }
     }
@@ -187,12 +209,11 @@ impl From<&SaveFile> for World {
         // TODO: too many unwrap() here
         let file = File::open(&savefile.path).unwrap();
         let mut lines = BufReader::new(&file).lines();
-        let sectors = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
+        let galaxy = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
         World::new(
             savefile.path.clone(),
-            savefile.world_meta.clone(),
-            sectors,
-            savefile.avatar.as_ref().unwrap().clone(),
+            galaxy,
+            savefile.avatar.clone().unwrap(),
         )
     }
 }
@@ -203,23 +224,8 @@ impl From<&World> for SaveFile {
             path: world.path.clone(),
             version: VERSION.to_string(),
             time: SystemTime::now(),
-            world_meta: world.meta.clone(),
+            galaxy_meta: world.galaxy.meta.clone(),
             avatar: Some(world.avatar.clone()),
         }
     }
-}
-
-pub fn savefiles() -> Vec<SaveFile> {
-    let path = Path::new("save");
-    let mut files = Vec::new();
-    if path.exists() {
-        for p in path.read_dir().unwrap() {
-            let p = p.unwrap().path();
-            if let Some(s) = load(&p) {
-                files.push(s);
-            }
-        }
-    }
-    files.sort();
-    files
 }

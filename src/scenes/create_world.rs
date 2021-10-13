@@ -1,4 +1,5 @@
 use crate::assets::Assets;
+use crate::astro::galaxy::GalaxyMeta;
 use crate::astro::galaxy_class::GalaxyClass;
 use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
@@ -12,7 +13,6 @@ use crate::sprites::input::TextInput;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Stringify};
-use crate::world::WorldMeta;
 use rand::distributions::Standard;
 use rand::{thread_rng, Rng};
 use std::cell::RefCell;
@@ -418,7 +418,7 @@ impl Scene for CreateWorld {
                     self.name_empty.borrow_mut().set_visible(true);
                     None
                 } else {
-                    match create(WorldMeta::new(
+                    match create(GalaxyMeta::new(
                         name,
                         seed,
                         self.galaxy_size,

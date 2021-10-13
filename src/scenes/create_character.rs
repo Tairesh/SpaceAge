@@ -52,16 +52,16 @@ impl CreateCharacter {
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenterByBottom { offset: -200.0 },
+                y: Vertical::AtWindowCenterByBottom { offset: -220.0 },
             },
         )));
         let subtitle = Rc::new(RefCell::new(Label::new(
-            format!("New adventurer in the {} galaxy", savefile.name()).as_str(),
+            format!("New adventurer in the {} galaxy", savefile.galaxy_name()).as_str(),
             assets.fonts.nasa24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenterByTop { offset: -180.0 },
+                y: Vertical::AtWindowCenterByTop { offset: -200.0 },
             },
         )));
         // TODO: traits, profession, scenario
@@ -403,7 +403,7 @@ impl Scene for CreateCharacter {
                         .set_avatar(Avatar::new(character, Point::zero()))
                         .as_world(),
                 ) {
-                    Ok(_) => Some(Transition::Pop),
+                    Ok(_) => Some(Transition::LoadWorld(self.savefile.clone())),
                     Err(err) => panic!("Can't save file: {:?}", err),
                 }
             }

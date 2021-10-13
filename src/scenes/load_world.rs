@@ -83,12 +83,12 @@ impl LoadWorld {
                 Transition::CustomEvent(format!("del:{}", savefile.path.to_str().unwrap())),
             ))));
             let name = Rc::new(RefCell::new(Label::new(
-                savefile.name(),
+                format!("{} ({})", savefile.galaxy_name(), savefile.avatar_name()),
                 assets.fonts.nasa24.clone(),
                 Colors::LIGHT_YELLOW,
                 Position {
-                    x: Horizontal::AtWindowCenterByLeft { offset: -260.0 },
-                    y: Vertical::AtWindowCenterByCenter { offset: y - 4.0 },
+                    x: Horizontal::AtWindowCenterByLeft { offset: -265.0 },
+                    y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
             )));
             let name_size = name.borrow_mut().calc_size(ctx);
@@ -104,7 +104,7 @@ impl LoadWorld {
                 },
                 Position {
                     x: Horizontal::AtWindowCenterByLeft {
-                        offset: -250.0 + name_size.x,
+                        offset: -255.0 + name_size.x,
                     },
                     y: Vertical::AtWindowCenterByBottom { offset: y - 4.0 },
                 },
@@ -116,7 +116,7 @@ impl LoadWorld {
                 Colors::LIGHT_YELLOW,
                 Position {
                     x: Horizontal::AtWindowCenterByLeft {
-                        offset: -250.0 + name_size.x,
+                        offset: -255.0 + name_size.x,
                     },
                     y: Vertical::AtWindowCenterByTop { offset: y },
                 },
@@ -141,7 +141,7 @@ impl Scene for LoadWorld {
         match (parts.next(), parts.next()) {
             (Some("load"), Some(path)) => load(path.as_ref()).map(|s| {
                 if s.has_avatar() {
-                    Transition::LoadWorldAndPush(s, GameScene::ShipWalk)
+                    Transition::LoadWorld(s)
                 } else {
                     Transition::Replace(GameScene::CreateCharacter(s))
                 }

@@ -1,57 +1,24 @@
 #![allow(dead_code)]
-use crate::astro::galaxy_class::GalaxyClass;
-use crate::astro::galaxy_size::GalaxySize;
+use crate::astro::galaxy::Galaxy;
 use crate::avatar::Avatar;
 use crate::geometry::direction::Direction;
 use serde::{Deserialize, Serialize};
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct WorldMeta {
-    pub name: String, // TODO: should be moved to GalaxyConfig (for creating) and Galaxy (for loading) struct
-    pub seed: u64,
-    pub size: GalaxySize,
-    pub class: GalaxyClass,
-    pub current_tick: u64, // TODO: should be moved to World
-}
-
-impl WorldMeta {
-    pub fn new(name: String, seed: String, size: GalaxySize, class: GalaxyClass) -> Self {
-        let name = name
-            .trim()
-            .replace("\n", "")
-            .replace("/", "")
-            .replace("\\", "");
-        let mut hasher = DefaultHasher::new();
-        seed.hash(&mut hasher);
-        let seed = hasher.finish();
-        Self {
-            name,
-            seed,
-            size,
-            class,
-            current_tick: 0,
-        }
-    }
-}
-
-#[derive(Debug)]
 pub struct World {
     pub path: PathBuf,
-    pub meta: WorldMeta,
-    // TODO: Galaxy structure
-    pub quadrants: Vec<u32>,
+    pub current_tick: u64,
+    pub galaxy: Galaxy,
     pub avatar: Avatar,
 }
 
 impl World {
-    pub fn new(path: PathBuf, meta: WorldMeta, quadrants: Vec<u32>, avatar: Avatar) -> Self {
+    pub fn new(path: PathBuf, galaxy: Galaxy, avatar: Avatar) -> Self {
         Self {
             path,
-            meta,
-            quadrants,
+            current_tick: 0,
+            galaxy,
             avatar,
         }
     }

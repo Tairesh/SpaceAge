@@ -62,7 +62,7 @@ impl GameScene {
 pub enum Transition {
     DoNothing,
     Push(GameScene),
-    LoadWorldAndPush(SaveFile, GameScene),
+    LoadWorld(SaveFile), // and replace to GameScene::ShipWalk
     Pop,
     Pop2,               // two times
     Replace(GameScene), // pop and push
