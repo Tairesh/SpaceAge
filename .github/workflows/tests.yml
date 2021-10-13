@@ -1,4 +1,4 @@
-name: Cargo tests
+name: tests
 
 on:
   push:
@@ -12,11 +12,13 @@ on:
       - '**/*.yml'
       - '**/*.toml'
 
+env:
+  CARGO_TERM_COLOR: always
+  SPACEAGE_VERSION_POSTFIX: "-test"
+
 jobs:
   tests:
-    runs-on: ubuntu-18.04
-    env:
-      SPACEAGE_VERSION_POSTFIX: "-test"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: "Install dependencies"
@@ -26,10 +28,10 @@ jobs:
           rustup update
           rustc --version
       - name: "Build"
-        run: cargo build
+        run: cargo build --verbose
       - name: "Check codestyle"
-        run: cargo fmt -- --check
+        run: cargo fmt -- --check --verbose
       - name: "Check clippy warnings"
-        run: cargo clippy -- -Dwarnings
+        run: cargo clippy -- -Dwarnings --verbose
       - name: "Run tests"
-        run: cargo test
+        run: cargo test --verbose
