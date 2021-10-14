@@ -399,7 +399,7 @@ impl Scene for CreateCharacter {
                 );
                 match save(
                     &self
-                        .savefile
+                        .savefile // TODO: also spawn ship
                         .set_avatar(Avatar::new(character, Point::zero()))
                         .as_world(),
                 ) {
