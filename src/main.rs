@@ -19,7 +19,7 @@ mod savefile;
 mod scenes;
 mod settings;
 mod sprites;
-mod world;
+mod things;
 
 extern crate chrono;
 extern crate num_enum;

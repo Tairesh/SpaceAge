@@ -7,26 +7,44 @@
   },
   {
     "type": "part",
-    "id": "wall_outer",
-    "name": "Outer wall",
+    "id": "wall",
+    "name": "Armored wall",
     "description": "Block some damage."
   },
   {
     "type": "part",
-    "id": "wall_inner",
-    "name": "Inner wall",
-    "description": "Block crew and oxygen from leaving."
+    "id": "door",
+    "name": "Airlock door",
+    "description": "Hold air inside when closed."
   },
   {
     "type": "part",
-    "id": "door_outer",
-    "name": "Outer door",
-    "description": "DOOR"
+    "id": "wing_segment",
+    "name": "Wing segment",
+    "description": "Decorative thing"
   },
   {
     "type": "part",
-    "id": "door_inner",
-    "name": "Inner door",
-    "description": "door"
+    "id": "floor",
+    "name": "Floor",
+    "description": "Like wall but horizontal."
+  },
+  {
+    "type": "part",
+    "id": "roof",
+    "name": "Roof",
+    "description": "Like wall but horizontal."
+  },
+  {
+    "type": "part",
+    "id": "seat",
+    "name": "Pilot seat",
+    "description": "For sitting."
+  },
+  {
+    "type": "part",
+    "id": "terminal",
+    "name": "Pilot terminal",
+    "description": "W0w $o F&s7."
   }
 ]

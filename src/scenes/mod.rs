@@ -17,7 +17,7 @@ use crate::scenes::settings::SettingsScene;
 use crate::scenes::ship_walk::ShipWalk;
 use crate::settings::{Settings, WindowMode};
 use crate::sprites::sprite::Sprite;
-use crate::world::World;
+use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, MouseButton};

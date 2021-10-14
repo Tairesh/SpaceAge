@@ -2,6 +2,7 @@
 use crate::astro::galaxy::Galaxy;
 use crate::avatar::Avatar;
 use crate::geometry::direction::Direction;
+use crate::savefile::save;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -23,16 +24,13 @@ impl World {
         }
     }
 
-    // TODO: save
-    // pub fn save(&mut self) {
-    //     let path = self.path.clone();
-    //     save(&path, self)
-    //         .map_err(|e| panic!("Error on saving world to {:?}: {}", self.path, e))
-    //         .ok();
-    // }
+    pub fn save(&self) {
+        save(self)
+            .map_err(|e| panic!("Error on saving world to {:?}: {:?}", self.path, e))
+            .ok();
+    }
 
-    // TODO: load tiles
-
+    // TODO: probably this should be moved to Ship
     pub fn move_avatar(&mut self, dir: Direction) {
         let pos = self.avatar.pos;
         // self.load_tile_mut(pos).off_step();

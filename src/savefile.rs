@@ -1,6 +1,6 @@
 use crate::astro::galaxy::{Galaxy, GalaxyMeta};
 use crate::avatar::Avatar;
-use crate::world::World;
+use crate::things::world::World;
 use crate::VERSION;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;

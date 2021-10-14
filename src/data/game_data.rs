@@ -13,9 +13,9 @@ fn string_to_str(s: &str) -> &'static str {
 
 #[derive(Debug)]
 pub struct GameData {
-    items: HashMap<&'static str, Item>,
-    parts: HashMap<&'static str, Part>,
-    ships: HashMap<&'static str, Ship>,
+    pub items: HashMap<&'static str, Item>,
+    pub parts: HashMap<&'static str, Part>,
+    pub ships: HashMap<&'static str, Ship>,
 }
 
 impl GameData {

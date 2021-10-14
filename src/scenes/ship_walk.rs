@@ -5,7 +5,7 @@ use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::Sprite;
-use crate::world::World;
+use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::{Context, Event};

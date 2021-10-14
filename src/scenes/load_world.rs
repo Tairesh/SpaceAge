@@ -93,7 +93,6 @@ impl LoadWorld {
             )));
             let name_size = name.borrow_mut().calc_size(ctx);
             sprites.push(name);
-            // TODO: add info of avatar in this world
             sprites.push(Rc::new(RefCell::new(Label::new(
                 &savefile.version,
                 assets.fonts.consolab12.clone(),

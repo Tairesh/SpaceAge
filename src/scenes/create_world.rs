@@ -58,7 +58,7 @@ impl CreateWorld {
             Position::center(),
         )));
         let title = Rc::new(RefCell::new(Label::new(
-            "Create new world:",
+            "Create new things:",
             assets.fonts.astrolab32.clone(),
             Colors::ORANGE_RED,
             Position {

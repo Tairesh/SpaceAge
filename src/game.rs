@@ -1,12 +1,10 @@
 use crate::assets::Assets;
 use crate::data::game_data::GameData;
-use crate::savefile::save;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::{GameScene, Scene, Transition};
 use crate::settings::{Settings, WindowMode};
-use crate::world::World;
+use crate::things::world::World;
 use std::cell::RefCell;
-use std::ops::Deref;
 use std::rc::Rc;
 use tetra::input::Key;
 use tetra::window::WindowPosition;
@@ -228,7 +226,7 @@ impl Drop for Game {
     fn drop(&mut self) {
         self.settings.save();
         if let Some(world) = &self.world {
-            save(world.borrow().deref()).ok();
+            world.borrow().save();
         }
     }
 }
