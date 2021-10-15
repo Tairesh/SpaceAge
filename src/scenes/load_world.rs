@@ -83,7 +83,7 @@ impl LoadWorld {
                 Transition::CustomEvent(format!("del:{}", savefile.path.to_str().unwrap())),
             ))));
             let name = Rc::new(RefCell::new(Label::new(
-                format!("{} ({})", savefile.galaxy_name(), savefile.avatar_name()),
+                format!("{} ({})", savefile.galaxy_name(), savefile.character_name()),
                 assets.fonts.nasa24.clone(),
                 Colors::LIGHT_YELLOW,
                 Position {
@@ -139,7 +139,7 @@ impl Scene for LoadWorld {
         let mut parts = event.split(':');
         match (parts.next(), parts.next()) {
             (Some("load"), Some(path)) => load(path.as_ref()).map(|s| {
-                if s.has_avatar() {
+                if s.has_character() {
                     Transition::LoadWorld(s)
                 } else {
                     Transition::Replace(GameScene::CreateCharacter(s))

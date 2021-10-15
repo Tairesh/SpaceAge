@@ -1,12 +1,10 @@
 use crate::assets::Assets;
-use crate::avatar::Avatar;
 use crate::colors::Colors;
-use crate::geometry::point::Point;
 use crate::human::character::Character;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
-use crate::savefile::{save, SaveFile};
+use crate::savefile::SaveFile;
 use crate::scenes::{easy_back, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::image::Image;
@@ -64,7 +62,7 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByTop { offset: -200.0 },
             },
         )));
-        // TODO: traits, profession, scenario
+        // TODO: traits, profession, scenario, ship class and name
         let name_label = Rc::new(RefCell::new(Label::new(
             "Name:",
             assets.fonts.nasa24.clone(),
@@ -397,15 +395,8 @@ impl Scene for CreateCharacter {
                     self.main_hand,
                     self.skin_tone,
                 );
-                match save(
-                    &self
-                        .savefile // TODO: also spawn ship
-                        .set_avatar(Avatar::new(character, Point::zero()))
-                        .as_world(),
-                ) {
-                    Ok(_) => Some(Transition::LoadWorld(self.savefile.clone())),
-                    Err(err) => panic!("Can't save file: {:?}", err),
-                }
+                self.savefile.set_character(character);
+                Some(Transition::CreateWorld(self.savefile.clone()))
             }
             "randomize" => {
                 let mut rng = rand::thread_rng();

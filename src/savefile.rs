@@ -1,5 +1,5 @@
 use crate::astro::galaxy::{Galaxy, GalaxyMeta};
-use crate::avatar::Avatar;
+use crate::human::character::Character;
 use crate::things::world::World;
 use crate::VERSION;
 use serde::{Deserialize, Serialize};
@@ -72,19 +72,19 @@ impl From<std::io::Error> for SaveError {
 }
 
 fn make_data(savefile: &SaveFile, world: Option<&World>) -> Result<String, SaveError> {
-    let data = [
-        // Avatar serializes inside Savefile
-        // GalaxyMeta in Savefile AND in Galaxy, probably it isn't the best way to do it
-        serde_json::to_string(savefile).map_err(SaveError::from)?,
-        if let Some(world) = world {
-            serde_json::to_string(&world.galaxy)
-        } else {
+    let mut data = vec![serde_json::to_string(savefile).map_err(SaveError::from)?];
+    if let Some(world) = world {
+        data.push(serde_json::to_string(&world.galaxy).map_err(SaveError::from)?);
+        data.push(serde_json::to_string(&world.avatar).map_err(SaveError::from)?);
+        data.push(serde_json::to_string(&world.ship).map_err(SaveError::from)?);
+        // TODO: other units, sectors data
+    } else {
+        data.push(
             serde_json::to_string(&Galaxy::from(savefile.galaxy_meta.clone()))
-        }
-        .map_err(SaveError::from)?,
-        // TODO: ship, other units, sectors data
-    ]
-    .join("\n");
+                .map_err(SaveError::from)?,
+        );
+    }
+    let data = data.join("\n");
     Ok(data)
 }
 
@@ -130,8 +130,8 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
+    pub character: Option<Character>,
     galaxy_meta: GalaxyMeta,
-    avatar: Option<Avatar>,
 }
 
 impl SaveFile {
@@ -149,25 +149,37 @@ impl SaveFile {
         self.galaxy_meta.name.as_str()
     }
 
-    pub fn avatar_name(&self) -> &str {
-        if let Some(avatar) = &self.avatar {
-            avatar.character.name.as_str()
+    pub fn character_name(&self) -> &str {
+        if let Some(character) = &self.character {
+            character.name.as_str()
         } else {
             "no character"
         }
     }
 
-    pub fn has_avatar(&self) -> bool {
-        self.avatar.is_some()
+    pub fn has_character(&self) -> bool {
+        self.character.is_some()
     }
 
-    pub fn set_avatar(&mut self, avatar: Avatar) -> &mut Self {
-        self.avatar = Some(avatar);
+    pub fn set_character(&mut self, character: Character) -> &mut Self {
+        self.character = Some(character);
         self
     }
 
-    pub fn as_world(&self) -> World {
-        self.into()
+    pub fn load_galaxy(&self) -> Galaxy {
+        let file = File::open(&self.path).unwrap();
+        let mut lines = BufReader::new(&file).lines();
+        serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap()
+    }
+
+    pub fn load_world(&self) -> World {
+        // TODO: use Result<World, LoadError)
+        let file = File::open(&self.path).unwrap();
+        let mut lines = BufReader::new(&file).lines();
+        let galaxy = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
+        let avatar = serde_json::from_str(lines.next().unwrap().ok().unwrap().as_str()).unwrap();
+        let ship = serde_json::from_str(lines.next().unwrap().ok().unwrap().as_str()).unwrap();
+        World::new(self.path.clone(), galaxy, avatar, ship)
     }
 }
 
@@ -199,22 +211,8 @@ impl From<GalaxyMeta> for SaveFile {
             version: VERSION.to_string(),
             time: SystemTime::now(),
             galaxy_meta,
-            avatar: None,
+            character: None,
         }
-    }
-}
-
-impl From<&SaveFile> for World {
-    fn from(savefile: &SaveFile) -> Self {
-        // TODO: too many unwrap() here
-        let file = File::open(&savefile.path).unwrap();
-        let mut lines = BufReader::new(&file).lines();
-        let galaxy = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
-        World::new(
-            savefile.path.clone(),
-            galaxy,
-            savefile.avatar.clone().unwrap(),
-        )
     }
 }
 
@@ -225,7 +223,7 @@ impl From<&World> for SaveFile {
             version: VERSION.to_string(),
             time: SystemTime::now(),
             galaxy_meta: world.galaxy.meta.clone(),
-            avatar: Some(world.avatar.clone()),
+            character: Some(world.avatar.character.clone()),
         }
     }
 }

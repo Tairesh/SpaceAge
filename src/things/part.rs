@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
 #[enum_dispatch::enum_dispatch(Part)]
@@ -12,7 +13,7 @@ pub trait PartImpl {
 }
 
 #[enum_dispatch::enum_dispatch]
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Part {
     Frame,
     Wing,
@@ -50,7 +51,7 @@ impl Ord for Part {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Frame {
     hp: u32,
 }
@@ -77,7 +78,7 @@ impl PartImpl for Frame {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum WingSegment {
     LeftFront,
     RightFront,
@@ -105,7 +106,7 @@ impl From<&str> for WingSegment {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Wing {
     hp: u32,
     var: WingSegment,
@@ -136,7 +137,7 @@ impl PartImpl for Wing {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum WallSegment {
     Vertical,
     Horizontal,
@@ -188,7 +189,7 @@ impl From<&str> for WallSegment {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Wall {
     hp: u32,
     var: WallSegment,
@@ -219,7 +220,7 @@ impl PartImpl for Wall {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Floor {
     hp: u32,
 }
@@ -246,7 +247,7 @@ impl PartImpl for Floor {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Roof {
     hp: u32,
 }
@@ -277,7 +278,7 @@ impl PartImpl for Roof {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Door {
     hp: u32,
     open: bool,
@@ -314,7 +315,7 @@ impl PartImpl for Door {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Seat {
     hp: u32,
     // some other data
@@ -342,7 +343,7 @@ impl PartImpl for Seat {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Terminal {
     hp: u32,
     // some other data

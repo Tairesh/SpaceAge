@@ -33,6 +33,11 @@ impl Point {
         (self.y as usize * width) + self.x as usize
     }
 
+    /// Helper for map index conversion
+    pub fn from_index(index: usize, width: usize) -> Point {
+        Point::new((index % width) as i32, (index / width) as i32)
+    }
+
     /// Direction to other point
     pub fn dir_to(&self, other: &Point) -> Direction {
         Direction::from(*other - *self)
@@ -220,6 +225,14 @@ mod tests {
         let pt = Point::new(1, 2);
         assert_eq!(pt.x, 1);
         assert_eq!(pt.y, 2);
+    }
+
+    #[test]
+    fn index_converting() {
+        let pt = Point::new(1, 2);
+        assert_eq!(pt.to_index(10), 21);
+        let pt2 = Point::from_index(21, 10);
+        assert_eq!(pt2, pt);
     }
 
     #[test]

@@ -67,6 +67,7 @@ impl Game {
         }
     }
 
+    // TODO: implement replace_scene and pop_scene
     fn push_scene(&mut self, ctx: &mut Context, scene: GameScene) {
         self.scenes
             .push(scene.into_scene(&self.world, &self.assets, &self.settings, ctx));
@@ -76,8 +77,15 @@ impl Game {
     fn transit(&mut self, ctx: &mut Context, transition: Transition) {
         match transition {
             Transition::DoNothing => {}
+            Transition::CreateWorld(savefile) => {
+                let world = World::create(&savefile, &self.data);
+                world.save();
+                self.world = Some(Rc::new(RefCell::new(world)));
+                self.scenes.pop();
+                self.push_scene(ctx, GameScene::ShipWalk);
+            }
             Transition::LoadWorld(savefile) => {
-                self.world = Some(Rc::new(RefCell::new(savefile.as_world())));
+                self.world = Some(Rc::new(RefCell::new(savefile.load_world())));
                 self.scenes.pop();
                 self.push_scene(ctx, GameScene::ShipWalk);
             }

@@ -1,6 +1,9 @@
 use crate::data::ship::Ship as ShipScheme;
+use crate::geometry::point::Point;
 use crate::things::part::{Door, Floor, Frame, Part, PartImpl, Roof, Seat, Terminal, Wall, Wing};
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Tile {
     pub parts: Vec<Part>,
 }
@@ -67,6 +70,7 @@ impl From<&str> for Tile {
 }
 
 #[allow(dead_code)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ship {
     pub name: String,
     pub class_name: String,
@@ -76,7 +80,6 @@ pub struct Ship {
 }
 
 impl Ship {
-    #[allow(dead_code)]
     pub fn generate<S: Into<String>>(name: S, scheme: &ShipScheme) -> Self {
         Self {
             name: name.into(),
@@ -88,6 +91,10 @@ impl Ship {
                 .collect(),
             bounds: scheme.bounds,
         }
+    }
+
+    pub fn find_start_point(&self) -> Point {
+        Point::new(self.bounds.0 as i32 / 2, self.bounds.1 as i32 / 2)
     }
 }
 
