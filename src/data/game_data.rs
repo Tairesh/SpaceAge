@@ -1,20 +1,18 @@
 use crate::data::entity::DataEntity;
 use crate::data::item::Item;
-use crate::data::part::Part;
 use crate::data::ship::Ship;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
 
-fn string_to_str(s: &str) -> &'static str {
+fn make_str(s: &str) -> &'static str {
     Box::leak(s.to_owned().into_boxed_str())
 }
 
 #[derive(Debug)]
 pub struct GameData {
     pub items: HashMap<&'static str, Item>,
-    pub parts: HashMap<&'static str, Part>,
     pub ships: HashMap<&'static str, Ship>,
 }
 
@@ -24,7 +22,6 @@ impl GameData {
         let mut data = GameData {
             // TODO: adjust amount of entities
             items: HashMap::with_capacity(10),
-            parts: HashMap::with_capacity(10),
             ships: HashMap::with_capacity(1),
         };
         for entry in path.read_dir().unwrap() {
@@ -43,14 +40,11 @@ impl GameData {
 
     fn add_entity(&mut self, entity: DataEntity) {
         match entity {
-            DataEntity::Part(part) => {
-                self.parts.insert(string_to_str(part.id.as_str()), part);
-            }
             DataEntity::Item(item) => {
-                self.items.insert(string_to_str(item.id.as_str()), item);
+                self.items.insert(make_str(item.id.as_str()), item);
             }
             DataEntity::Ship(ship) => {
-                self.ships.insert(string_to_str(ship.id.as_str()), ship);
+                self.ships.insert(make_str(ship.id.as_str()), ship);
             }
         }
     }
@@ -68,10 +62,6 @@ mod tests {
         let heart = data.items.get("heart").unwrap();
         assert_eq!(heart.id, "heart");
         assert!(heart.tags.contains(&ItemTag::BodyPart));
-        assert!(data.parts.contains_key("frame"));
-        let frame = data.parts.get("frame").unwrap();
-        assert_eq!(frame.id, "frame");
-        assert_eq!(frame.name, "Main frame");
         let dugong = data.ships.get("dugong").unwrap();
         assert_eq!(dugong.name, "Dugong");
         assert_eq!(dugong.tiles.len(), dugong.bounds.0 * dugong.bounds.1);

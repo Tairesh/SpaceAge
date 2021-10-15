@@ -7,5 +7,3 @@ pub struct Ship {
     pub tiles: Vec<String>,
     pub bounds: (usize, usize),
 }
-
-// TODO: create actual ship by this scheme
