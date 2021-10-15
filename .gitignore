@@ -1,6 +1,8 @@
 # Rust stuff
 /target
 /Cargo.lock
+**/*.rs.bk
+*.pdb
 
 # IDEA stuff
 /.idea
