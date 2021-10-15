@@ -22,6 +22,7 @@ mod sprites;
 mod things;
 
 extern crate chrono;
+extern crate enum_dispatch;
 extern crate num_enum;
 extern crate rand;
 extern crate serde;

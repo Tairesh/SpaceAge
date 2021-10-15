@@ -1,60 +1,27 @@
 use crate::data::ship::Ship as ShipScheme;
-
-// TODO: use enum for doors/walls/engines etc
-pub struct Part {
-    pub proto: String,
-    pub char: char,
-}
-
-impl Part {
-    pub fn new(proto: &str, char: char) -> Self {
-        Self {
-            proto: proto.to_string(),
-            char,
-        }
-    }
-
-    pub fn frame() -> Self {
-        Self::new("frame", '┼')
-    }
-
-    pub fn wing_segment(char: char) -> Self {
-        Self::new("wing_segment", char)
-    }
-
-    pub fn wall(char: char) -> Self {
-        Self::new("wall", char)
-    }
-
-    pub fn door(open: bool) -> Self {
-        Self::new("door", if open { '.' } else { '+' })
-    }
-
-    pub fn floor() -> Self {
-        Self::new("floor", '.')
-    }
-
-    pub fn roof() -> Self {
-        Self::new("roof", '┼')
-    }
-
-    pub fn terminal() -> Self {
-        Self::new("terminal", '@')
-    }
-
-    pub fn seat() -> Self {
-        Self::new("seat", 'h')
-    }
-}
+use crate::things::part::{Door, Floor, Frame, Part, PartImpl, Roof, Seat, Terminal, Wall, Wing};
 
 pub struct Tile {
     pub parts: Vec<Part>,
 }
 
+#[allow(dead_code)]
 impl Tile {
-    #[allow(dead_code)]
     pub fn is_void(&self) -> bool {
         self.parts.is_empty()
+    }
+
+    pub fn ch(&self) -> char {
+        if self.is_void() {
+            ' '
+        } else {
+            self.parts
+                .iter()
+                .filter(|p| p.visible())
+                .max()
+                .map(char::from)
+                .unwrap_or(' ')
+        }
     }
 }
 
@@ -63,37 +30,37 @@ impl From<&str> for Tile {
         if s == " " {
             return Tile { parts: vec![] };
         }
-        let mut parts = vec![Part::frame()];
+        let mut parts: Vec<Part> = vec![Frame::new().into()];
         match s {
             ch @ ("d" | "b" | "M") => {
-                parts.push(Part::wing_segment(ch.as_bytes()[0] as char));
+                parts.push(Wing::new(ch).into());
             }
             ch
             @
             ("╔" | "═" | "╗" | "║" | "╝" | "╚" | "╠" | "╦" | "╣" | "╩" | "╬") =>
             {
-                parts.push(Part::wall(ch.as_bytes()[0] as char));
+                parts.push(Wall::new(ch).into());
             }
             "." => {
-                parts.push(Part::floor());
-                parts.push(Part::roof());
+                parts.push(Floor::new().into());
+                parts.push(Roof::new().into());
             }
             "+" => {
-                parts.push(Part::floor());
-                parts.push(Part::door(false));
-                parts.push(Part::roof());
+                parts.push(Floor::new().into());
+                parts.push(Door::new().into());
+                parts.push(Roof::new().into());
             }
             "@" => {
-                parts.push(Part::floor());
-                parts.push(Part::terminal());
-                parts.push(Part::roof());
+                parts.push(Floor::new().into());
+                parts.push(Terminal::new().into());
+                parts.push(Roof::new().into());
             }
             "h" => {
-                parts.push(Part::floor());
-                parts.push(Part::seat());
-                parts.push(Part::roof());
+                parts.push(Floor::new().into());
+                parts.push(Seat::new().into());
+                parts.push(Roof::new().into());
             }
-            _ => unimplemented!("'{}' is not valid tile", s),
+            _ => println!("'{}' is not a valid tile", s),
         }
         Tile { parts }
     }
@@ -105,7 +72,7 @@ pub struct Ship {
     pub class_name: String,
     pub tiles: Vec<Tile>,
     pub bounds: (usize, usize),
-    // pub squawk: Squawk,  // TODO: implement squawk code
+    // pub squawk: Squawk,  // TODO: implement squawk code (as Part)
 }
 
 impl Ship {
@@ -126,6 +93,7 @@ impl Ship {
 
 #[cfg(test)]
 mod tests {
+    use super::super::part::{Part, PartImpl};
     use super::Ship;
     use crate::data::game_data::GameData;
 
@@ -137,7 +105,11 @@ mod tests {
         assert_eq!(ship.class_name, "Dugong");
         let tiles = ship.tiles.as_slice();
         assert!(tiles[0].is_void());
+        assert_eq!(tiles[0].ch(), ' ');
+        assert_eq!(tiles[30].ch(), '@');
         assert_eq!(tiles[30].parts.len(), 4);
-        assert_eq!(tiles[30].parts.get(2).unwrap().proto, "terminal");
+        let term = tiles[30].parts.get(2).unwrap();
+        assert_eq!(term.ch(), '@');
+        assert!(matches!(term, Part::Terminal(..)));
     }
 }
