@@ -1,12 +1,15 @@
+use crate::game::action::Action;
 use crate::geometry::direction::Direction;
 use crate::geometry::point::Point;
 use crate::human::character::Character;
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Avatar {
     pub character: Character,
     pub pos: Point, // tile in ship
     pub vision: Direction,
+    pub action: Option<Action>,
 }
 
 impl Avatar {
@@ -15,6 +18,7 @@ impl Avatar {
             character,
             pos,
             vision: Direction::East,
+            action: None,
         }
     }
 }

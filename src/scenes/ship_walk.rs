@@ -1,5 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
+use crate::game::action::{Action, ActionType};
 use crate::game::world::World;
 use crate::input;
 use crate::scenes::{GameScene, Scene, Transition};
@@ -64,26 +65,23 @@ impl Scene for ShipWalk {
             {
                 self.last_walk = now;
                 let mut world = self.world.borrow_mut();
-                world.move_avatar(dir);
-                // if dir.is_here() {
-                //     let action = ActionType::SkippingTime;
-                //     let finish = world.meta.current_tick + action.length(&mut world);
-                //     world.avatar.action = Some(Action::new(finish, action));
-                // } else {
-                //     let action = ActionType::Walking(dir);
-                //     if action.is_possible(&mut world) {
-                //         let length = action.length(&mut world);
-                //         let finish = world.meta.current_tick + length;
-                //         world.avatar.action = Some(Action::new(finish, action));
-                //     }
-                // }
-                self.ship_view.borrow_mut().update(
-                    ctx,
-                    &world.ship,
-                    &world.avatar,
-                    &self.assets.tileset,
-                );
+                if dir.is_here() {
+                    world.avatar.action = Action::new(ActionType::SkippingTime, &world);
+                } else {
+                    world.avatar.action = Action::new(ActionType::Walking(dir), &world);
+                }
             }
+        }
+
+        if self.world.borrow().avatar.action.is_some() {
+            let mut world = self.world.borrow_mut();
+            world.tick();
+            self.ship_view.borrow_mut().update(
+                ctx,
+                &world.ship,
+                &world.avatar,
+                &self.assets.tileset,
+            );
         }
 
         Transition::DoNothing

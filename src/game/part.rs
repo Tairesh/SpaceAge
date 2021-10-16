@@ -1,5 +1,6 @@
 use crate::ascii::tile::Tile;
 use crate::colors::Colors;
+use crate::game::passage::Passage;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
@@ -17,6 +18,11 @@ pub trait PartView {
     }
     /// tile representation
     fn tile(&self) -> Tile;
+}
+
+#[enum_dispatch::enum_dispatch(Part)]
+pub trait PartInteract {
+    fn passage(&self) -> Passage;
 }
 
 #[enum_dispatch::enum_dispatch]
@@ -76,6 +82,12 @@ impl PartView for Frame {
 
     fn tile(&self) -> Tile {
         Tile::default('┼')
+    }
+}
+
+impl PartInteract for Frame {
+    fn passage(&self) -> Passage {
+        Passage::Passable(100)
     }
 }
 
@@ -141,6 +153,12 @@ impl PartView for Wing {
 
     fn tile(&self) -> Tile {
         Tile::new(self.var.into(), Colors::LIGHT_GRAY, None)
+    }
+}
+
+impl PartInteract for Wing {
+    fn passage(&self) -> Passage {
+        Passage::Passable(50)
     }
 }
 
@@ -227,6 +245,12 @@ impl PartView for Wall {
     }
 }
 
+impl PartInteract for Wall {
+    fn passage(&self) -> Passage {
+        Passage::Unpassable
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Floor {
     hp: u32,
@@ -251,6 +275,12 @@ impl PartView for Floor {
 
     fn tile(&self) -> Tile {
         Tile::with_floor('.', Colors::GRAY)
+    }
+}
+
+impl PartInteract for Floor {
+    fn passage(&self) -> Passage {
+        Passage::Passable(10)
     }
 }
 
@@ -282,6 +312,12 @@ impl PartView for Roof {
 
     fn tile(&self) -> Tile {
         Tile::with_floor('+', Colors::LIGHT_GOLDEN_ROD_YELLOW)
+    }
+}
+
+impl PartInteract for Roof {
+    fn passage(&self) -> Passage {
+        Passage::Passable(50)
     }
 }
 
@@ -322,6 +358,16 @@ impl PartView for Door {
     }
 }
 
+impl PartInteract for Door {
+    fn passage(&self) -> Passage {
+        if self.open {
+            Passage::Passable(10)
+        } else {
+            Passage::Unpassable
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Seat {
     hp: u32,
@@ -350,6 +396,12 @@ impl PartView for Seat {
     }
 }
 
+impl PartInteract for Seat {
+    fn passage(&self) -> Passage {
+        Passage::Passable(100)
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Terminal {
     hp: u32,
@@ -375,5 +427,11 @@ impl PartView for Terminal {
 
     fn tile(&self) -> Tile {
         Tile::new('◙', Colors::LIGHT_STEEL_BLUE, Some(Colors::LIGHT_GREEN))
+    }
+}
+
+impl PartInteract for Terminal {
+    fn passage(&self) -> Passage {
+        Passage::Unpassable
     }
 }

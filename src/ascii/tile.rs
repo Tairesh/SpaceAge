@@ -1,6 +1,6 @@
 use crate::colors::Colors;
 use crate::game::part::PartView;
-use crate::game::ship::ShipTile;
+use crate::game::ship_tile::ShipTile;
 use tetra::graphics::Color;
 
 #[derive(Debug, Clone)]
@@ -38,7 +38,7 @@ impl Tile {
 
 impl From<&ShipTile> for Tile {
     fn from(tile: &ShipTile) -> Self {
-        if let Some(top_part) = tile.parts.iter().filter(|p| p.visible()).max() {
+        if let Some(top_part) = tile.top_part() {
             top_part.tile()
         } else {
             Tile::empty()

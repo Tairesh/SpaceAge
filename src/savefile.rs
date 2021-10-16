@@ -148,6 +148,7 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
+    // TODO: save current_tick
     pub character: Option<Character>,
     galaxy_meta: GalaxyMeta,
 }

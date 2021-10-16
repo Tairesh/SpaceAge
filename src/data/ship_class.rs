@@ -1,5 +1,6 @@
 use crate::game::part::*;
-use crate::game::ship::{Ship, ShipTile};
+use crate::game::ship::Ship;
+use crate::game::ship_tile::ShipTile;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]

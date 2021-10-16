@@ -1,18 +1,7 @@
 use crate::data::ship_class::{generate_ship, ShipClass};
-use crate::game::part::Part;
+use crate::game::ship_tile::ShipTile;
 use crate::geometry::point::Point;
 use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct ShipTile {
-    pub parts: Vec<Part>,
-}
-
-impl ShipTile {
-    pub fn is_void(&self) -> bool {
-        self.parts.is_empty()
-    }
-}
 
 #[allow(dead_code)]
 #[derive(Serialize, Deserialize, Debug, Clone)]

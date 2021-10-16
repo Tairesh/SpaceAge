@@ -51,29 +51,28 @@ impl World {
     // TODO: probably this should be moved to Ship
     pub fn move_avatar(&mut self, dir: Direction) {
         let pos = self.avatar.pos;
-        // self.load_tile_mut(pos).off_step();
         self.avatar.pos = pos + dir;
         self.avatar.vision = dir;
-        // self.load_tile_mut(self.avatar.pos).on_step();
     }
 
     /// Doing actions that should be done
     fn act(&mut self) {
-        // if let Some(action) = self.avatar.action {
-        //     if action.finish <= self.meta.current_tick {
-        //         action.act(self);
-        //     }
-        // }
+        if let Some(action) = &self.avatar.action {
+            if action.finish <= self.current_tick {
+                action.clone().act(self);
+                self.avatar.action = None;
+            }
+        }
     }
 
     pub fn tick(&mut self) {
-        // self.act();
-        // const SPEND_LIMIT: u32 = 100;
-        // let mut spend = 0;
-        // while self.avatar.action.is_some() && spend < SPEND_LIMIT {
-        //     self.meta.current_tick += 1;
-        //     spend += 1;
-        //     self.act();
-        // }
+        self.act();
+        const SPEND_LIMIT: u8 = 100;
+        let mut spend = 0;
+        while self.avatar.action.is_some() && spend < SPEND_LIMIT {
+            self.current_tick += 1;
+            spend += 1;
+            self.act();
+        }
     }
 }
