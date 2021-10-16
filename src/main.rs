@@ -10,6 +10,7 @@ mod assets;
 mod astro;
 mod avatar;
 mod colors;
+mod cp437;
 mod data;
 mod enums;
 mod game;
@@ -42,7 +43,7 @@ type Rect = tetra::math::Rect<f32, f32>;
 fn main() -> tetra::Result {
     let settings = Settings::load()?;
     let title = format!("{} {}", TITLE, VERSION);
-    let mut ctx = ContextBuilder::new(title.clone(), settings.width as i32, settings.height as i32);
+    let mut ctx = ContextBuilder::new(title, settings.width as i32, settings.height as i32);
     ctx.show_mouse(true)
         .vsync(true)
         .key_repeat(true)
@@ -56,5 +57,5 @@ fn main() -> tetra::Result {
     window::set_minimum_size(&mut ctx, 1024, 768)?;
     window::set_maximum_size(&mut ctx, 1920, 1280)?;
 
-    ctx.run(|ctx| Ok(Game::new(ctx, settings, title)))
+    ctx.run(|ctx| Ok(Game::new(ctx, settings)))
 }

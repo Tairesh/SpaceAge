@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 use tetra::graphics::Color;
 
 #[enum_dispatch::enum_dispatch(Part)]
-pub trait PartImpl {
+pub trait PartView {
     fn ch(&self) -> char;
     /// tile will display char of part with MAXIMUM z_index
     fn z_index(&self) -> i8;
@@ -16,7 +16,7 @@ pub trait PartImpl {
     fn color(&self) -> Color {
         Color::WHITE
     }
-    /// bg color for doors
+    /// bg color
     fn bg_color(&self) -> Option<Color> {
         None
     }
@@ -78,7 +78,7 @@ impl Default for Frame {
     }
 }
 
-impl PartImpl for Frame {
+impl PartView for Frame {
     fn ch(&self) -> char {
         '┼'
     }
@@ -90,17 +90,21 @@ impl PartImpl for Frame {
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum WingSegment {
+    Normal,
     LeftFront,
     RightFront,
-    Normal,
+    LeftBack,
+    RightBack,
 }
 
 impl From<WingSegment> for char {
     fn from(var: WingSegment) -> Self {
         match var {
+            WingSegment::Normal => 'M',
             WingSegment::LeftFront => 'd',
             WingSegment::RightFront => 'b',
-            WingSegment::Normal => 'M',
+            WingSegment::LeftBack => 'V',
+            WingSegment::RightBack => 'P',
         }
     }
 }
@@ -111,6 +115,8 @@ impl From<&str> for WingSegment {
             "d" => WingSegment::LeftFront,
             "b" => WingSegment::RightFront,
             "M" => WingSegment::Normal,
+            "V" => WingSegment::LeftBack,
+            "P" => WingSegment::RightBack,
             _ => unimplemented!("Invalid wing segment: '{}'", ch),
         }
     }
@@ -137,7 +143,7 @@ impl Default for Wing {
     }
 }
 
-impl PartImpl for Wing {
+impl PartView for Wing {
     fn ch(&self) -> char {
         self.var.into()
     }
@@ -224,7 +230,7 @@ impl Default for Wall {
     }
 }
 
-impl PartImpl for Wall {
+impl PartView for Wall {
     fn ch(&self) -> char {
         self.var.into()
     }
@@ -238,7 +244,7 @@ impl PartImpl for Wall {
     }
 
     fn bg_color(&self) -> Option<Color> {
-        Some(Colors::SPACE_VIOLET)
+        Some(Colors::BLACK)
     }
 }
 
@@ -259,7 +265,7 @@ impl Default for Floor {
     }
 }
 
-impl PartImpl for Floor {
+impl PartView for Floor {
     fn ch(&self) -> char {
         '.'
     }
@@ -268,8 +274,12 @@ impl PartImpl for Floor {
         1
     }
 
+    fn color(&self) -> Color {
+        Colors::GRAY
+    }
+
     fn bg_color(&self) -> Option<Color> {
-        Some(Colors::SPACE_VIOLET)
+        Some(Colors::BLACK)
     }
 }
 
@@ -290,7 +300,7 @@ impl Default for Roof {
     }
 }
 
-impl PartImpl for Roof {
+impl PartView for Roof {
     fn ch(&self) -> char {
         '.'
     }
@@ -327,12 +337,12 @@ impl Default for Door {
     }
 }
 
-impl PartImpl for Door {
+impl PartView for Door {
     fn ch(&self) -> char {
         if self.open {
             '.'
         } else {
-            '+'
+            '='
         }
     }
 
@@ -341,15 +351,15 @@ impl PartImpl for Door {
     }
 
     fn color(&self) -> Color {
-        Colors::DARK_GRAY
+        if self.open {
+            Colors::DARK_GRAY
+        } else {
+            Colors::LIGHT_STEEL_BLUE
+        }
     }
 
     fn bg_color(&self) -> Option<Color> {
-        if self.open {
-            None
-        } else {
-            Some(Colors::LIGHT_STEEL_BLUE)
-        }
+        Some(Colors::BLACK)
     }
 }
 
@@ -371,13 +381,21 @@ impl Default for Seat {
     }
 }
 
-impl PartImpl for Seat {
+impl PartView for Seat {
     fn ch(&self) -> char {
-        'h'
+        '▬'
     }
 
     fn z_index(&self) -> i8 {
         9
+    }
+
+    fn color(&self) -> Color {
+        Colors::DARK_GRAY
+    }
+
+    fn bg_color(&self) -> Option<Color> {
+        Some(Colors::LIGHT_GRAY)
     }
 }
 
@@ -399,12 +417,20 @@ impl Default for Terminal {
     }
 }
 
-impl PartImpl for Terminal {
+impl PartView for Terminal {
     fn ch(&self) -> char {
-        '@'
+        '◙'
     }
 
     fn z_index(&self) -> i8 {
         10
+    }
+
+    fn color(&self) -> Color {
+        Colors::LIGHT_STEEL_BLUE
+    }
+
+    fn bg_color(&self) -> Option<Color> {
+        Some(Colors::LIME)
     }
 }

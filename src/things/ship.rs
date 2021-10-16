@@ -1,6 +1,6 @@
 use crate::data::ship::Ship as ShipScheme;
 use crate::geometry::point::Point;
-use crate::things::part::{Door, Floor, Frame, Part, PartImpl, Roof, Seat, Terminal, Wall, Wing};
+use crate::things::part::{Door, Floor, Frame, Part, PartView, Roof, Seat, Terminal, Wall, Wing};
 use serde::{Deserialize, Serialize};
 use tetra::graphics::Color;
 
@@ -18,6 +18,7 @@ impl Tile {
         self.parts.iter().filter(|p| p.visible()).max()
     }
 
+    // TODO: create a struct for ch/color/bg_color
     pub fn ch(&self) -> char {
         self.top_part().map(char::from).unwrap_or(' ')
     }
@@ -38,7 +39,7 @@ impl From<&str> for Tile {
         }
         let mut parts: Vec<Part> = vec![Frame::new().into()];
         match s {
-            ch @ ("d" | "b" | "M") => {
+            ch @ ("d" | "b" | "M" | "V" | "P") => {
                 parts.push(Wing::new(ch).into());
             }
             ch
@@ -103,7 +104,7 @@ impl Ship {
 
 #[cfg(test)]
 mod tests {
-    use super::super::part::{Part, PartImpl};
+    use super::super::part::{Part, PartView};
     use super::Ship;
     use crate::data::game_data::GameData;
 
@@ -116,10 +117,10 @@ mod tests {
         let tiles = ship.tiles.as_slice();
         assert!(tiles[0].is_void());
         assert_eq!(tiles[0].ch(), ' ');
-        assert_eq!(tiles[30].ch(), '@');
+        assert_eq!(tiles[30].ch(), '◙');
         assert_eq!(tiles[30].parts.len(), 4);
         let term = tiles[30].parts.get(2).unwrap();
-        assert_eq!(term.ch(), '@');
+        assert_eq!(term.ch(), '◙');
         assert!(matches!(term, Part::Terminal(..)));
     }
 }

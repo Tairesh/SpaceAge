@@ -1,4 +1,5 @@
 use crate::assets::TileSet;
+use crate::avatar::Avatar;
 use crate::geometry::point::Point;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
@@ -8,10 +9,10 @@ use tetra::graphics::mesh::{Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
 use tetra::{graphics, Context};
 
-fn draw_ship(ctx: &mut Context, ship: &Ship, tileset: &TileSet) -> Canvas {
+fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) -> Canvas {
     let canvas_size = (
-        TileSet::TILE_SIZE * ship.bounds.0 as i32,
-        TileSet::TILE_SIZE * ship.bounds.1 as i32,
+        TileSet::TILE_SIZE.0 * ship.bounds.0 as i32,
+        TileSet::TILE_SIZE.1 * ship.bounds.1 as i32,
     );
     let canvas = Canvas::new(ctx, canvas_size.0, canvas_size.1).unwrap();
     graphics::set_canvas(ctx, &canvas);
@@ -21,8 +22,8 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, tileset: &TileSet) -> Canvas {
         Rectangle::new(
             0.0,
             0.0,
-            TileSet::TILE_SIZE as f32,
-            TileSet::TILE_SIZE as f32,
+            TileSet::TILE_SIZE.0 as f32,
+            TileSet::TILE_SIZE.1 as f32,
         ),
     )
     .unwrap();
@@ -30,15 +31,25 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, tileset: &TileSet) -> Canvas {
         if tile.is_void() {
             continue;
         }
-        let pos = Vec2::from(Point::from_index(i, ship.bounds.0) * TileSet::TILE_SIZE);
+        let point = Point::from_index(i, ship.bounds.0);
+        let pos = Vec2::from(point * TileSet::TILE_SIZE);
         if let Some(color) = tile.bg_color() {
             mesh.draw(ctx, DrawParams::new().position(pos).color(color));
         }
         tileset.draw(
             ctx,
-            tile.ch().into(),
+            tile.ch(),
             DrawParams::new().position(pos).color(tile.color()),
         );
+        if avatar.pos == point {
+            tileset.draw(
+                ctx,
+                '@',
+                DrawParams::new()
+                    .position(pos)
+                    .color(avatar.character.skin_tone.into()),
+            );
+        }
     }
     graphics::reset_canvas(ctx);
     canvas
@@ -53,9 +64,15 @@ pub struct ShipView {
 }
 
 impl ShipView {
-    pub fn new(ctx: &mut Context, ship: &Ship, tileset: &TileSet, position: Position) -> Self {
+    pub fn new(
+        ctx: &mut Context,
+        ship: &Ship,
+        avatar: &Avatar,
+        tileset: &TileSet,
+        position: Position,
+    ) -> Self {
         Self {
-            canvas: draw_ship(ctx, ship, tileset),
+            canvas: draw_ship(ctx, ship, avatar, tileset),
             position,
             rect: None,
             zoom: 2.0,

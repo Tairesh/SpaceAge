@@ -20,15 +20,15 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(ctx: &mut Context, settings: Settings, default_title: String) -> Self {
-        let assets = Rc::new(Assets::new(ctx));
+    pub fn new(ctx: &mut Context, settings: Settings) -> Self {
+        let assets = Rc::new(Assets::load(ctx));
         let data = Rc::new(GameData::load());
         let mut game = Self {
             scenes: vec![Box::new(MainMenu::new(&assets))],
             settings: Rc::new(RefCell::new(settings)),
             assets,
             data,
-            default_title,
+            default_title: window::get_title(ctx).to_string(),
             current_fps: 60,
             world: None,
         };

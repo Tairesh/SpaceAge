@@ -1,3 +1,4 @@
+use crate::cp437::char_to_point;
 use tetra::graphics::text::Font;
 use tetra::graphics::{DrawParams, Rectangle, Texture};
 use tetra::Context;
@@ -51,101 +52,26 @@ pub struct TileSet {
 }
 
 impl TileSet {
-    pub const TILE_SIZE: i32 = 10;
+    pub const TILE_SIZE: (i32, i32) = (14, 16);
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/ascii.png")).unwrap(),
+            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/14x16.png")).unwrap(),
         }
     }
 
-    pub fn draw<P: Into<DrawParams>>(&self, ctx: &mut Context, tile: AsciiTile, params: P) {
-        self.texture.draw_region(ctx, tile.into(), params);
+    pub fn draw<P: Into<DrawParams>>(&self, ctx: &mut Context, ch: char, params: P) {
+        self.texture
+            .draw_region(ctx, TileSet::char_to_rectangle(ch), params);
     }
-}
 
-#[derive(Debug)]
-pub enum AsciiTile {
-    Empty,
-    BigM,
-    SmallB,
-    SmallD,
-    SmallH,
-    Door,
-    Minus,
-    Dot,
-    Terminal,
-    DoubleLeftTop,          // "╔"
-    DoubleRightTop,         // "╗"
-    DoubleLeftBottom,       // "╚"
-    DoubleRightBottom,      // "╝"
-    DoubleVertical,         // "║"
-    DoubleVerticalRight,    // "╣"
-    DoubleVerticalLeft,     // "╠"
-    DoubleHorizontal,       // "═"
-    DoubleHorizontalTop,    // "╦"
-    DoubleHorizontalBottom, // "╩"
-    DoubleCross,            // "╬"
-}
-
-impl From<char> for AsciiTile {
-    fn from(ch: char) -> Self {
-        match ch {
-            ' ' => AsciiTile::Empty,
-            'M' => AsciiTile::BigM,
-            'd' => AsciiTile::SmallD,
-            'b' => AsciiTile::SmallB,
-            'h' => AsciiTile::SmallH,
-            '+' => AsciiTile::Door,
-            '-' => AsciiTile::Minus,
-            '.' => AsciiTile::Dot,
-            '@' => AsciiTile::Terminal,
-            '╔' => AsciiTile::DoubleLeftTop,
-            '╗' => AsciiTile::DoubleRightTop,
-            '╚' => AsciiTile::DoubleLeftBottom,
-            '╝' => AsciiTile::DoubleRightBottom,
-            '║' => AsciiTile::DoubleVertical,
-            '╣' => AsciiTile::DoubleVerticalRight,
-            '╠' => AsciiTile::DoubleVerticalLeft,
-            '═' => AsciiTile::DoubleHorizontal,
-            '╦' => AsciiTile::DoubleHorizontalTop,
-            '╩' => AsciiTile::DoubleHorizontalBottom,
-            '╬' => AsciiTile::DoubleCross,
-            _ => unimplemented!("'{}' is not valid ascii tile", ch),
-            // _ => AsciiTile::Empty,
-        }
-    }
-}
-
-impl From<AsciiTile> for Rectangle {
-    fn from(tile: AsciiTile) -> Self {
-        let coords = match tile {
-            AsciiTile::Empty => (0, 0),
-            AsciiTile::Door => (0, 150),
-            AsciiTile::Minus => (130, 20),
-            AsciiTile::Dot => (140, 20),
-            AsciiTile::Terminal => (80, 140),
-            AsciiTile::DoubleVerticalRight => (90, 110),
-            AsciiTile::DoubleVertical => (100, 110),
-            AsciiTile::DoubleRightTop => (110, 110),
-            AsciiTile::DoubleRightBottom => (120, 110),
-            AsciiTile::DoubleLeftBottom => (80, 120),
-            AsciiTile::DoubleLeftTop => (90, 120),
-            AsciiTile::DoubleHorizontalBottom => (100, 120),
-            AsciiTile::DoubleHorizontalTop => (110, 120),
-            AsciiTile::DoubleVerticalLeft => (120, 120),
-            AsciiTile::DoubleHorizontal => (130, 120),
-            AsciiTile::DoubleCross => (140, 120),
-            AsciiTile::BigM => (130, 40),
-            AsciiTile::SmallB => (20, 60),
-            AsciiTile::SmallD => (40, 60),
-            AsciiTile::SmallH => (80, 60),
-        };
+    fn char_to_rectangle(ch: char) -> Rectangle {
+        let point = char_to_point(ch);
         Rectangle::new(
-            coords.0 as f32,
-            coords.1 as f32,
-            TileSet::TILE_SIZE as f32,
-            TileSet::TILE_SIZE as f32,
+            point.x as f32 * TileSet::TILE_SIZE.0 as f32,
+            point.y as f32 * TileSet::TILE_SIZE.1 as f32,
+            TileSet::TILE_SIZE.0 as f32,
+            TileSet::TILE_SIZE.1 as f32,
         )
     }
 }
@@ -157,7 +83,7 @@ pub struct Assets {
 }
 
 impl Assets {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn load(ctx: &mut Context) -> Self {
         Self {
             fonts: Fonts::new(ctx),
             images: Images::new(ctx),

@@ -32,6 +32,7 @@ impl ShipWalk {
         let ship = Rc::new(RefCell::new(ShipView::new(
             ctx,
             &world.borrow().ship,
+            &world.borrow().avatar,
             &assets.tileset,
             Position::center(),
         )));
