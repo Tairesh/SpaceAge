@@ -1,7 +1,6 @@
-#![allow(dead_code)]
-
 use crate::Vec2;
 
+#[allow(dead_code)]
 #[derive(Copy, Clone)]
 pub enum Horizontal {
     ByLeft { x: f32 },
@@ -15,6 +14,7 @@ pub enum Horizontal {
     AtWindowRightByRight { offset: f32 },
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone)]
 pub enum Vertical {
     ByTop { y: f32 },
@@ -34,6 +34,7 @@ pub struct Position {
     pub y: Vertical,
 }
 
+#[allow(dead_code)]
 pub enum AnchorX {
     Left,
     Center,
@@ -50,6 +51,7 @@ impl AnchorX {
     }
 }
 
+#[allow(dead_code)]
 pub enum AnchorY {
     Top,
     Center,
@@ -78,17 +80,6 @@ impl Position {
         Position::new(x, y, AnchorX::Left, AnchorY::Top)
     }
 
-    pub fn by_right_top(x: f32, y: f32) -> Position {
-        Position::new(x, y, AnchorX::Right, AnchorY::Top)
-    }
-
-    pub fn zeroed() -> Position {
-        Position {
-            x: Horizontal::ByLeft { x: 0.0 },
-            y: Vertical::ByTop { y: 0.0 },
-        }
-    }
-
     pub fn center() -> Position {
         Position {
             x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -103,6 +94,7 @@ impl Position {
         }
     }
 
+    #[allow(dead_code)]
     pub fn vertical_center(offset: f32, x: Horizontal) -> Position {
         Position {
             x,
@@ -153,4 +145,33 @@ impl Position {
     }
 }
 
-//TODO: write tests
+#[cfg(test)]
+mod tests {
+    use super::{AnchorX, AnchorY, Horizontal, Position, Vertical};
+    use crate::Vec2;
+
+    #[test]
+    fn test_positions() {
+        let owner_size = Vec2::new(100.0, 200.0);
+        let window_size = (800, 600);
+        let pos = Position::new(0.0, 0.0, AnchorX::Left, AnchorY::Top);
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::zero());
+        let pos = Position::new(300.0, 400.0, AnchorX::Right, AnchorY::Bottom);
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(200.0, 200.0));
+        let pos = Position::new(300.0, 300.0, AnchorX::Center, AnchorY::Center);
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(250.0, 200.0));
+        let pos = Position::center();
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(350.0, 200.0));
+        let pos =
+            Position::horizontal_center(10.0, Vertical::AtWindowCenterByCenter { offset: 10.0 });
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(360.0, 210.0));
+        let pos =
+            Position::vertical_center(10.0, Horizontal::AtWindowCenterByCenter { offset: 10.0 });
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(360.0, 210.0));
+        let pos = Position {
+            x: Horizontal::AtWindowRightByRight { offset: -10.0 },
+            y: Vertical::AtWindowBottomByBottom { offset: -10.0 },
+        };
+        assert_eq!(pos.as_vec(owner_size, window_size), Vec2::new(690.0, 390.0));
+    }
+}
