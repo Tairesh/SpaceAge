@@ -1,9 +1,8 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
-use crate::scenes::{easy_back, Scene, Transition};
+use crate::scenes::{bg, easy_back, Scene, Transition};
 use crate::settings::{Settings, WindowMode};
 use crate::sprites::button::Button;
-use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Positionate, Press, Sprite};
@@ -22,10 +21,6 @@ pub struct SettingsScene {
 
 impl SettingsScene {
     pub fn new(assets: &Assets, settings: Rc<RefCell<Settings>>, ctx: &mut Context) -> Self {
-        let bg = Rc::new(RefCell::new(Image::new(
-            assets.images.bg.clone(),
-            Position::center(),
-        )));
         let title = Rc::new(RefCell::new(Label::new(
             "Settings",
             assets.fonts.astrolab32.clone(),
@@ -86,7 +81,14 @@ impl SettingsScene {
             settings,
             window: window_btn.clone(),
             fullscreen: fullscreen_btn.clone(),
-            sprites: vec![bg, title, window_mode, window_btn, fullscreen_btn, back_btn],
+            sprites: vec![
+                bg(assets),
+                title,
+                window_mode,
+                window_btn,
+                fullscreen_btn,
+                back_btn,
+            ],
         }
     }
 }

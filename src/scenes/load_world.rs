@@ -1,9 +1,8 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::savefile::{delete, load, savefiles, savefiles_exists};
-use crate::scenes::{easy_back, GameScene, Scene, Transition};
+use crate::scenes::{bg, easy_back, GameScene, Scene, Transition};
 use crate::sprites::button::Button;
-use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Positionate, Sprite};
@@ -23,11 +22,7 @@ impl LoadWorld {
     pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
         let savefiles = savefiles();
         let mut sprites: Vec<Rc<RefCell<dyn Sprite>>> = Vec::with_capacity(savefiles.len() * 5 + 2);
-        // TODO: make a shortcut for centered bg image sprite
-        sprites.push(Rc::new(RefCell::new(Image::new(
-            assets.images.bg.clone(),
-            Position::center(),
-        ))));
+        sprites.push(bg(assets));
         // TODO: make a shortcut for scene title
         sprites.push(Rc::new(RefCell::new(Label::new(
             "Load world:",

@@ -6,9 +6,8 @@ use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
 use crate::savefile::SaveFile;
-use crate::scenes::{easy_back, Scene, Transition};
+use crate::scenes::{bg, easy_back, Scene, Transition};
 use crate::sprites::button::Button;
-use crate::sprites::image::Image;
 use crate::sprites::input::TextInput;
 use crate::sprites::label::Label;
 use crate::sprites::meshy::JustMesh;
@@ -40,10 +39,6 @@ pub struct CreateCharacter {
 impl CreateCharacter {
     pub fn new(savefile: SaveFile, assets: &Assets, data: Rc<GameData>, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
-        let bg = Rc::new(RefCell::new(Image::new(
-            assets.images.bg.clone(),
-            Position::center(),
-        )));
         let title = Rc::new(RefCell::new(Label::new(
             "Create new character:",
             assets.fonts.astrolab32.clone(),
@@ -304,6 +299,7 @@ impl CreateCharacter {
             assets.fonts.consolab18.clone(),
             Transition::Pop,
         )));
+        // TODO: add next stage for selecting scenario and ship name
         let create_btn = Rc::new(RefCell::new(Button::new(
             vec![(Key::Enter, Some(KeyModifier::Alt))],
             "[Alt+Enter] Create",
@@ -321,7 +317,7 @@ impl CreateCharacter {
             savefile,
             data,
             sprites: vec![
-                bg,
+                bg(assets),
                 title,
                 subtitle,
                 name_label,

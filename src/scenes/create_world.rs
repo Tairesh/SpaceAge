@@ -5,10 +5,9 @@ use crate::astro::galaxy_generator;
 use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
 use crate::savefile::{create, SaveError};
-use crate::scenes::{easy_back, Scene, Transition};
+use crate::scenes::{bg, easy_back, Scene, Transition};
 use crate::sprites::button::Button;
 use crate::sprites::galaxy::Galaxy;
-use crate::sprites::image::Image;
 use crate::sprites::input::TextInput;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
@@ -53,10 +52,6 @@ pub struct CreateWorld {
 impl CreateWorld {
     pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
-        let bg = Rc::new(RefCell::new(Image::new(
-            assets.images.bg.clone(),
-            Position::center(),
-        )));
         let title = Rc::new(RefCell::new(Label::new(
             "Create new things:",
             assets.fonts.astrolab32.clone(),
@@ -279,7 +274,7 @@ impl CreateWorld {
         )));
         CreateWorld {
             sprites: vec![
-                bg,
+                bg(assets),
                 title,
                 name_label,
                 name_input.clone(),

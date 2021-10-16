@@ -1,9 +1,8 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::savefile::savefiles_exists;
-use crate::scenes::{GameScene, Scene, Transition};
+use crate::scenes::{bg, GameScene, Scene, Transition};
 use crate::sprites::button::Button;
-use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Disable, Sprite};
@@ -20,10 +19,6 @@ pub struct MainMenu {
 
 impl MainMenu {
     pub fn new(assets: &Assets) -> Self {
-        let bg = Rc::new(RefCell::new(Image::new(
-            assets.images.bg.clone(),
-            Position::center(),
-        )));
         let logo = Rc::new(RefCell::new(Label::new(
             TITLE,
             assets.fonts.logo.clone(),
@@ -87,7 +82,7 @@ impl MainMenu {
         )));
         Self {
             sprites: vec![
-                bg,
+                bg(assets),
                 logo,
                 version,
                 select_btn.clone(),

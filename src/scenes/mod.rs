@@ -6,6 +6,7 @@ pub mod main_menu;
 mod settings;
 mod ship_walk;
 
+use crate::assets::Assets;
 use crate::game::Game;
 use crate::savefile::SaveFile;
 use crate::scenes::create_character::CreateCharacter;
@@ -15,6 +16,8 @@ use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
 use crate::scenes::ship_walk::ShipWalk;
+use crate::sprites::image::Image;
+use crate::sprites::position::Position;
 use crate::sprites::sprite::Sprite;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -89,6 +92,13 @@ pub(crate) fn easy_back(event: Event, focused: bool) -> Option<Transition> {
     } else {
         None
     }
+}
+
+pub(crate) fn bg(assets: &Assets) -> Rc<RefCell<Image>> {
+    Rc::new(RefCell::new(Image::new(
+        assets.images.bg.clone(),
+        Position::center(),
+    )))
 }
 
 pub trait Scene {
