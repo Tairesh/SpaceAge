@@ -10,16 +10,18 @@ use crate::sprites::sprite::{Positionate, Press, Sprite};
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, KeyModifier};
-use tetra::{Context, Event};
+use tetra::window::WindowPosition;
+use tetra::{window, Context, Event};
 
 pub struct SettingsScene {
+    settings: Rc<RefCell<Settings>>,
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
     window: Rc<RefCell<Button>>,
     fullscreen: Rc<RefCell<Button>>,
 }
 
 impl SettingsScene {
-    pub fn new(assets: &Assets, settings: &Settings, ctx: &mut Context) -> Self {
+    pub fn new(assets: &Assets, settings: Rc<RefCell<Settings>>, ctx: &mut Context) -> Self {
         let bg = Rc::new(RefCell::new(Image::new(
             assets.images.bg.clone(),
             Position::center(),
@@ -36,7 +38,7 @@ impl SettingsScene {
         let fullscreen_btn = Rc::new(RefCell::new(Button::fixed(
             vec![(Key::F, Some(KeyModifier::Alt))],
             "[Alt+F] Fullscreen",
-            matches!(settings.window_mode(), WindowMode::Fullscreen),
+            matches!(settings.borrow().window_mode(), WindowMode::Fullscreen),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
                 y: Vertical::AtWindowCenterByTop { offset: -100.0 },
@@ -47,7 +49,7 @@ impl SettingsScene {
         let window_btn = Rc::new(RefCell::new(Button::fixed(
             vec![(Key::W, Some(KeyModifier::Alt))],
             "[Alt+W] Window",
-            matches!(settings.window_mode(), WindowMode::Window),
+            matches!(settings.borrow().window_mode(), WindowMode::Window),
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
                 y: Vertical::AtWindowCenterByTop { offset: -100.0 },
@@ -81,6 +83,7 @@ impl SettingsScene {
         )));
 
         SettingsScene {
+            settings,
             window: window_btn.clone(),
             fullscreen: fullscreen_btn.clone(),
             sprites: vec![bg, title, window_mode, window_btn, fullscreen_btn, back_btn],
@@ -97,17 +100,37 @@ impl Scene for SettingsScene {
         Some(&self.sprites)
     }
 
-    fn custom_event(&mut self, _ctx: &mut Context, event: &str) -> Option<Transition> {
+    fn custom_event(&mut self, ctx: &mut Context, event: &str) -> Option<Transition> {
         match event {
             "window" => {
                 self.fullscreen.borrow_mut().unpress();
-                Some(Transition::ChangeWindowMode(WindowMode::Window))
+                let mut settings = self.settings.borrow_mut();
+                settings.fullscreen = false;
+                if window::is_fullscreen(ctx) {
+                    window::set_fullscreen(ctx, false).ok();
+                }
+                window::set_decorated(ctx, true);
+                window::set_size(ctx, settings.width as i32, settings.height as i32).ok();
+                window::set_position(
+                    ctx,
+                    WindowPosition::Centered(0),
+                    WindowPosition::Centered(0),
+                );
+                None
             }
             "fullscreen" => {
                 self.window.borrow_mut().unpress();
-                Some(Transition::ChangeWindowMode(WindowMode::Fullscreen))
+                self.settings.borrow_mut().fullscreen = true;
+                window::set_fullscreen(ctx, true).ok();
+                None
             }
             _ => unreachable!(),
         }
+    }
+}
+
+impl Drop for SettingsScene {
+    fn drop(&mut self) {
+        self.settings.borrow_mut().save();
     }
 }

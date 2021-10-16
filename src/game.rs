@@ -2,31 +2,30 @@ use crate::assets::Assets;
 use crate::data::game_data::GameData;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::{GameScene, Scene, Transition};
-use crate::settings::{Settings, WindowMode};
+use crate::settings::Settings;
 use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::Key;
-use tetra::window::WindowPosition;
 use tetra::{time, window, Context, Event, Result, State};
 
 pub struct Game {
     scenes: Vec<Box<dyn Scene>>,
-    settings: Settings,
-    assets: Assets,
-    data: GameData,
-    world: Option<Rc<RefCell<World>>>,
+    pub settings: Rc<RefCell<Settings>>,
+    pub assets: Rc<Assets>,
+    pub data: Rc<GameData>,
+    pub world: Option<Rc<RefCell<World>>>,
     default_title: String,
     current_fps: u8,
 }
 
 impl Game {
     pub fn new(ctx: &mut Context, settings: Settings, default_title: String) -> Self {
-        let assets = Assets::new(ctx);
-        let data = GameData::load();
+        let assets = Rc::new(Assets::new(ctx));
+        let data = Rc::new(GameData::load());
         let mut game = Self {
             scenes: vec![Box::new(MainMenu::new(&assets))],
-            settings,
+            settings: Rc::new(RefCell::new(settings)),
             assets,
             data,
             default_title,
@@ -57,7 +56,7 @@ impl Game {
     }
 
     fn show_fps(&mut self, ctx: &mut Context) {
-        if self.settings.show_fps {
+        if self.settings.borrow().show_fps {
             let fps = time::get_fps(ctx).round() as u8;
             if fps != self.current_fps {
                 window::set_title(ctx, format!("{} ({} FPS)", self.default_title, fps));
@@ -68,8 +67,7 @@ impl Game {
 
     // TODO: implement replace_scene and pop_scene
     fn push_scene(&mut self, ctx: &mut Context, scene: GameScene) {
-        self.scenes
-            .push(scene.into_scene(&self.world, &self.assets, &self.settings, ctx));
+        self.scenes.push(scene.into_scene(self, ctx));
         self.on_open(ctx);
     }
 
@@ -116,34 +114,6 @@ impl Game {
             }
             Transition::Quit => {
                 window::quit(ctx);
-            }
-            Transition::ChangeWindowMode(wm) => {
-                if self.settings.window_mode() != wm {
-                    match wm {
-                        WindowMode::Fullscreen => {
-                            self.settings.fullscreen = true;
-                            window::set_fullscreen(ctx, true).ok();
-                        }
-                        WindowMode::Window => {
-                            self.settings.fullscreen = false;
-                            if window::is_fullscreen(ctx) {
-                                window::set_fullscreen(ctx, false).ok();
-                            }
-                            window::set_decorated(ctx, true);
-                            window::set_size(
-                                ctx,
-                                self.settings.width as i32,
-                                self.settings.height as i32,
-                            )
-                            .ok();
-                            window::set_position(
-                                ctx,
-                                WindowPosition::Centered(0),
-                                WindowPosition::Centered(0),
-                            );
-                        }
-                    }
-                }
             }
         }
     }
@@ -202,17 +172,20 @@ impl State for Game {
     fn event(&mut self, ctx: &mut Context, event: Event) -> Result {
         match event {
             Event::KeyPressed { key: Key::F2 } => {
-                self.settings.show_fps = !self.settings.show_fps;
-                if !self.settings.show_fps {
+                let mut settings = self.settings.borrow_mut();
+                settings.show_fps = !settings.show_fps;
+                if !settings.show_fps {
                     window::set_title(ctx, &self.default_title);
                 }
             }
             Event::Resized { width, height } => {
-                if !self.settings.fullscreen {
-                    self.settings.width = width as u32;
-                    self.settings.height = height as u32;
-                    self.settings.validate();
+                let mut settings = self.settings.borrow_mut();
+                if !settings.fullscreen {
+                    settings.width = width as u32;
+                    settings.height = height as u32;
+                    settings.validate();
                 }
+                drop(settings);
                 self.on_resize(ctx);
             }
             _ => {}
@@ -231,7 +204,7 @@ impl State for Game {
 
 impl Drop for Game {
     fn drop(&mut self) {
-        self.settings.save();
+        self.settings.borrow_mut().save();
         if let Some(world) = &self.world {
             world.borrow().save();
         }

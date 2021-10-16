@@ -1,7 +1,8 @@
+use crate::data::game_data::GameData;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
-use rand::distributions::{Distribution, Standard};
+use rand::distributions::Standard;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
@@ -30,13 +31,14 @@ impl Character {
             skin_tone,
         }
     }
-}
 
-impl Distribution<Character> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Character {
+    pub fn random<R: Rng + ?Sized>(rng: &mut R, data: &GameData) -> Character {
         let gender = rng.sample(Standard);
+        let packs = data.names.as_slice();
+        let pack = &packs[rng.gen_range(0..packs.len())];
+        let name = pack.random_name(rng, &gender);
         Character::new(
-            "Ashley",
+            name,
             gender,
             rng.gen_range(0..=199),
             rng.sample(Standard),

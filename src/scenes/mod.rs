@@ -6,7 +6,7 @@ pub mod main_menu;
 mod settings;
 mod ship_walk;
 
-use crate::assets::Assets;
+use crate::game::Game;
 use crate::savefile::SaveFile;
 use crate::scenes::create_character::CreateCharacter;
 use crate::scenes::create_world::CreateWorld;
@@ -15,9 +15,7 @@ use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
 use crate::scenes::ship_walk::ShipWalk;
-use crate::settings::{Settings, WindowMode};
 use crate::sprites::sprite::Sprite;
-use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, MouseButton};
@@ -36,23 +34,26 @@ pub enum GameScene {
 }
 
 impl GameScene {
-    pub fn into_scene(
-        self,
-        world: &Option<Rc<RefCell<World>>>,
-        assets: &Assets,
-        settings: &Settings,
-        ctx: &mut Context,
-    ) -> Box<dyn Scene> {
+    pub fn into_scene(self, game: &Game, ctx: &mut Context) -> Box<dyn Scene> {
         match self {
-            GameScene::MainMenu => Box::new(MainMenu::new(assets)),
+            GameScene::MainMenu => Box::new(MainMenu::new(&game.assets)),
             GameScene::Empty => Box::new(Empty {}),
-            GameScene::Settings => Box::new(SettingsScene::new(assets, settings, ctx)),
-            GameScene::CreateWorld => Box::new(CreateWorld::new(assets, ctx)),
-            GameScene::LoadWorld => Box::new(LoadWorld::new(assets, ctx)),
-            GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(s, assets, ctx)),
-            GameScene::ShipWalk => {
-                Box::new(ShipWalk::new(world.as_ref().unwrap().clone(), assets, ctx))
+            GameScene::Settings => {
+                Box::new(SettingsScene::new(&game.assets, game.settings.clone(), ctx))
             }
+            GameScene::CreateWorld => Box::new(CreateWorld::new(&game.assets, ctx)),
+            GameScene::LoadWorld => Box::new(LoadWorld::new(&game.assets, ctx)),
+            GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(
+                s,
+                &game.assets,
+                game.data.clone(),
+                ctx,
+            )),
+            GameScene::ShipWalk => Box::new(ShipWalk::new(
+                game.world.as_ref().unwrap().clone(),
+                &game.assets,
+                ctx,
+            )),
         }
     }
 }
@@ -68,7 +69,6 @@ pub enum Transition {
     Pop2,               // two times
     Replace(GameScene), // pop and push
     CustomEvent(String),
-    ChangeWindowMode(WindowMode),
     Quit,
 }
 

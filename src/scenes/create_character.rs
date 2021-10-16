@@ -1,5 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
+use crate::data::game_data::GameData;
 use crate::human::character::Character;
 use crate::human::gender::Gender;
 use crate::human::main_hand::MainHand;
@@ -14,8 +15,6 @@ use crate::sprites::meshy::JustMesh;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify};
 use crate::Vec2;
-use rand::distributions::Standard;
-use rand::Rng;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
@@ -25,6 +24,7 @@ use tetra::{window, Context, Event};
 
 pub struct CreateCharacter {
     savefile: SaveFile,
+    data: Rc<GameData>,
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
     name_input: Rc<RefCell<TextInput>>,
     name_empty: Rc<RefCell<Label>>,
@@ -38,7 +38,7 @@ pub struct CreateCharacter {
 }
 
 impl CreateCharacter {
-    pub fn new(savefile: SaveFile, assets: &Assets, ctx: &mut Context) -> Self {
+    pub fn new(savefile: SaveFile, assets: &Assets, data: Rc<GameData>, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
         let bg = Rc::new(RefCell::new(Image::new(
             assets.images.bg.clone(),
@@ -319,6 +319,7 @@ impl CreateCharacter {
 
         Self {
             savefile,
+            data,
             sprites: vec![
                 bg,
                 title,
@@ -401,7 +402,8 @@ impl Scene for CreateCharacter {
             "randomize" => {
                 let mut rng = rand::thread_rng();
                 let window_size = window::get_size(ctx);
-                let character: Character = rng.sample(Standard);
+                let character = Character::random(&mut rng, &self.data);
+                self.name_input.borrow_mut().set_value(character.name);
                 self.gender_input.borrow_mut().set_value(character.gender);
                 self.age_input
                     .borrow_mut()

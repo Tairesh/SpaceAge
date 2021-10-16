@@ -14,7 +14,7 @@ pub struct NamesPack {
 
 impl NamesPack {
     #[allow(dead_code)]
-    pub fn random_name<R: Rng + ?Sized>(&self, rng: &mut R, gender: Gender) -> String {
+    pub fn random_name<R: Rng + ?Sized>(&self, rng: &mut R, gender: &Gender) -> String {
         let first_names = match gender {
             Gender::Male => &self.first_names_male,
             Gender::Female => &self.first_names_female,
@@ -65,10 +65,10 @@ mod tests {
             last_names_female: vec!["Afganova".to_string()],
         };
         let mut rng = thread_rng();
-        let name = pack.random_name(&mut rng, Gender::Male);
+        let name = pack.random_name(&mut rng, &Gender::Male);
         assert_eq!(name, "Ilya Afganov");
 
-        let name = pack.random_name(&mut rng, Gender::Female);
+        let name = pack.random_name(&mut rng, &Gender::Female);
         assert_eq!(name, "Ashley Afganova");
 
         let pack = NamesPack {
@@ -78,7 +78,7 @@ mod tests {
             last_names_male: vec!["Afganov".to_string()],
             last_names_female: vec![],
         };
-        let name = pack.random_name(&mut rng, Gender::Female);
+        let name = pack.random_name(&mut rng, &Gender::Female);
         assert_eq!(name, "Ashley Afganov");
     }
 }
