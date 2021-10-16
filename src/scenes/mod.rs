@@ -66,7 +66,6 @@ impl GameScene {
 }
 
 #[derive(Debug, Clone)]
-#[allow(dead_code)]
 pub enum Transition {
     DoNothing,
     Push(GameScene),
@@ -74,7 +73,6 @@ pub enum Transition {
     LoadWorld(SaveFile), // and replace to GameScene::ShipWalk
     UnloadWorld,         // and go to main menu
     Pop,
-    Pop2,               // two times
     Replace(GameScene), // pop and push
     CustomEvent(String),
     Quit,

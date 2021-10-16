@@ -57,7 +57,6 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByTop { offset: -200.0 },
             },
         )));
-        // TODO: traits, profession, scenario, ship class and name
         let name_label = Rc::new(RefCell::new(Label::new(
             "Name:",
             assets.fonts.nasa24.clone(),

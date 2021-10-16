@@ -154,7 +154,7 @@ impl Draw for TextInput {
         } else {
             Vec2::new(rect.x + 7.0, y)
         };
-        // TODO: horizontal scroll if text width is more than sprite width
+        // TODO: horizontal scroll if text width is bigger than sprite width
         self.text.draw(
             ctx,
             DrawParams::new()

@@ -37,14 +37,14 @@ impl Game {
     }
 
     fn on_open(&mut self, ctx: &mut Context) {
-        if let Some(scene) = self.scenes.last_mut() {
+        if let Some(scene) = self.current_scene() {
             scene.on_open(ctx);
         }
         self.on_resize(ctx);
     }
 
     fn on_resize(&mut self, ctx: &mut Context) {
-        if let Some(scene) = self.scenes.last_mut() {
+        if let Some(scene) = self.current_scene() {
             let window_size = window::get_size(ctx);
             if let Some(sprites) = scene.sprites() {
                 for sprite in sprites.iter() {
@@ -65,10 +65,23 @@ impl Game {
         }
     }
 
-    // TODO: implement replace_scene and pop_scene
+    fn pop_scene(&mut self, ctx: &mut Context) {
+        self.scenes.pop();
+        self.on_open(ctx);
+    }
+
+    fn replace_scene(&mut self, ctx: &mut Context, scene: GameScene) {
+        self.scenes.pop();
+        self.push_scene(ctx, scene);
+    }
+
     fn push_scene(&mut self, ctx: &mut Context, scene: GameScene) {
         self.scenes.push(scene.into_scene(self, ctx));
         self.on_open(ctx);
+    }
+
+    fn current_scene(&mut self) -> Option<&mut Box<dyn Scene>> {
+        self.scenes.last_mut()
     }
 
     fn transit(&mut self, ctx: &mut Context, transition: Transition) {
@@ -78,13 +91,11 @@ impl Game {
                 let world = World::create(&savefile, &self.data);
                 world.save();
                 self.world = Some(Rc::new(RefCell::new(world)));
-                self.scenes.pop();
-                self.push_scene(ctx, GameScene::ShipWalk);
+                self.replace_scene(ctx, GameScene::ShipWalk);
             }
             Transition::LoadWorld(savefile) => {
                 self.world = Some(Rc::new(RefCell::new(savefile.load_world())));
-                self.scenes.pop();
-                self.push_scene(ctx, GameScene::ShipWalk);
+                self.replace_scene(ctx, GameScene::ShipWalk);
             }
             Transition::UnloadWorld => {
                 if let Some(world) = &self.world {
@@ -97,26 +108,16 @@ impl Game {
                 self.push_scene(ctx, s);
             }
             Transition::Pop => {
-                self.scenes.pop();
-                self.on_open(ctx);
-            }
-            Transition::Pop2 => {
-                self.scenes.pop();
-                self.scenes.pop();
-                self.on_open(ctx);
+                self.pop_scene(ctx);
             }
             Transition::Replace(s) => {
-                self.scenes.pop();
-                self.push_scene(ctx, s);
+                self.replace_scene(ctx, s);
             }
             Transition::CustomEvent(str) => {
-                if let Some(t) = self
-                    .scenes
-                    .last_mut()
-                    .unwrap()
-                    .custom_event(ctx, str.as_str())
-                {
-                    self.transit(ctx, t);
+                if let Some(scene) = self.current_scene() {
+                    if let Some(t) = scene.custom_event(ctx, str.as_str()) {
+                        self.transit(ctx, t);
+                    }
                 }
             }
             Transition::Quit => {
@@ -129,7 +130,7 @@ impl Game {
 impl State for Game {
     fn update(&mut self, ctx: &mut Context) -> Result {
         self.show_fps(ctx);
-        let transition = if let Some(scene) = self.scenes.last_mut() {
+        let transition = if let Some(scene) = self.current_scene() {
             let mut button_clicked = None;
             let focused = scene
                 .sprites()
@@ -160,10 +161,8 @@ impl State for Game {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> Result {
-        if let Some(scene) = self.scenes.last_mut() {
+        if let Some(scene) = self.current_scene() {
             scene.draw(ctx);
-        }
-        if let Some(scene) = self.scenes.last_mut() {
             if let Some(sprites) = scene.sprites() {
                 for sprite in sprites.iter() {
                     let mut sprite = sprite.borrow_mut();
@@ -197,7 +196,7 @@ impl State for Game {
             }
             _ => {}
         }
-        if let Some(scene) = self.scenes.last_mut() {
+        if let Some(scene) = self.current_scene() {
             let focused = scene
                 .sprites()
                 .map(|sprites| sprites.iter().any(|s| s.borrow().focused()))
