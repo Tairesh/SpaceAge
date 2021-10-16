@@ -2,29 +2,32 @@ use crate::data::ship::Ship as ShipScheme;
 use crate::geometry::point::Point;
 use crate::things::part::{Door, Floor, Frame, Part, PartImpl, Roof, Seat, Terminal, Wall, Wing};
 use serde::{Deserialize, Serialize};
+use tetra::graphics::Color;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Tile {
     pub parts: Vec<Part>,
 }
 
-#[allow(dead_code)]
 impl Tile {
     pub fn is_void(&self) -> bool {
         self.parts.is_empty()
     }
 
+    fn top_part(&self) -> Option<&Part> {
+        self.parts.iter().filter(|p| p.visible()).max()
+    }
+
     pub fn ch(&self) -> char {
-        if self.is_void() {
-            ' '
-        } else {
-            self.parts
-                .iter()
-                .filter(|p| p.visible())
-                .max()
-                .map(char::from)
-                .unwrap_or(' ')
-        }
+        self.top_part().map(char::from).unwrap_or(' ')
+    }
+
+    pub fn color(&self) -> Color {
+        self.top_part().map(|p| p.color()).unwrap_or(Color::WHITE)
+    }
+
+    pub fn bg_color(&self) -> Option<Color> {
+        self.top_part().map(|p| p.bg_color()).unwrap_or(None)
     }
 }
 

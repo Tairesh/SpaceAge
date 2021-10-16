@@ -1,14 +1,24 @@
+use crate::colors::Colors;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
+use tetra::graphics::Color;
 
 #[enum_dispatch::enum_dispatch(Part)]
 pub trait PartImpl {
     fn ch(&self) -> char;
-    // tile will display char of part with MAXIMUM z_index
+    /// tile will display char of part with MAXIMUM z_index
     fn z_index(&self) -> i8;
-    // false if it's a roof for example
+    /// false if it's a roof for example
     fn visible(&self) -> bool {
         true
+    }
+    /// color of char
+    fn color(&self) -> Color {
+        Color::WHITE
+    }
+    /// bg color for doors
+    fn bg_color(&self) -> Option<Color> {
+        None
     }
 }
 
@@ -135,6 +145,10 @@ impl PartImpl for Wing {
     fn z_index(&self) -> i8 {
         1
     }
+
+    fn color(&self) -> Color {
+        Colors::GRAY
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
@@ -218,6 +232,14 @@ impl PartImpl for Wall {
     fn z_index(&self) -> i8 {
         2
     }
+
+    fn color(&self) -> Color {
+        Colors::LIGHT_STEEL_BLUE
+    }
+
+    fn bg_color(&self) -> Option<Color> {
+        Some(Colors::SPACE_VIOLET)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -244,6 +266,10 @@ impl PartImpl for Floor {
 
     fn z_index(&self) -> i8 {
         1
+    }
+
+    fn bg_color(&self) -> Option<Color> {
+        Some(Colors::SPACE_VIOLET)
     }
 }
 
@@ -312,6 +338,18 @@ impl PartImpl for Door {
 
     fn z_index(&self) -> i8 {
         2
+    }
+
+    fn color(&self) -> Color {
+        Colors::DARK_GRAY
+    }
+
+    fn bg_color(&self) -> Option<Color> {
+        if self.open {
+            None
+        } else {
+            Some(Colors::LIGHT_STEEL_BLUE)
+        }
     }
 }
 

@@ -4,6 +4,7 @@ use crate::scenes::{easy_back, Scene, Transition};
 use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::Position;
+use crate::sprites::ship::ShipView;
 use crate::sprites::sprite::Sprite;
 use crate::things::world::World;
 use std::cell::RefCell;
@@ -17,7 +18,7 @@ pub struct ShipWalk {
 }
 
 impl ShipWalk {
-    pub fn new(world: Rc<RefCell<World>>, assets: &Assets, _ctx: &mut Context) -> Self {
+    pub fn new(world: Rc<RefCell<World>>, assets: &Assets, ctx: &mut Context) -> Self {
         let bg = Rc::new(RefCell::new(Image::repeat(
             assets.images.blue_nebula.clone(),
         )));
@@ -27,9 +28,15 @@ impl ShipWalk {
             Colors::LIGHT_SKY_BLUE,
             Position::by_left_top(10.0, 10.0),
         )));
+        let ship = Rc::new(RefCell::new(ShipView::new(
+            ctx,
+            &world.borrow().ship,
+            &assets.tileset,
+            Position::center(),
+        )));
         Self {
             world,
-            sprites: vec![bg, name],
+            sprites: vec![bg, name, ship],
         }
     }
 }

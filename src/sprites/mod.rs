@@ -6,4 +6,5 @@ pub mod input;
 pub mod label;
 pub mod meshy;
 pub mod position;
+pub mod ship;
 pub mod sprite;
