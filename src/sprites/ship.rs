@@ -9,7 +9,7 @@ use crate::things::ship::Ship;
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
-use tetra::{graphics, Context};
+use tetra::{graphics, window, Context};
 
 fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) -> Canvas {
     let canvas_size = (
@@ -107,6 +107,14 @@ impl ShipView {
             rect: None,
             zoom: 2.0,
             visible: true,
+        }
+    }
+
+    pub fn update(&mut self, ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) {
+        let old_size = self.canvas.size();
+        self.canvas = draw_ship(ctx, ship, avatar, tileset);
+        if old_size != self.canvas.size() {
+            self.positionate(ctx, window::get_size(ctx));
         }
     }
 }

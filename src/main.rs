@@ -16,6 +16,7 @@ mod enums;
 mod game;
 mod geometry;
 mod human;
+mod input;
 mod savefile;
 mod scenes;
 mod settings;

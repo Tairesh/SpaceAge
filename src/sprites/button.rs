@@ -1,4 +1,5 @@
 use crate::colors::Colors;
+use crate::input;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Update};
@@ -7,7 +8,7 @@ use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::{Font, Text};
 use tetra::graphics::{Color, DrawParams, Rectangle};
 use tetra::input::{Key, KeyModifier, MouseButton};
-use tetra::{input, Context};
+use tetra::Context;
 
 enum ButtonContent {
     Text(Text),
@@ -247,19 +248,6 @@ impl Positionate for Button {
     }
 }
 
-fn is_pressed_key_with_mod(ctx: &mut Context, key: Key, key_mod: Option<KeyModifier>) -> bool {
-    if !input::is_key_pressed(ctx, key) {
-        return false;
-    }
-    if let Some(key_mod) = key_mod {
-        input::is_key_modifier_down(ctx, key_mod)
-    } else {
-        !input::is_key_modifier_down(ctx, KeyModifier::Alt)
-            && !input::is_key_modifier_down(ctx, KeyModifier::Ctrl)
-            && !input::is_key_modifier_down(ctx, KeyModifier::Shift)
-    }
-}
-
 impl Update for Button {
     fn update(&mut self, ctx: &mut Context, focused: bool, blocked: &[Rect]) -> Option<Transition> {
         if self.is_disabled {
@@ -269,7 +257,7 @@ impl Update for Button {
             let mut on_pressed = false;
             let mut off_pressed = false;
             for (key, key_mod) in self.keys.iter().copied() {
-                if is_pressed_key_with_mod(ctx, key, key_mod) {
+                if input::is_pressed_key_with_mod(ctx, key, key_mod) {
                     on_pressed = true;
                 }
                 if input::is_key_released(ctx, key) && self.is_pressed {

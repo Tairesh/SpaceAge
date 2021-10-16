@@ -57,7 +57,7 @@ impl GameScene {
             )),
             GameScene::ShipWalk => Box::new(ShipWalk::new(
                 game.world.as_ref().unwrap().clone(),
-                &game.assets,
+                game.assets.clone(),
                 ctx,
             )),
             GameScene::GameMenu => Box::new(GameMenu::new(&game.assets)),
