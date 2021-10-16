@@ -268,11 +268,11 @@ impl Update for Button {
         if !self.keys.is_empty() && !focused {
             let mut on_pressed = false;
             let mut off_pressed = false;
-            for (key, key_mod) in self.keys.iter() {
-                if is_pressed_key_with_mod(ctx, *key, *key_mod) {
+            for (key, key_mod) in self.keys.iter().copied() {
+                if is_pressed_key_with_mod(ctx, key, key_mod) {
                     on_pressed = true;
                 }
-                if input::is_key_released(ctx, *key) && self.is_pressed {
+                if input::is_key_released(ctx, key) && self.is_pressed {
                     off_pressed = true
                 }
             }

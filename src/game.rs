@@ -86,6 +86,13 @@ impl Game {
                 self.scenes.pop();
                 self.push_scene(ctx, GameScene::ShipWalk);
             }
+            Transition::UnloadWorld => {
+                if let Some(world) = &self.world {
+                    world.borrow().save();
+                }
+                self.scenes.clear();
+                self.push_scene(ctx, GameScene::MainMenu);
+            }
             Transition::Push(s) => {
                 self.push_scene(ctx, s);
             }

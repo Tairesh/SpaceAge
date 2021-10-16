@@ -1,6 +1,7 @@
 mod create_character;
 mod create_world;
 mod empty;
+mod game_menu;
 mod load_world;
 pub mod main_menu;
 mod settings;
@@ -12,6 +13,7 @@ use crate::savefile::SaveFile;
 use crate::scenes::create_character::CreateCharacter;
 use crate::scenes::create_world::CreateWorld;
 use crate::scenes::empty::Empty;
+use crate::scenes::game_menu::GameMenu;
 use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
@@ -34,6 +36,7 @@ pub enum GameScene {
     LoadWorld,
     CreateCharacter(SaveFile),
     ShipWalk,
+    GameMenu,
 }
 
 impl GameScene {
@@ -57,6 +60,7 @@ impl GameScene {
                 &game.assets,
                 ctx,
             )),
+            GameScene::GameMenu => Box::new(GameMenu::new(&game.assets)),
         }
     }
 }
@@ -68,6 +72,7 @@ pub enum Transition {
     Push(GameScene),
     CreateWorld(SaveFile),
     LoadWorld(SaveFile), // and replace to GameScene::ShipWalk
+    UnloadWorld,         // and go to main menu
     Pop,
     Pop2,               // two times
     Replace(GameScene), // pop and push

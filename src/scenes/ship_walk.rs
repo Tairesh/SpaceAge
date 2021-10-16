@@ -1,6 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
-use crate::scenes::{easy_back, Scene, Transition};
+use crate::scenes::{GameScene, Scene, Transition};
 use crate::sprites::image::Image;
 use crate::sprites::label::Label;
 use crate::sprites::position::Position;
@@ -9,6 +9,7 @@ use crate::sprites::sprite::Sprite;
 use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
+use tetra::input::Key;
 use tetra::{Context, Event};
 
 pub struct ShipWalk {
@@ -42,9 +43,12 @@ impl ShipWalk {
 }
 
 impl Scene for ShipWalk {
-    fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
-        // TODO: go back only with Transition::UnloadWorld
-        easy_back(event, focused).unwrap_or(Transition::DoNothing)
+    fn event(&mut self, _ctx: &mut Context, event: Event, _focused: bool) -> Transition {
+        if let Event::KeyPressed { key: Key::Escape } = event {
+            Transition::Push(GameScene::GameMenu)
+        } else {
+            Transition::DoNothing
+        }
     }
 
     fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {

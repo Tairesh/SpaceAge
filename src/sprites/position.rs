@@ -96,16 +96,16 @@ impl Position {
         }
     }
 
-    pub fn horizontal_center(offset: f32, y: f32, anchor_y: AnchorY) -> Position {
+    pub fn horizontal_center(offset: f32, y: Vertical) -> Position {
         Position {
             x: Horizontal::AtWindowCenterByCenter { offset },
-            y: anchor_y.to_position(y),
+            y,
         }
     }
 
-    pub fn vertical_center(offset: f32, x: f32, anchor_x: AnchorX) -> Position {
+    pub fn vertical_center(offset: f32, x: Horizontal) -> Position {
         Position {
-            x: anchor_x.to_position(x),
+            x,
             y: Vertical::AtWindowCenterByCenter { offset },
         }
     }
@@ -152,3 +152,5 @@ impl Position {
         Vec2::new(x.round(), y.round())
     }
 }
+
+//TODO: write tests
