@@ -6,11 +6,11 @@ use tetra::{window, ContextBuilder};
 use crate::game::Game;
 use crate::settings::Settings;
 
+mod ascii;
 mod assets;
 mod astro;
 mod avatar;
 mod colors;
-mod cp437;
 mod data;
 mod enums;
 mod game;

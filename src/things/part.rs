@@ -1,25 +1,22 @@
+use crate::ascii::tile::Tile;
 use crate::colors::Colors;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
-use tetra::graphics::Color;
+
+// TODO: get rid of this mess
+// Part logic (like hp) and Part view should be in different places
+// also one file for one part
 
 #[enum_dispatch::enum_dispatch(Part)]
 pub trait PartView {
-    fn ch(&self) -> char;
-    /// tile will display char of part with MAXIMUM z_index
+    /// only part with MAXIMUM z_index will be displayed
     fn z_index(&self) -> i8;
-    /// false if it's a roof for example
+    /// false if it's a roof (invisible when inside)
     fn visible(&self) -> bool {
         true
     }
-    /// color of char
-    fn color(&self) -> Color {
-        Color::WHITE
-    }
-    /// bg color
-    fn bg_color(&self) -> Option<Color> {
-        None
-    }
+    /// tile representation
+    fn tile(&self) -> Tile;
 }
 
 #[enum_dispatch::enum_dispatch]
@@ -33,12 +30,6 @@ pub enum Part {
     Door,
     Seat,
     Terminal,
-}
-
-impl From<&Part> for char {
-    fn from(part: &Part) -> Self {
-        part.ch()
-    }
 }
 
 impl Eq for Part {}
@@ -79,12 +70,12 @@ impl Default for Frame {
 }
 
 impl PartView for Frame {
-    fn ch(&self) -> char {
-        '┼'
-    }
-
     fn z_index(&self) -> i8 {
         0
+    }
+
+    fn tile(&self) -> Tile {
+        Tile::default('┼')
     }
 }
 
@@ -144,16 +135,12 @@ impl Default for Wing {
 }
 
 impl PartView for Wing {
-    fn ch(&self) -> char {
-        self.var.into()
-    }
-
     fn z_index(&self) -> i8 {
         1
     }
 
-    fn color(&self) -> Color {
-        Colors::GRAY
+    fn tile(&self) -> Tile {
+        Tile::new(self.var.into(), Colors::LIGHT_GRAY, None)
     }
 }
 
@@ -231,20 +218,12 @@ impl Default for Wall {
 }
 
 impl PartView for Wall {
-    fn ch(&self) -> char {
-        self.var.into()
-    }
-
     fn z_index(&self) -> i8 {
         2
     }
 
-    fn color(&self) -> Color {
-        Colors::LIGHT_STEEL_BLUE
-    }
-
-    fn bg_color(&self) -> Option<Color> {
-        Some(Colors::BLACK)
+    fn tile(&self) -> Tile {
+        Tile::with_floor(self.var.into(), Colors::LIGHT_GOLDEN_ROD_YELLOW)
     }
 }
 
@@ -266,20 +245,12 @@ impl Default for Floor {
 }
 
 impl PartView for Floor {
-    fn ch(&self) -> char {
-        '.'
-    }
-
     fn z_index(&self) -> i8 {
         1
     }
 
-    fn color(&self) -> Color {
-        Colors::GRAY
-    }
-
-    fn bg_color(&self) -> Option<Color> {
-        Some(Colors::BLACK)
+    fn tile(&self) -> Tile {
+        Tile::with_floor('.', Colors::GRAY)
     }
 }
 
@@ -301,16 +272,16 @@ impl Default for Roof {
 }
 
 impl PartView for Roof {
-    fn ch(&self) -> char {
-        '.'
-    }
-
     fn z_index(&self) -> i8 {
         100
     }
 
     fn visible(&self) -> bool {
         false
+    }
+
+    fn tile(&self) -> Tile {
+        Tile::with_floor('+', Colors::LIGHT_GOLDEN_ROD_YELLOW)
     }
 }
 
@@ -338,28 +309,16 @@ impl Default for Door {
 }
 
 impl PartView for Door {
-    fn ch(&self) -> char {
-        if self.open {
-            '.'
-        } else {
-            '='
-        }
-    }
-
     fn z_index(&self) -> i8 {
         2
     }
 
-    fn color(&self) -> Color {
+    fn tile(&self) -> Tile {
         if self.open {
-            Colors::DARK_GRAY
+            Tile::with_floor('.', Colors::DARK_GRAY)
         } else {
-            Colors::LIGHT_STEEL_BLUE
+            Tile::with_floor('=', Colors::LIGHT_GOLDEN_ROD_YELLOW)
         }
-    }
-
-    fn bg_color(&self) -> Option<Color> {
-        Some(Colors::BLACK)
     }
 }
 
@@ -382,20 +341,12 @@ impl Default for Seat {
 }
 
 impl PartView for Seat {
-    fn ch(&self) -> char {
-        '▬'
-    }
-
     fn z_index(&self) -> i8 {
         9
     }
 
-    fn color(&self) -> Color {
-        Colors::DARK_GRAY
-    }
-
-    fn bg_color(&self) -> Option<Color> {
-        Some(Colors::LIGHT_GRAY)
+    fn tile(&self) -> Tile {
+        Tile::new('▬', Colors::DARK_SLATE_GRAY, Some(Colors::LIGHT_GRAY))
     }
 }
 
@@ -418,19 +369,11 @@ impl Default for Terminal {
 }
 
 impl PartView for Terminal {
-    fn ch(&self) -> char {
-        '◙'
-    }
-
     fn z_index(&self) -> i8 {
         10
     }
 
-    fn color(&self) -> Color {
-        Colors::LIGHT_STEEL_BLUE
-    }
-
-    fn bg_color(&self) -> Option<Color> {
-        Some(Colors::LIME)
+    fn tile(&self) -> Tile {
+        Tile::new('◙', Colors::LIGHT_STEEL_BLUE, Some(Colors::LIGHT_GREEN))
     }
 }

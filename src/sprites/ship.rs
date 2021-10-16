@@ -1,11 +1,13 @@
+use crate::ascii::tile::Tile;
 use crate::assets::TileSet;
 use crate::avatar::Avatar;
+use crate::colors::Colors;
 use crate::geometry::point::Point;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::things::ship::Ship;
 use crate::{Rect, Vec2};
-use tetra::graphics::mesh::{Mesh, ShapeStyle};
+use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
 use tetra::{graphics, Context};
 
@@ -16,6 +18,34 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
     );
     let canvas = Canvas::new(ctx, canvas_size.0, canvas_size.1).unwrap();
     graphics::set_canvas(ctx, &canvas);
+
+    let mut bg_builder = GeometryBuilder::new();
+    let bg_color = Colors::SPACE_VIOLET;
+    for (i, tile) in ship.tiles.iter().enumerate() {
+        if tile.is_void() {
+            continue;
+        }
+        let tile: Tile = tile.into();
+        if let Some(bg) = tile.bg {
+            if bg == bg_color {
+                let point = Point::from_index(i, ship.bounds.0);
+                let pos = Vec2::from(point * TileSet::TILE_SIZE);
+                bg_builder
+                    .rectangle(
+                        ShapeStyle::Fill,
+                        Rectangle::new(
+                            pos.x,
+                            pos.y,
+                            TileSet::TILE_SIZE.0 as f32,
+                            TileSet::TILE_SIZE.1 as f32,
+                        ),
+                    )
+                    .ok();
+            }
+        }
+    }
+    let mesh = bg_builder.build_mesh(ctx).unwrap();
+    mesh.draw(ctx, DrawParams::new().color(bg_color));
     let mesh = Mesh::rectangle(
         ctx,
         ShapeStyle::Fill,
@@ -27,20 +57,20 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
         ),
     )
     .unwrap();
+
     for (i, tile) in ship.tiles.iter().enumerate() {
         if tile.is_void() {
             continue;
         }
+        let tile: Tile = tile.into();
         let point = Point::from_index(i, ship.bounds.0);
         let pos = Vec2::from(point * TileSet::TILE_SIZE);
-        if let Some(color) = tile.bg_color() {
-            mesh.draw(ctx, DrawParams::new().position(pos).color(color));
+        if let Some(color) = tile.bg {
+            if color != bg_color {
+                mesh.draw(ctx, DrawParams::new().position(pos).color(color));
+            }
         }
-        tileset.draw(
-            ctx,
-            tile.ch(),
-            DrawParams::new().position(pos).color(tile.color()),
-        );
+        tileset.draw(ctx, tile.ch, DrawParams::new().position(pos).color(tile.fg));
         if avatar.pos == point {
             tileset.draw(
                 ctx,

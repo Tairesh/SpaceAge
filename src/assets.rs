@@ -1,4 +1,4 @@
-use crate::cp437::char_to_point;
+use crate::ascii::cp437::char_to_point;
 use tetra::graphics::text::Font;
 use tetra::graphics::{DrawParams, Rectangle, Texture};
 use tetra::Context;
