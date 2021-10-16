@@ -1,7 +1,6 @@
-use crate::data::ship::Ship as ShipScheme;
+use crate::data::ship_class::{generate_ship, ShipClass};
+use crate::game::part::Part;
 use crate::geometry::point::Point;
-use crate::things::part::Part;
-use crate::things::ship_generator::generate_ship;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -26,7 +25,7 @@ pub struct Ship {
 }
 
 impl Ship {
-    pub fn generate<S: Into<String>>(name: S, scheme: &ShipScheme) -> Self {
+    pub fn generate<S: Into<String>>(name: S, scheme: &ShipClass) -> Self {
         generate_ship(name, scheme)
     }
 

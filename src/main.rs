@@ -3,13 +3,13 @@
 use tetra::graphics::ImageData;
 use tetra::{window, ContextBuilder};
 
-use crate::game::Game;
+use crate::app::App;
 use crate::settings::Settings;
 
+mod app;
 mod ascii;
 mod assets;
 mod astro;
-mod avatar;
 mod colors;
 mod data;
 mod enums;
@@ -21,7 +21,6 @@ mod savefile;
 mod scenes;
 mod settings;
 mod sprites;
-mod things;
 
 extern crate chrono;
 extern crate enum_dispatch;
@@ -58,5 +57,5 @@ fn main() -> tetra::Result {
     window::set_minimum_size(&mut ctx, 1024, 768)?;
     window::set_maximum_size(&mut ctx, 1920, 1280)?;
 
-    ctx.run(|ctx| Ok(Game::new(ctx, settings)))
+    ctx.run(|ctx| Ok(App::new(ctx, settings)))
 }

@@ -1,15 +1,15 @@
 use crate::assets::Assets;
 use crate::data::game_data::GameData;
+use crate::game::world::World;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::{GameScene, Scene, Transition};
 use crate::settings::Settings;
-use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::Key;
 use tetra::{time, window, Context, Event, Result, State};
 
-pub struct Game {
+pub struct App {
     scenes: Vec<Box<dyn Scene>>,
     pub settings: Rc<RefCell<Settings>>,
     pub assets: Rc<Assets>,
@@ -19,7 +19,7 @@ pub struct Game {
     current_fps: u8,
 }
 
-impl Game {
+impl App {
     pub fn new(ctx: &mut Context, settings: Settings) -> Self {
         let assets = Rc::new(Assets::load(ctx));
         let data = Rc::new(GameData::load());
@@ -131,7 +131,7 @@ impl Game {
     }
 }
 
-impl State for Game {
+impl State for App {
     fn update(&mut self, ctx: &mut Context) -> Result {
         self.show_fps(ctx);
         let transition = if let Some(scene) = self.current_scene() {
@@ -212,7 +212,7 @@ impl State for Game {
     }
 }
 
-impl Drop for Game {
+impl Drop for App {
     fn drop(&mut self) {
         self.settings.borrow_mut().save();
         if let Some(world) = &self.world {

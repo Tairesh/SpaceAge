@@ -1,6 +1,6 @@
 use crate::data::item::Item;
 use crate::data::names_pack::NamesPack;
-use crate::data::ship::Ship;
+use crate::data::ship_class::ShipClass;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -8,7 +8,7 @@ use serde::Deserialize;
 #[serde(rename_all = "snake_case")]
 pub enum DataEntity {
     Item(Item),
-    Ship(Ship),
+    ShipClass(ShipClass),
     NamesPack(NamesPack),
 }
 
@@ -28,7 +28,7 @@ mod tests {
             "tags": [ "BODY_PART" ]
           },
           {
-            "type": "ship",
+            "type": "ship_class",
             "id": "dugong",
             "name": "Dugong",
             "tiles": [
@@ -57,8 +57,8 @@ mod tests {
         } else {
             unreachable!("First DataEntity is not Item!");
         }
-        assert!(matches!(slice[1], DataEntity::Ship(..)));
-        if let DataEntity::Ship(ship) = &slice[1] {
+        assert!(matches!(slice[1], DataEntity::ShipClass(..)));
+        if let DataEntity::ShipClass(ship) = &slice[1] {
             assert_eq!(ship.id, "dugong");
             assert_eq!(ship.bounds, (3, 4));
             assert_eq!(ship.tiles.len(), 3 * 4);

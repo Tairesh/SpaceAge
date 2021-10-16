@@ -1,6 +1,6 @@
 use crate::colors::Colors;
-use crate::things::part::PartView;
-use crate::things::ship::ShipTile;
+use crate::game::part::PartView;
+use crate::game::ship::ShipTile;
 use tetra::graphics::Color;
 
 #[derive(Debug, Clone)]

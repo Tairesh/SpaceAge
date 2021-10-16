@@ -1,11 +1,11 @@
 use crate::ascii::tile::Tile;
 use crate::assets::TileSet;
-use crate::avatar::Avatar;
 use crate::colors::Colors;
+use crate::game::avatar::Avatar;
+use crate::game::ship::Ship;
 use crate::geometry::point::Point;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
-use crate::things::ship::Ship;
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};

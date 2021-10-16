@@ -7,8 +7,8 @@ pub mod main_menu;
 mod settings;
 mod ship_walk;
 
+use crate::app::App;
 use crate::assets::Assets;
-use crate::game::Game;
 use crate::savefile::SaveFile;
 use crate::scenes::create_character::CreateCharacter;
 use crate::scenes::create_world::CreateWorld;
@@ -27,9 +27,9 @@ use tetra::input::{Key, MouseButton};
 use tetra::{Context, Event};
 
 #[derive(Debug, Clone)]
-#[allow(dead_code)]
 pub enum GameScene {
     MainMenu,
+    #[allow(dead_code)]
     Empty,
     Settings,
     CreateWorld,
@@ -40,7 +40,7 @@ pub enum GameScene {
 }
 
 impl GameScene {
-    pub fn into_scene(self, game: &Game, ctx: &mut Context) -> Box<dyn Scene> {
+    pub fn into_scene(self, game: &App, ctx: &mut Context) -> Box<dyn Scene> {
         match self {
             GameScene::MainMenu => Box::new(MainMenu::new(&game.assets)),
             GameScene::Empty => Box::new(Empty {}),

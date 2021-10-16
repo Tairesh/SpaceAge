@@ -1,5 +1,6 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
+use crate::game::world::World;
 use crate::input;
 use crate::scenes::{GameScene, Scene, Transition};
 use crate::sprites::image::Image;
@@ -7,7 +8,6 @@ use crate::sprites::label::Label;
 use crate::sprites::position::Position;
 use crate::sprites::ship::ShipView;
 use crate::sprites::sprite::Sprite;
-use crate::things::world::World;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Instant;

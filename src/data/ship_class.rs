@@ -1,6 +1,14 @@
-use super::part::*;
-use super::ship::{Ship, ShipTile};
-use crate::data::ship::Ship as ShipScheme;
+use crate::game::part::*;
+use crate::game::ship::{Ship, ShipTile};
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct ShipClass {
+    pub id: String,
+    pub name: String,
+    pub tiles: Vec<String>,
+    pub bounds: (usize, usize),
+}
 
 impl From<&str> for ShipTile {
     fn from(s: &str) -> Self {
@@ -43,7 +51,7 @@ impl From<&str> for ShipTile {
     }
 }
 
-pub fn generate_ship<S: Into<String>>(name: S, scheme: &ShipScheme) -> Ship {
+pub fn generate_ship<S: Into<String>>(name: S, scheme: &ShipClass) -> Ship {
     Ship {
         name: name.into(),
         class_name: scheme.name.clone(),
@@ -58,9 +66,9 @@ pub fn generate_ship<S: Into<String>>(name: S, scheme: &ShipScheme) -> Ship {
 
 #[cfg(test)]
 mod tests {
-    use super::super::part::{Part, PartView};
     use super::generate_ship;
     use crate::data::game_data::GameData;
+    use crate::game::part::Part;
 
     #[test]
     fn make_dugong() {

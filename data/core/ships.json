@@ -1,6 +1,6 @@
 [
   {
-    "type": "ship",
+    "type": "ship_class",
     "id": "dugong",
     "name": "Dugong",
     "tiles": [

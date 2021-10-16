@@ -53,7 +53,7 @@ impl CreateWorld {
     pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
         let title = Rc::new(RefCell::new(Label::new(
-            "Create new things:",
+            "Create new game:",
             assets.fonts.astrolab32.clone(),
             Colors::ORANGE_RED,
             Position {

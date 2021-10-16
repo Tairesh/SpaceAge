@@ -1,7 +1,7 @@
 use crate::data::entity::DataEntity;
 use crate::data::item::Item;
 use crate::data::names_pack::NamesPack;
-use crate::data::ship::Ship;
+use crate::data::ship_class::ShipClass;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
@@ -14,7 +14,7 @@ fn make_str(s: &str) -> &'static str {
 #[derive(Debug)]
 pub struct GameData {
     pub items: HashMap<&'static str, Item>,
-    pub ships: HashMap<&'static str, Ship>,
+    pub ships: HashMap<&'static str, ShipClass>,
     pub names: Vec<NamesPack>,
 }
 
@@ -22,7 +22,7 @@ impl GameData {
     pub fn load() -> GameData {
         let mut data = GameData {
             // TODO: adjust amount of entities
-            items: HashMap::with_capacity(10),
+            items: HashMap::with_capacity(1),
             ships: HashMap::with_capacity(1),
             names: Vec::with_capacity(3),
         };
@@ -53,7 +53,7 @@ impl GameData {
             DataEntity::Item(item) => {
                 self.items.insert(make_str(item.id.as_str()), item);
             }
-            DataEntity::Ship(ship) => {
+            DataEntity::ShipClass(ship) => {
                 self.ships.insert(make_str(ship.id.as_str()), ship);
             }
             DataEntity::NamesPack(name_pack) => self.names.push(name_pack),

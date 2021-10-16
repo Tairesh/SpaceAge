@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 use crate::astro::galaxy::Galaxy;
-use crate::avatar::Avatar;
 use crate::data::game_data::GameData;
+use crate::game::avatar::Avatar;
+use crate::game::ship::Ship;
 use crate::geometry::direction::Direction;
 use crate::savefile::{save, SaveFile};
-use crate::things::ship::Ship;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
