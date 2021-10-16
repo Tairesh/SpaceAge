@@ -148,7 +148,7 @@ pub struct SaveFile {
     pub path: PathBuf,
     pub version: String,
     pub time: SystemTime,
-    // TODO: save current_tick
+    pub current_tick: u128,
     pub character: Option<Character>,
     galaxy_meta: GalaxyMeta,
 }
@@ -201,7 +201,13 @@ impl SaveFile {
             .map_err(LoadError::from)?;
         let ship = serde_json::from_str(lines.next().unwrap().map_err(LoadError::from)?.as_str())
             .map_err(LoadError::from)?;
-        Ok(World::new(self.path.clone(), galaxy, avatar, ship))
+        Ok(World::new(
+            self.path.clone(),
+            galaxy,
+            avatar,
+            ship,
+            self.current_tick,
+        ))
     }
 }
 
@@ -234,6 +240,7 @@ impl From<GalaxyMeta> for SaveFile {
             time: SystemTime::now(),
             galaxy_meta,
             character: None,
+            current_tick: 0,
         }
     }
 }
@@ -246,6 +253,7 @@ impl From<&World> for SaveFile {
             time: SystemTime::now(),
             galaxy_meta: world.galaxy.meta.clone(),
             character: Some(world.avatar.character.clone()),
+            current_tick: world.current_tick,
         }
     }
 }

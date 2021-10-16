@@ -18,10 +18,16 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(path: PathBuf, galaxy: Galaxy, avatar: Avatar, ship: Ship) -> Self {
+    pub fn new(
+        path: PathBuf,
+        galaxy: Galaxy,
+        avatar: Avatar,
+        ship: Ship,
+        current_tick: u128,
+    ) -> Self {
         Self {
             path,
-            current_tick: 0,
+            current_tick,
             galaxy,
             avatar,
             ship,
@@ -36,6 +42,7 @@ impl World {
                 galaxy,
                 Avatar::new(savefile.character.clone().unwrap(), ship.find_start_point()),
                 ship,
+                savefile.current_tick,
             )
         } else {
             panic!("Can't load galaxy: {:?}", savefile.path)
