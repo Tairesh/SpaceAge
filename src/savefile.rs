@@ -71,6 +71,24 @@ impl From<std::io::Error> for SaveError {
     }
 }
 
+#[derive(Debug)]
+pub enum LoadError {
+    SystemError(String),
+    DeserializeError(String),
+}
+
+impl From<serde_json::Error> for LoadError {
+    fn from(e: serde_json::Error) -> Self {
+        LoadError::DeserializeError(e.to_string())
+    }
+}
+
+impl From<std::io::Error> for LoadError {
+    fn from(e: std::io::Error) -> Self {
+        LoadError::SystemError(e.to_string())
+    }
+}
+
 fn make_data(savefile: &SaveFile, world: Option<&World>) -> Result<String, SaveError> {
     let mut data = vec![serde_json::to_string(savefile).map_err(SaveError::from)?];
     if let Some(world) = world {
@@ -166,20 +184,23 @@ impl SaveFile {
         self
     }
 
-    pub fn load_galaxy(&self) -> Galaxy {
-        let file = File::open(&self.path).unwrap();
+    pub fn load_galaxy(&self) -> Result<Galaxy, LoadError> {
+        let file = File::open(&self.path).map_err(LoadError::from)?;
         let mut lines = BufReader::new(&file).lines();
-        serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap()
+        serde_json::from_str(lines.nth(1).unwrap().map_err(LoadError::from)?.as_str())
+            .map_err(LoadError::from)
     }
 
-    pub fn load_world(&self) -> World {
-        // TODO: use Result<World, LoadError)
-        let file = File::open(&self.path).unwrap();
+    pub fn load_world(&self) -> Result<World, LoadError> {
+        let file = File::open(&self.path).map_err(LoadError::from)?;
         let mut lines = BufReader::new(&file).lines();
-        let galaxy = serde_json::from_str(lines.nth(1).unwrap().ok().unwrap().as_str()).unwrap();
-        let avatar = serde_json::from_str(lines.next().unwrap().ok().unwrap().as_str()).unwrap();
-        let ship = serde_json::from_str(lines.next().unwrap().ok().unwrap().as_str()).unwrap();
-        World::new(self.path.clone(), galaxy, avatar, ship)
+        let galaxy = serde_json::from_str(lines.nth(1).unwrap().map_err(LoadError::from)?.as_str())
+            .map_err(LoadError::from)?;
+        let avatar = serde_json::from_str(lines.next().unwrap().map_err(LoadError::from)?.as_str())
+            .map_err(LoadError::from)?;
+        let ship = serde_json::from_str(lines.next().unwrap().map_err(LoadError::from)?.as_str())
+            .map_err(LoadError::from)?;
+        Ok(World::new(self.path.clone(), galaxy, avatar, ship))
     }
 }
 

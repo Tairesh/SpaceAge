@@ -94,8 +94,12 @@ impl Game {
                 self.replace_scene(ctx, GameScene::ShipWalk);
             }
             Transition::LoadWorld(savefile) => {
-                self.world = Some(Rc::new(RefCell::new(savefile.load_world())));
-                self.replace_scene(ctx, GameScene::ShipWalk);
+                if let Ok(world) = savefile.load_world() {
+                    self.world = Some(Rc::new(RefCell::new(world)));
+                    self.replace_scene(ctx, GameScene::ShipWalk);
+                } else {
+                    panic!("Can't load world: {:?}", savefile.path)
+                }
             }
             Transition::UnloadWorld => {
                 if let Some(world) = &self.world {

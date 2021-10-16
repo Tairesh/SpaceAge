@@ -29,14 +29,17 @@ impl World {
     }
 
     pub fn create(savefile: &SaveFile, data: &GameData) -> Self {
-        let galaxy = savefile.load_galaxy();
-        let ship = Ship::generate("Dugong", data.ships.get("dugong").unwrap());
-        World::new(
-            savefile.path.clone(),
-            galaxy,
-            Avatar::new(savefile.character.clone().unwrap(), ship.find_start_point()),
-            ship,
-        )
+        if let Ok(galaxy) = savefile.load_galaxy() {
+            let ship = Ship::generate("Dugong", data.ships.get("dugong").unwrap());
+            World::new(
+                savefile.path.clone(),
+                galaxy,
+                Avatar::new(savefile.character.clone().unwrap(), ship.find_start_point()),
+                ship,
+            )
+        } else {
+            panic!("Can't load galaxy: {:?}", savefile.path)
+        }
     }
 
     pub fn save(&self) {
