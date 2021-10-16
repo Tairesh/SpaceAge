@@ -1,4 +1,5 @@
 use crate::data::item::Item;
+use crate::data::names_pack::NamesPack;
 use crate::data::ship::Ship;
 use serde::Deserialize;
 
@@ -8,6 +9,7 @@ use serde::Deserialize;
 pub enum DataEntity {
     Item(Item),
     Ship(Ship),
+    NamesPack(NamesPack),
 }
 
 #[cfg(test)]
@@ -36,6 +38,13 @@ mod tests {
                 "E", "+", "E"
             ],
             "bounds": [3, 4]
+          },
+          {
+            "type": "names_pack",
+            "id": "test",
+            "first_names_male": [ "Ilya", "Victor" ],
+            "first_names_female": [ "Ashley" ],
+            "last_names_male": [ "Agafonov", "Nikolayev" ]
           }
         ]
         "#;
@@ -43,18 +52,27 @@ mod tests {
         let slice = data.as_slice();
         assert!(matches!(slice[0], DataEntity::Item(..)));
         if let DataEntity::Item(item) = &slice[0] {
-            assert!(item.id.eq("heart"));
+            assert_eq!(item.id, "heart");
             assert!(item.tags.contains(&ItemTag::BodyPart));
         } else {
-            unreachable!("Second DataEntity is not Item!");
+            unreachable!("First DataEntity is not Item!");
         }
         assert!(matches!(slice[1], DataEntity::Ship(..)));
         if let DataEntity::Ship(ship) = &slice[1] {
-            assert!(ship.id.eq("dugong"));
+            assert_eq!(ship.id, "dugong");
             assert_eq!(ship.bounds, (3, 4));
             assert_eq!(ship.tiles.len(), 3 * 4);
         } else {
             unreachable!("Second DataEntity is not Ship!");
+        }
+        assert!(matches!(slice[2], DataEntity::NamesPack(..)));
+        if let DataEntity::NamesPack(name_pack) = &slice[2] {
+            assert_eq!(name_pack.id, "test");
+            assert!(name_pack.first_names_male.contains(&"Ilya".to_string()));
+            assert!(name_pack.last_names_male.contains(&"Agafonov".to_string()));
+            assert!(name_pack.last_names_female.is_empty());
+        } else {
+            unreachable!("Third DataEntity is not NamePack!");
         }
     }
 }

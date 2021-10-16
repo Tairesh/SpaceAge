@@ -14,7 +14,6 @@ pub struct Game {
     scenes: Vec<Box<dyn Scene>>,
     settings: Settings,
     assets: Assets,
-    #[allow(dead_code)]
     data: GameData,
     world: Option<Rc<RefCell<World>>>,
     default_title: String,

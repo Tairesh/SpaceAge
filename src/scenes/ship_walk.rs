@@ -22,7 +22,7 @@ impl ShipWalk {
             assets.images.blue_nebula.clone(),
         )));
         let name = Rc::new(RefCell::new(Label::new(
-            world.borrow().avatar.character.name.clone(),
+            world.borrow().ship.name.clone(),
             assets.fonts.astrolab16.clone(),
             Colors::LIGHT_SKY_BLUE,
             Position::by_left_top(10.0, 10.0),
