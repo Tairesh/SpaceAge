@@ -52,11 +52,11 @@ pub struct TileSet {
 }
 
 impl TileSet {
-    pub const TILE_SIZE: (i32, i32) = (14, 16);
+    pub const TILE_SIZE: (i32, i32) = (12, 12);
 
     pub fn new(ctx: &mut Context) -> Self {
         Self {
-            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/14x16.png")).unwrap(),
+            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/12x12.png")).unwrap(),
         }
     }
 

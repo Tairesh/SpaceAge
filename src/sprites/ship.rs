@@ -86,7 +86,6 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
                 mesh.draw(ctx, DrawParams::new().position(pos).color(color));
             }
         }
-        tileset.draw(ctx, tile.ch, DrawParams::new().position(pos).color(tile.fg));
         if avatar.pos == point {
             tileset.draw(
                 ctx,
@@ -95,6 +94,8 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
                     .position(pos)
                     .color(avatar.character.skin_tone.into()),
             );
+        } else {
+            tileset.draw(ctx, tile.ch, DrawParams::new().position(pos).color(tile.fg));
         }
     }
 

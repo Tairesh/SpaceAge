@@ -34,9 +34,9 @@ impl ShipPartView for Door {
 
     fn tile(&self) -> Tile {
         if self.open {
-            Tile::with_floor('.', Colors::LIGHT_GRAY)
+            Tile::with_floor('.', Colors::LIGHT_STEEL_BLUE)
         } else {
-            Tile::with_floor('=', Colors::LIGHT_GOLDEN_ROD_YELLOW)
+            Tile::with_floor('≡', Colors::LIGHT_STEEL_BLUE)
         }
     }
 

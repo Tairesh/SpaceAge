@@ -28,7 +28,7 @@ impl ShipPartView for Terminal {
     }
 
     fn tile(&self) -> Tile {
-        Tile::new('◙', Colors::LIGHT_STEEL_BLUE, Some(Colors::LIGHT_GREEN))
+        Tile::new('◘', Colors::GRAY, Some(Colors::LIME))
     }
 }
 

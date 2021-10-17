@@ -28,7 +28,7 @@ impl ShipPartView for Seat {
     }
 
     fn tile(&self) -> Tile {
-        Tile::new('▬', Colors::DARK_SLATE_GRAY, Some(Colors::LIGHT_GRAY))
+        Tile::new('▬', Colors::GRAY, Some(Colors::DARK_GRAY))
     }
 }
 
