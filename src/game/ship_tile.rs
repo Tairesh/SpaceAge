@@ -1,11 +1,10 @@
-use crate::game::part::{Part, PartInteract, PartView};
-use crate::game::part_action::PartAction;
 use crate::game::passage::Passage;
+use crate::game::ship_parts::{ShipPart, ShipPartAction, ShipPartInteract, ShipPartView};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ShipTile {
-    pub parts: Vec<Part>,
+    pub parts: Vec<ShipPart>,
 }
 
 impl ShipTile {
@@ -13,7 +12,7 @@ impl ShipTile {
         self.parts.is_empty()
     }
 
-    pub fn top_part(&self) -> Option<&Part> {
+    pub fn top_part(&self) -> Option<&ShipPart> {
         self.parts.iter().filter(|p| p.visible()).max()
     }
 
@@ -24,21 +23,21 @@ impl ShipTile {
         self.top_part().unwrap().passage()
     }
 
-    pub fn support_action(&self, action: PartAction) -> bool {
-        self.parts.iter().any(|p| p.support_action(action))
+    pub fn supports_action(&self, action: ShipPartAction) -> bool {
+        self.parts.iter().any(|p| p.supports_action(action))
     }
 
-    pub fn action_length(&self, action: PartAction) -> Option<u32> {
+    pub fn action_length(&self, action: ShipPartAction) -> Option<u32> {
         self.parts
             .iter()
-            .find(|p| p.support_action(action))?
+            .find(|p| p.supports_action(action))?
             .action_length(action)
     }
 
-    pub fn act(&mut self, action: PartAction) {
+    pub fn act(&mut self, action: ShipPartAction) {
         self.parts
             .iter_mut()
-            .filter(|p| p.support_action(action))
+            .filter(|p| p.supports_action(action))
             .for_each(|p| {
                 p.act(action);
             });

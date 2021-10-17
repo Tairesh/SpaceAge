@@ -1,7 +1,7 @@
 use crate::assets::{Assets, TileSet};
 use crate::colors::Colors;
 use crate::game::action::{Action, ActionType};
-use crate::game::part_action::PartAction;
+use crate::game::ship_parts::ShipPartAction;
 use crate::game::ship_tile::ShipTile;
 use crate::game::world::World;
 use crate::geometry::direction::{Direction, DIR9};
@@ -38,8 +38,8 @@ impl GameMode {
     pub fn cursor_here(&self, tile: &ShipTile) -> bool {
         match self {
             GameMode::Default => false,
-            GameMode::Opening => tile.support_action(PartAction::Open),
-            GameMode::Closing => tile.support_action(PartAction::Close),
+            GameMode::Opening => tile.supports_action(ShipPartAction::Open),
+            GameMode::Closing => tile.supports_action(ShipPartAction::Close),
         }
     }
 }
@@ -145,8 +145,10 @@ impl Scene for ShipWalk {
                     if self.selected.is_none() {
                         self.select(dir);
                         let mut world = self.world.borrow_mut();
-                        world.avatar.action =
-                            Action::new(ActionType::ActivatingPart(dir, PartAction::Open), &world);
+                        world.avatar.action = Action::new(
+                            ActionType::ActivatingPart(dir, ShipPartAction::Open),
+                            &world,
+                        );
                     }
                 } else if self.selected.is_some() {
                     self.mode = GameMode::Default;
@@ -161,8 +163,10 @@ impl Scene for ShipWalk {
                     if self.selected.is_none() {
                         self.select(dir);
                         let mut world = self.world.borrow_mut();
-                        world.avatar.action =
-                            Action::new(ActionType::ActivatingPart(dir, PartAction::Close), &world);
+                        world.avatar.action = Action::new(
+                            ActionType::ActivatingPart(dir, ShipPartAction::Close),
+                            &world,
+                        );
                     }
                 } else if self.selected.is_some() {
                     self.mode = GameMode::Default;

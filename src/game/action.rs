@@ -1,5 +1,5 @@
-use crate::game::part_action::PartAction;
 use crate::game::passage::Passage;
+use crate::game::ship_parts::ShipPartAction;
 use crate::game::world::World;
 use crate::geometry::direction::Direction;
 use serde::{Deserialize, Serialize};
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 pub enum ActionType {
     SkippingTime,
     Walking(Direction),
-    ActivatingPart(Direction, PartAction),
+    ActivatingPart(Direction, ShipPartAction),
 }
 
 impl ActionType {

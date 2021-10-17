@@ -1,5 +1,5 @@
 use crate::colors::Colors;
-use crate::game::part::PartView;
+use crate::game::ship_parts::ShipPartView;
 use crate::game::ship_tile::ShipTile;
 use tetra::graphics::Color;
 
