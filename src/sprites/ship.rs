@@ -91,10 +91,11 @@ pub struct ShipView {
     rect: Option<Rect>,
     zoom: f32,
     visible: bool,
+    avatar_pos: Point,
 }
 
-fn position(avatar: &Avatar, zoom: f32) -> Position {
-    let pos = avatar.pos * TileSet::TILE_SIZE * zoom + TileSet::TILE_SIZE;
+fn position(avatar_pos: Point, zoom: f32) -> Position {
+    let pos = avatar_pos * TileSet::TILE_SIZE * zoom + TileSet::TILE_SIZE;
     Position {
         x: Horizontal::AtWindowCenterByLeft {
             offset: -pos.x as f32,
@@ -115,17 +116,28 @@ impl ShipView {
     ) -> Self {
         Self {
             canvas: draw_ship(ctx, ship, avatar, tileset),
-            position: position(avatar, zoom),
+            position: position(avatar.pos, zoom),
             rect: None,
             zoom,
             visible: true,
+            avatar_pos: avatar.pos,
         }
+    }
+
+    fn repositionate(&mut self, ctx: &mut Context) {
+        self.position = position(self.avatar_pos, self.zoom);
+        self.positionate(ctx, window::get_size(ctx));
     }
 
     pub fn update(&mut self, ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) {
         self.canvas = draw_ship(ctx, ship, avatar, tileset);
-        self.position = position(avatar, self.zoom);
-        self.positionate(ctx, window::get_size(ctx));
+        self.avatar_pos = avatar.pos;
+        self.repositionate(ctx);
+    }
+
+    pub fn set_zoom(&mut self, zoom: f32, ctx: &mut Context) {
+        self.zoom = zoom;
+        self.repositionate(ctx);
     }
 }
 

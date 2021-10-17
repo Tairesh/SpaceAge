@@ -44,6 +44,52 @@ impl GameMode {
     }
 }
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+struct Zoom(u8);
+
+impl Zoom {
+    pub fn as_view(&self) -> f32 {
+        (*self).into()
+    }
+
+    pub fn as_scale(&self) -> Vec2 {
+        let f = self.as_view();
+        Vec2::new(f, f)
+    }
+
+    pub fn inc(&mut self) -> bool {
+        if self.0 < 7 {
+            self.0 += 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn dec(&mut self) -> bool {
+        if self.0 > 1 {
+            self.0 -= 1;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+impl From<Zoom> for f32 {
+    fn from(z: Zoom) -> Self {
+        match z.0 {
+            1 | 0 => 0.25,
+            2 => 0.5,
+            3 => 1.0,
+            4 => 2.0,
+            5 => 3.0,
+            6 => 4.0,
+            7.. => 5.0,
+        }
+    }
+}
+
 pub struct ShipWalk {
     #[allow(dead_code)]
     world: Rc<RefCell<World>>,
@@ -54,6 +100,7 @@ pub struct ShipWalk {
     mode: GameMode,
     cursor: Mesh,
     selected: Option<Direction>,
+    zoom: Zoom,
 }
 
 impl ShipWalk {
@@ -67,12 +114,13 @@ impl ShipWalk {
             Colors::LIGHT_SKY_BLUE,
             Position::by_left_top(10.0, 10.0),
         )));
+        let zoom = Zoom(4); // TODO: load current zoom from savefile
         let ship_view = Rc::new(RefCell::new(ShipView::new(
             ctx,
             &world.borrow().ship,
             &world.borrow().avatar,
             &assets.tileset,
-            2.0,
+            zoom.as_view(),
         )));
         Self {
             world,
@@ -93,6 +141,7 @@ impl ShipWalk {
             )
             .unwrap(),
             selected: None,
+            zoom,
         }
     }
 
@@ -105,8 +154,6 @@ impl ShipWalk {
 }
 
 impl Scene for ShipWalk {
-    // TODO: positionate ship relative to avatar position
-    // TODO: add zoom
     fn update(&mut self, ctx: &mut Context, focused: bool) -> Transition {
         if focused {
             return Transition::DoNothing;
@@ -114,6 +161,13 @@ impl Scene for ShipWalk {
 
         match self.mode {
             GameMode::Default => {
+                if (input::is_mouse_scrolled_down(ctx) && self.zoom.dec())
+                    || (input::is_mouse_scrolled_up(ctx) && self.zoom.inc())
+                {
+                    self.ship_view
+                        .borrow_mut()
+                        .set_zoom(self.zoom.as_view(), ctx);
+                }
                 if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
                     return Transition::Push(GameScene::GameMenu);
                 } else if input::is_pressed_key_with_mod(ctx, Key::O, None) {
@@ -143,6 +197,7 @@ impl Scene for ShipWalk {
                 }
                 if let Some(dir) = input::get_direction_keys_down(ctx) {
                     if self.selected.is_none() {
+                        // TODO: do not open if dir is HERE
                         self.select(dir);
                         let mut world = self.world.borrow_mut();
                         world.avatar.action = Action::new(
@@ -159,8 +214,10 @@ impl Scene for ShipWalk {
                 if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
                     self.mode = GameMode::Default;
                 }
+                // TODO: move it in some function to avoid duplication
                 if let Some(dir) = input::get_direction_keys_down(ctx) {
                     if self.selected.is_none() {
+                        // TODO: do not close if dir is HERE
                         self.select(dir);
                         let mut world = self.world.borrow_mut();
                         world.avatar.action = Action::new(
@@ -193,7 +250,8 @@ impl Scene for ShipWalk {
         if self.mode.draw_cursors() {
             let world = self.world.borrow();
             let rect = self.ship_view.borrow().rect();
-            let center = Vec2::from(world.avatar.pos * TileSet::TILE_SIZE * 2.0) + (rect.x, rect.y);
+            let center = Vec2::from(world.avatar.pos * TileSet::TILE_SIZE * self.zoom.as_view())
+                + (rect.x, rect.y);
 
             for dir in DIR9 {
                 let pos = world.avatar.pos + dir;
@@ -202,12 +260,12 @@ impl Scene for ShipWalk {
                         let delta = Vec2::new(
                             (dir.dx() * TileSet::TILE_SIZE.0) as f32,
                             (dir.dy() * TileSet::TILE_SIZE.1) as f32,
-                        ) * 2.0;
+                        ) * self.zoom.as_view();
                         self.cursor.draw(
                             ctx,
                             DrawParams::new()
                                 .position(center + delta)
-                                .scale(Vec2::new(2.0, 2.0))
+                                .scale(self.zoom.as_scale())
                                 .color(Colors::ORANGE.with_alpha(0.7)),
                         );
                     }
@@ -218,11 +276,11 @@ impl Scene for ShipWalk {
                 let delta = Vec2::new(
                     (dir.dx() * TileSet::TILE_SIZE.0) as f32,
                     (dir.dy() * TileSet::TILE_SIZE.1) as f32,
-                ) * 2.0;
+                ) * self.zoom.as_view();
                 self.cursor.draw(
                     ctx,
                     DrawParams::new()
-                        .scale(Vec2::new(2.0, 2.0))
+                        .scale(self.zoom.as_scale())
                         .position(center + delta)
                         .color(Colors::LIGHT_YELLOW.with_alpha(0.7)),
                 )
