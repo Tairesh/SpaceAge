@@ -19,7 +19,7 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 use tetra::input::{Key, KeyModifier};
-use tetra::{graphics, window, Context, Event};
+use tetra::{window, Context, Event};
 
 fn random_seed<R: Rng + ?Sized>(rng: &mut R) -> String {
     rng.next_u32().to_string()
@@ -332,10 +332,6 @@ impl Scene for CreateWorld {
 
     fn event(&mut self, _ctx: &mut Context, event: Event, focused: bool) -> Transition {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
-    }
-
-    fn draw(&mut self, ctx: &mut Context) {
-        graphics::clear(ctx, Colors::SPACE_VIOLET);
     }
 
     fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {

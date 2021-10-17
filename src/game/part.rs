@@ -1,5 +1,6 @@
 use crate::ascii::tile::Tile;
 use crate::colors::Colors;
+use crate::game::part_action::PartAction;
 use crate::game::passage::Passage;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -23,6 +24,13 @@ pub trait PartView {
 #[enum_dispatch::enum_dispatch(Part)]
 pub trait PartInteract {
     fn passage(&self) -> Passage;
+    fn support_action(&self, action: PartAction) -> bool {
+        self.action_length(action).is_some()
+    }
+    fn action_length(&self, _action: PartAction) -> Option<u32> {
+        None
+    }
+    fn act(&mut self, _action: PartAction) {}
 }
 
 #[enum_dispatch::enum_dispatch]
@@ -364,6 +372,36 @@ impl PartInteract for Door {
             Passage::Passable(10)
         } else {
             Passage::Unpassable
+        }
+    }
+
+    fn action_length(&self, action: PartAction) -> Option<u32> {
+        match action {
+            PartAction::Open => {
+                if !self.open {
+                    Some(10)
+                } else {
+                    None
+                }
+            }
+            PartAction::Close => {
+                if self.open {
+                    Some(10)
+                } else {
+                    None
+                }
+            } // _ => false,
+        }
+    }
+
+    fn act(&mut self, action: PartAction) {
+        match action {
+            PartAction::Open => {
+                self.open = true;
+            }
+            PartAction::Close => {
+                self.open = false;
+            }
         }
     }
 }

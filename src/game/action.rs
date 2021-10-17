@@ -1,28 +1,32 @@
+use crate::game::part_action::PartAction;
 use crate::game::passage::Passage;
 use crate::game::world::World;
 use crate::geometry::direction::Direction;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[non_exhaustive]
 pub enum ActionType {
     SkippingTime,
     Walking(Direction),
+    ActivatingPart(Direction, PartAction),
 }
 
 impl ActionType {
-    pub fn length(&self, world: &World) -> Option<u64> {
+    pub fn length(&self, world: &World) -> Option<u32> {
         match self {
             ActionType::SkippingTime => Some(1),
             ActionType::Walking(dir) => {
-                let point = world.avatar.pos + *dir;
-                if let Some(tile) = world.ship.tiles.get(point.to_index(world.ship.bounds.0)) {
-                    match tile.passage() {
-                        Passage::Passable(length) => Some(length as u64),
-                        Passage::Unpassable => None,
-                    }
+                let tile = world.ship.get_tile(world.avatar.pos + *dir)?;
+                if let Passage::Passable(length) = tile.passage() {
+                    Some(length as u32)
                 } else {
                     None
                 }
+            }
+            ActionType::ActivatingPart(dir, action) => {
+                let tile = world.ship.get_tile(world.avatar.pos + *dir)?;
+                tile.action_length(*action)
             }
         }
     }
@@ -45,6 +49,12 @@ impl Action {
             ActionType::SkippingTime => {}
             ActionType::Walking(dir) => {
                 world.move_avatar(dir);
+            }
+            ActionType::ActivatingPart(dir, action) => {
+                let pos = world.avatar.pos + dir;
+                if let Some(tile) = world.ship.get_tile_mut(pos) {
+                    tile.act(action);
+                }
             }
         }
     }

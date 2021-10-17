@@ -21,4 +21,12 @@ impl Ship {
     pub fn find_start_point(&self) -> Point {
         Point::new(self.bounds.0 as i32 / 2, self.bounds.1 as i32 / 2)
     }
+
+    pub fn get_tile(&self, point: Point) -> Option<&ShipTile> {
+        self.tiles.get(point.to_index(self.bounds.0))
+    }
+
+    pub fn get_tile_mut(&mut self, point: Point) -> Option<&mut ShipTile> {
+        self.tiles.get_mut(point.to_index(self.bounds.0))
+    }
 }

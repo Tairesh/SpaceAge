@@ -166,7 +166,6 @@ impl State for App {
 
     fn draw(&mut self, ctx: &mut Context) -> Result {
         if let Some(scene) = self.current_scene() {
-            scene.draw(ctx);
             if let Some(sprites) = scene.sprites() {
                 for sprite in sprites.iter() {
                     let mut sprite = sprite.borrow_mut();
@@ -175,6 +174,7 @@ impl State for App {
                     }
                 }
             }
+            scene.draw(ctx);
         }
         Ok(())
     }
