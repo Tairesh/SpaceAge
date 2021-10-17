@@ -4,7 +4,7 @@ use crate::colors::Colors;
 use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
 use crate::geometry::point::Point;
-use crate::sprites::position::Position;
+use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
@@ -93,29 +93,39 @@ pub struct ShipView {
     visible: bool,
 }
 
+fn position(avatar: &Avatar, zoom: f32) -> Position {
+    let pos = avatar.pos * TileSet::TILE_SIZE * zoom + TileSet::TILE_SIZE;
+    Position {
+        x: Horizontal::AtWindowCenterByLeft {
+            offset: -pos.x as f32,
+        },
+        y: Vertical::AtWindowCenterByTop {
+            offset: -pos.y as f32,
+        },
+    }
+}
+
 impl ShipView {
     pub fn new(
         ctx: &mut Context,
         ship: &Ship,
         avatar: &Avatar,
         tileset: &TileSet,
-        position: Position,
+        zoom: f32,
     ) -> Self {
         Self {
             canvas: draw_ship(ctx, ship, avatar, tileset),
-            position,
+            position: position(avatar, zoom),
             rect: None,
-            zoom: 2.0,
+            zoom,
             visible: true,
         }
     }
 
     pub fn update(&mut self, ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) {
-        let old_size = self.canvas.size();
         self.canvas = draw_ship(ctx, ship, avatar, tileset);
-        if old_size != self.canvas.size() {
-            self.positionate(ctx, window::get_size(ctx));
-        }
+        self.position = position(avatar, self.zoom);
+        self.positionate(ctx, window::get_size(ctx));
     }
 }
 

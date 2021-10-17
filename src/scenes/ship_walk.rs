@@ -72,7 +72,7 @@ impl ShipWalk {
             &world.borrow().ship,
             &world.borrow().avatar,
             &assets.tileset,
-            Position::center(),
+            2.0,
         )));
         Self {
             world,
