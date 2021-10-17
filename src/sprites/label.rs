@@ -34,6 +34,11 @@ impl Label {
             visible: false,
         }
     }
+
+    pub fn update<C: Into<String>>(&mut self, text: C, ctx: &mut Context, window_size: (i32, i32)) {
+        self.set_value(text);
+        self.positionate(ctx, window_size);
+    }
 }
 
 impl Draw for Label {

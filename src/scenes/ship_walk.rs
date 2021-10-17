@@ -18,7 +18,7 @@ use std::time::Instant;
 use tetra::graphics::mesh::{Mesh, ShapeStyle};
 use tetra::graphics::{DrawParams, Rectangle};
 use tetra::input::{Key, KeyModifier};
-use tetra::Context;
+use tetra::{window, Context};
 
 #[derive(Debug)]
 enum GameMode {
@@ -96,6 +96,7 @@ pub struct ShipWalk {
     assets: Rc<Assets>,
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
     ship_view: Rc<RefCell<ShipView>>,
+    clock: Rc<RefCell<Label>>,
     last_walk: Instant,
     mode: GameMode,
     cursor: Mesh,
@@ -122,11 +123,19 @@ impl ShipWalk {
             &assets.tileset,
             zoom.as_view(),
         )));
+        // TODO: implement a graphic clock with binary display
+        let clock = Rc::new(RefCell::new(Label::new(
+            format!("{}", world.borrow().time()),
+            assets.fonts.nasa24.clone(),
+            Colors::ORANGE,
+            Position::by_right_top(-10.0, 10.0),
+        )));
         Self {
             world,
             assets,
-            sprites: vec![bg, name, ship_view.clone()],
+            sprites: vec![bg, name, ship_view.clone(), clock.clone()],
             ship_view,
+            clock,
             last_walk: Instant::now(),
             mode: GameMode::Default,
             cursor: Mesh::rectangle(
@@ -235,11 +244,16 @@ impl Scene for ShipWalk {
         if self.world.borrow().avatar.action.is_some() {
             let mut world = self.world.borrow_mut();
             world.tick();
+            let window_size = window::get_size(ctx);
+            self.clock
+                .borrow_mut()
+                .update(format!("{}", world.time()), ctx, window_size);
             self.ship_view.borrow_mut().update(
                 ctx,
                 &world.ship,
                 &world.avatar,
                 &self.assets.tileset,
+                window_size,
             );
         }
 

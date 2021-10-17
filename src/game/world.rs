@@ -5,13 +5,14 @@ use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
 use crate::geometry::direction::Direction;
 use crate::savefile::{save, SaveFile};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct World {
     pub path: PathBuf,
-    pub current_tick: u128,
+    pub current_tick: u128, // TODO: create Clock structure
     pub galaxy: Galaxy,
     pub avatar: Avatar,
     pub ship: Ship,
@@ -55,10 +56,15 @@ impl World {
             .ok();
     }
 
-    // TODO: probably this should be moved to Ship
+    pub fn time(&self) -> DateTime<Utc> {
+        DateTime::from_utc(
+            NaiveDateTime::from_timestamp(32_503_680_000 + self.current_tick as i64 / 60, 0),
+            Utc,
+        )
+    }
+
     pub fn move_avatar(&mut self, dir: Direction) {
-        let pos = self.avatar.pos;
-        self.avatar.pos = pos + dir;
+        self.avatar.pos = self.avatar.pos + dir;
         self.avatar.vision = dir;
     }
 

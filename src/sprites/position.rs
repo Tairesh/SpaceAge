@@ -80,6 +80,13 @@ impl Position {
         Position::new(x, y, AnchorX::Left, AnchorY::Top)
     }
 
+    pub fn by_right_top(x_offset: f32, y: f32) -> Position {
+        Position {
+            x: Horizontal::AtWindowRightByRight { offset: x_offset },
+            y: AnchorY::Top.to_position(y),
+        }
+    }
+
     pub fn center() -> Position {
         Position {
             x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },

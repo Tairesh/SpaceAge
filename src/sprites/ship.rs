@@ -144,20 +144,27 @@ impl ShipView {
         }
     }
 
-    fn repositionate(&mut self, ctx: &mut Context) {
+    fn repositionate(&mut self, ctx: &mut Context, window_size: (i32, i32)) {
         self.position = position(self.avatar_pos, self.zoom);
-        self.positionate(ctx, window::get_size(ctx));
+        self.positionate(ctx, window_size);
     }
 
-    pub fn update(&mut self, ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) {
+    pub fn update(
+        &mut self,
+        ctx: &mut Context,
+        ship: &Ship,
+        avatar: &Avatar,
+        tileset: &TileSet,
+        window_size: (i32, i32),
+    ) {
         self.canvas = draw_ship(ctx, ship, avatar, tileset);
         self.avatar_pos = avatar.pos;
-        self.repositionate(ctx);
+        self.repositionate(ctx, window_size);
     }
 
     pub fn set_zoom(&mut self, zoom: f32, ctx: &mut Context) {
         self.zoom = zoom;
-        self.repositionate(ctx);
+        self.repositionate(ctx, window::get_size(ctx));
     }
 }
 
