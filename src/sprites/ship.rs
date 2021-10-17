@@ -1,6 +1,7 @@
 use crate::ascii::tile::Tile;
 use crate::assets::TileSet;
 use crate::colors::Colors;
+use crate::fov::field_of_view_set;
 use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
 use crate::geometry::point::Point;
@@ -58,6 +59,8 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
     )
     .unwrap();
 
+    let fov = field_of_view_set(avatar.pos, i32::max(ship.bounds.0, ship.bounds.1), ship);
+    let mut fov_builder = GeometryBuilder::new();
     for (i, tile) in ship.tiles.iter().enumerate() {
         if tile.is_void() {
             continue;
@@ -66,6 +69,19 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
         let point = Point::from_index(i, ship.bounds.0);
         let pos = Vec2::from(point * TileSet::TILE_SIZE);
         if let Some(color) = tile.bg {
+            if !fov.contains(&point) {
+                fov_builder
+                    .rectangle(
+                        ShapeStyle::Fill,
+                        Rectangle::new(
+                            pos.x,
+                            pos.y,
+                            TileSet::TILE_SIZE.0 as f32,
+                            TileSet::TILE_SIZE.1 as f32,
+                        ),
+                    )
+                    .ok();
+            }
             if color != bg_color {
                 mesh.draw(ctx, DrawParams::new().position(pos).color(color));
             }
@@ -81,6 +97,10 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
             );
         }
     }
+
+    let mesh = fov_builder.build_mesh(ctx).unwrap();
+    mesh.draw(ctx, DrawParams::new().color(Colors::BLACK.with_alpha(0.5)));
+
     graphics::reset_canvas(ctx);
     canvas
 }

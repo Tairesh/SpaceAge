@@ -16,7 +16,7 @@ pub struct ShipClass {
     pub id: String,
     pub name: String,
     pub tiles: Vec<String>,
-    pub bounds: (usize, usize),
+    pub bounds: (i32, i32),
 }
 
 impl From<&str> for ShipTile {

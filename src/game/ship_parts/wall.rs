@@ -83,7 +83,11 @@ impl ShipPartView for Wall {
     }
 
     fn tile(&self) -> Tile {
-        Tile::with_floor(self.var.into(), Colors::LIGHT_GOLDEN_ROD_YELLOW)
+        Tile::with_floor(self.var.into(), Colors::LIGHT_STEEL_BLUE)
+    }
+
+    fn is_transparent(&self) -> bool {
+        false
     }
 }
 

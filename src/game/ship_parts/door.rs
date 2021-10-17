@@ -39,6 +39,10 @@ impl ShipPartView for Door {
             Tile::with_floor('=', Colors::LIGHT_GOLDEN_ROD_YELLOW)
         }
     }
+
+    fn is_transparent(&self) -> bool {
+        self.open
+    }
 }
 
 impl ShipPartInteract for Door {

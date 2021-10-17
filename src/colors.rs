@@ -291,6 +291,7 @@ impl Colors {
     pub const DARK_BROWN: Color = Color::rgb(u8tof32(32), u8tof32(7), u8tof32(0));
     pub const DARK_GRAY: Color = Color::rgb(u8tof32(33), u8tof32(33), u8tof32(33));
     pub const DARK_GREY: Color = Colors::DARK_GRAY;
+    pub const DARKEST_GRAY: Color = Color::rgb(u8tof32(10), u8tof32(10), u8tof32(10));
     pub const DARK_GREEN: Color = Color::rgb(u8tof32(0), u8tof32(50), u8tof32(0));
     pub const DEEP_DARK_GREEN: Color = Color::rgb(u8tof32(10), u8tof32(20), u8tof32(0));
     pub const DARK_KHAKI: Color = Color::rgb(u8tof32(189), u8tof32(183), u8tof32(107));

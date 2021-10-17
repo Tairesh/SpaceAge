@@ -11,7 +11,7 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new(x: i32, y: i32) -> Self {
+    pub const fn new(x: i32, y: i32) -> Self {
         Point { x, y }
     }
 
@@ -29,13 +29,17 @@ impl Point {
     }
 
     /// Helper for map index conversion
-    pub fn to_index(self, width: usize) -> usize {
-        (self.y as usize * width) + self.x as usize
+    pub fn to_index(self, width: i32) -> Option<usize> {
+        if self.x < 0 || self.y < 0 || self.x >= width {
+            None
+        } else {
+            Some(((self.y * width) + self.x) as usize)
+        }
     }
 
     /// Helper for map index conversion
-    pub fn from_index(index: usize, width: usize) -> Point {
-        Point::new((index % width) as i32, (index / width) as i32)
+    pub fn from_index(index: usize, width: i32) -> Point {
+        Point::new(index as i32 % width, index as i32 / width)
     }
 
     /// Direction to other point
@@ -230,9 +234,15 @@ mod tests {
     #[test]
     fn index_converting() {
         let pt = Point::new(1, 2);
-        assert_eq!(pt.to_index(10), 21);
+        assert_eq!(pt.to_index(10).unwrap(), 21);
         let pt2 = Point::from_index(21, 10);
         assert_eq!(pt2, pt);
+        let pt = Point::new(-1, 2);
+        assert!(pt.to_index(10).is_none());
+        let pt = Point::new(1, -2);
+        assert!(pt.to_index(10).is_none());
+        let pt = Point::new(10, 2);
+        assert!(pt.to_index(10).is_none());
     }
 
     #[test]

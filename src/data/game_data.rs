@@ -75,7 +75,7 @@ mod tests {
         assert!(heart.tags.contains(&ItemTag::BodyPart));
         let dugong = data.ships.get("dugong").unwrap();
         assert_eq!(dugong.name, "Dugong");
-        assert_eq!(dugong.tiles.len(), dugong.bounds.0 * dugong.bounds.1);
+        assert_eq!(dugong.tiles.len() as i32, dugong.bounds.0 * dugong.bounds.1);
         assert_eq!(dugong.tiles.as_slice()[30], "@");
         assert!(!data.names.is_empty());
     }

@@ -38,6 +38,10 @@ pub trait ShipPartView {
     }
     /// tile representation
     fn tile(&self) -> Tile;
+    /// is tile with this part transparent
+    fn is_transparent(&self) -> bool {
+        true
+    }
 }
 
 #[enum_dispatch(ShipPart)]

@@ -27,7 +27,7 @@ impl Tile {
         Self {
             ch,
             fg,
-            bg: Some(Colors::SPACE_VIOLET),
+            bg: Some(Colors::DARKEST_GRAY),
         }
     }
 

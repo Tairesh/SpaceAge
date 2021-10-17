@@ -42,4 +42,8 @@ impl ShipTile {
                 p.act(action);
             });
     }
+
+    pub fn is_transparent(&self) -> bool {
+        self.parts.iter().all(|p| p.is_transparent())
+    }
 }
