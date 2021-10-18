@@ -6,6 +6,7 @@ mod load_world;
 pub mod main_menu;
 mod settings;
 mod ship_walk;
+mod terminal;
 
 use crate::app::App;
 use crate::assets::Assets;
@@ -18,6 +19,7 @@ use crate::scenes::load_world::LoadWorld;
 use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
 use crate::scenes::ship_walk::ShipWalk;
+use crate::scenes::terminal::Terminal;
 use crate::sprites::image::Image;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::Sprite;
@@ -37,6 +39,7 @@ pub enum GameScene {
     CreateCharacter(SaveFile),
     ShipWalk,
     GameMenu,
+    Terminal,
 }
 
 impl GameScene {
@@ -61,6 +64,7 @@ impl GameScene {
                 ctx,
             )),
             GameScene::GameMenu => Box::new(GameMenu::new(&game.assets)),
+            GameScene::Terminal => Box::new(Terminal::new(ctx, &game.assets)),
         }
     }
 }

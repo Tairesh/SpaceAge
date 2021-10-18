@@ -27,6 +27,10 @@ impl ShipTile {
         self.parts.iter().any(|p| p.supports_action(action))
     }
 
+    pub fn supports_any_action(&self) -> bool {
+        self.parts.iter().any(|p| !p.supported_actions().is_empty())
+    }
+
     pub fn action_length(&self, action: ShipPartAction) -> Option<u32> {
         self.parts
             .iter()

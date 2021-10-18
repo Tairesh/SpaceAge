@@ -77,7 +77,8 @@ impl ShipPartInteract for Door {
                 } else {
                     None
                 }
-            } // _ => false,
+            }
+            _ => None,
         }
     }
 
@@ -89,6 +90,7 @@ impl ShipPartInteract for Door {
             ShipPartAction::Close => {
                 self.open = false;
             }
+            _ => {}
         }
     }
 }

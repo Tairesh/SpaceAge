@@ -1,4 +1,5 @@
 pub mod alert;
+pub mod bg;
 pub mod button;
 pub mod galaxy;
 pub mod image;

@@ -34,15 +34,8 @@ impl Image {
 
     pub fn repeat(texture: Texture) -> Self {
         Self {
-            texture,
-            region: None,
-            color: None,
-            nine_slice: None,
-            scale: Vec2::new(1.0, 1.0),
-            position: Position::center(),
-            rect: None,
-            visible: true,
             repeat: true,
+            ..Self::new(texture, Position::center())
         }
     }
 

@@ -2,6 +2,7 @@ use super::super::passage::Passage;
 use super::{ShipPartInteract, ShipPartView};
 use crate::ascii::tile::Tile;
 use crate::colors::Colors;
+use crate::game::ship_parts::ShipPartAction;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
@@ -35,5 +36,17 @@ impl ShipPartView for Terminal {
 impl ShipPartInteract for Terminal {
     fn passage(&self) -> Passage {
         Passage::Unpassable
+    }
+
+    fn supported_actions(&self) -> &[ShipPartAction] {
+        &[ShipPartAction::UseTerminal]
+    }
+
+    fn action_length(&self, action: ShipPartAction) -> Option<u32> {
+        if let ShipPartAction::UseTerminal = action {
+            Some(0)
+        } else {
+            None
+        }
     }
 }

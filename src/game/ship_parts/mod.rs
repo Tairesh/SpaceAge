@@ -26,6 +26,7 @@ use std::cmp::Ordering;
 pub enum ShipPartAction {
     Open,
     Close,
+    UseTerminal,
 }
 
 #[enum_dispatch(ShipPart)]

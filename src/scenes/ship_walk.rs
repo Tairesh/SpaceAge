@@ -41,7 +41,7 @@ impl GameMode {
                 if let Some(action) = action {
                     tile.supports_action(*action)
                 } else {
-                    true
+                    tile.supports_any_action()
                 }
             }
         }
@@ -236,7 +236,15 @@ impl Scene for ShipWalk {
                             let mut world = self.world.borrow_mut();
                             world.avatar.action =
                                 Action::new(ActionType::ActivatingPart(dir, action), &world);
-                        } // TODO: select action from list
+                        } else {
+                            // TODO: select action from list
+                            let world = self.world.borrow();
+                            if let Some(tile) = world.ship.get_tile(world.avatar.pos + dir) {
+                                if tile.supports_action(ShipPartAction::UseTerminal) {
+                                    return Transition::Push(GameScene::Terminal);
+                                }
+                            }
+                        }
                     }
                 } else if self.selected.is_some() {
                     self.mode = GameMode::Default;
