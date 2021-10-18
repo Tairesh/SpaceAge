@@ -189,8 +189,9 @@ impl Draw for Button {
         let text_color = self.state().fg_color();
         match &mut self.content {
             ButtonContent::Text(text) => {
-                if !self.keys.is_empty() {
-                    vec.x -= 3.0;
+                // hack for "[key] Name" buttons
+                if text.content().starts_with('[') {
+                    vec.x -= 2.0;
                 }
                 text.draw(ctx, DrawParams::new().position(vec).color(text_color));
             }

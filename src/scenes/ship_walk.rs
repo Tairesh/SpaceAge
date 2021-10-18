@@ -111,7 +111,7 @@ impl ShipWalk {
         )));
         let name = Rc::new(RefCell::new(Label::new(
             world.borrow().ship.name.clone(),
-            assets.fonts.astrolab16.clone(),
+            assets.fonts.handel16.clone(),
             Colors::LIGHT_SKY_BLUE,
             Position::by_left_top(10.0, 10.0),
         )));
@@ -126,7 +126,7 @@ impl ShipWalk {
         // TODO: implement a graphic clock with binary display
         let clock = Rc::new(RefCell::new(Label::new(
             format!("{}", world.borrow().time()),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position::by_right_top(-10.0, 10.0),
         )));

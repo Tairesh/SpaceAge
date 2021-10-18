@@ -23,7 +23,7 @@ impl SettingsScene {
     pub fn new(assets: &Assets, settings: Rc<RefCell<Settings>>, ctx: &mut Context) -> Self {
         let title = Rc::new(RefCell::new(Label::new(
             "Settings",
-            assets.fonts.astrolab32.clone(),
+            assets.fonts.handel32.clone(),
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -36,7 +36,7 @@ impl SettingsScene {
             matches!(settings.borrow().window_mode(), WindowMode::Fullscreen),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
-                y: Vertical::AtWindowCenterByTop { offset: -100.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
             },
             assets.fonts.consolab18.clone(),
             Transition::CustomEvent("fullscreen".to_string()),
@@ -47,7 +47,7 @@ impl SettingsScene {
             matches!(settings.borrow().window_mode(), WindowMode::Window),
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
-                y: Vertical::AtWindowCenterByTop { offset: -100.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
             },
             assets.fonts.consolab18.clone(),
             Transition::CustomEvent("window".to_string()),
@@ -55,15 +55,13 @@ impl SettingsScene {
         let window_size = window_btn.borrow_mut().calc_size(ctx);
         let window_mode = Rc::new(RefCell::new(Label::new(
             "Window mode:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: 90.0 - window_size.x,
                 },
-                y: Vertical::AtWindowCenterByCenter {
-                    offset: -102.0 + window_size.y / 2.0,
-                },
+                y: Vertical::AtWindowCenterByCenter { offset: -106.0 },
             },
         )));
         let back_btn = Rc::new(RefCell::new(Button::new(

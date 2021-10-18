@@ -54,7 +54,7 @@ impl CreateWorld {
         let right_column_width: f32 = 300.0;
         let title = Rc::new(RefCell::new(Label::new(
             "Create new game:",
-            assets.fonts.astrolab32.clone(),
+            assets.fonts.handel32.clone(),
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -63,18 +63,18 @@ impl CreateWorld {
         )));
         let name_label = Rc::new(RefCell::new(Label::new(
             "Galaxy name:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -122.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -126.0 },
             },
         )));
         let mut rng = thread_rng();
         let name_input = Rc::new(RefCell::new(TextInput::new(
             random_name(&mut rng),
             right_column_width,
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -120.0 },
@@ -104,17 +104,17 @@ impl CreateWorld {
         )));
         let seed_label = Rc::new(RefCell::new(Label::new(
             "World seed:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -52.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -56.0 },
             },
         )));
         let seed_input = Rc::new(RefCell::new(TextInput::new(
             random_seed(&mut rng),
             right_column_width,
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
@@ -133,11 +133,11 @@ impl CreateWorld {
         )));
         let size_label = Rc::new(RefCell::new(Label::new(
             "Galaxy size:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 18.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
         let size_left = Rc::new(RefCell::new(Button::new(
@@ -147,19 +147,19 @@ impl CreateWorld {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("size:left".to_string()),
         )));
         let galaxy_size = GalaxySize::Normal;
         let size_name = Rc::new(RefCell::new(Label::new(
             galaxy_size.name(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 50.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 18.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
         let size_right = Rc::new(RefCell::new(Button::new(
@@ -171,16 +171,16 @@ impl CreateWorld {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("size:right".to_string()),
         )));
         let class_label = Rc::new(RefCell::new(Label::new(
             "Galaxy class:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
         let class_left = Rc::new(RefCell::new(Button::new(
@@ -190,19 +190,19 @@ impl CreateWorld {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("class:left".to_string()),
         )));
         let galaxy_class = GalaxyClass::Spiral;
         let class_name = Rc::new(RefCell::new(Label::new(
             galaxy_class.name(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 50.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
         let class_right = Rc::new(RefCell::new(Button::new(
@@ -214,7 +214,7 @@ impl CreateWorld {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("class:right".to_string()),
         )));
         let randomize_btn = Rc::new(RefCell::new(Button::new(
@@ -233,7 +233,7 @@ impl CreateWorld {
         let randomize_size = randomize_btn.borrow_mut().calc_size(ctx);
         let preview_btn = Rc::new(RefCell::new(Button::new(
             vec![(Key::P, None)],
-            "[P] Preview",
+            "[p] Preview",
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -55.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
@@ -268,8 +268,8 @@ impl CreateWorld {
         )));
         let preview = Rc::new(RefCell::new(Galaxy::new(
             128,
-            assets.fonts.astrolab32.clone(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel32.clone(),
+            assets.fonts.handel24.clone(),
             Position::center(),
         )));
         CreateWorld {

@@ -41,7 +41,7 @@ impl CreateCharacter {
         let right_column_width: f32 = 300.0;
         let title = Rc::new(RefCell::new(Label::new(
             "Create new character:",
-            assets.fonts.astrolab32.clone(),
+            assets.fonts.handel32.clone(),
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -50,7 +50,7 @@ impl CreateCharacter {
         )));
         let subtitle = Rc::new(RefCell::new(Label::new(
             format!("New adventurer in the {} galaxy", savefile.galaxy_name()).as_str(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -59,17 +59,17 @@ impl CreateCharacter {
         )));
         let name_label = Rc::new(RefCell::new(Label::new(
             "Name:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -122.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -126.0 },
             },
         )));
         let name_input = Rc::new(RefCell::new(TextInput::new(
             "",
             right_column_width,
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -120.0 },
@@ -88,11 +88,11 @@ impl CreateCharacter {
         )));
         let gender_label = Rc::new(RefCell::new(Label::new(
             "Gender:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -52.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -56.0 },
             },
         )));
         let gender_left = Rc::new(RefCell::new(Button::new(
@@ -102,13 +102,13 @@ impl CreateCharacter {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("gender:left".to_string()),
         )));
         let gender_input = Rc::new(RefCell::new(TextInput::new(
             "Female",
             right_column_width - 80.0,
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
@@ -125,33 +125,33 @@ impl CreateCharacter {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("gender:right".to_string()),
         )));
         let age_label = Rc::new(RefCell::new(Label::new(
             "Age:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 18.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
         let age_left = Rc::new(RefCell::new(Button::new(
             vec![],
-            "—",
+            "-",
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("age:left".to_string()),
         )));
         let age_input = Rc::new(RefCell::new(TextInput::int(
             18,
             (15, 199),
             right_column_width - 80.0,
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
@@ -168,16 +168,16 @@ impl CreateCharacter {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("age:right".to_string()),
         )));
         let hand_title = Rc::new(RefCell::new(Label::new(
             "Main hand:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
         let hand_left = Rc::new(RefCell::new(Button::new(
@@ -187,19 +187,19 @@ impl CreateCharacter {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("hand:left".to_string()),
         )));
         let main_hand = MainHand::Right;
         let hand_label = Rc::new(RefCell::new(Label::new(
             main_hand.name(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 88.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
         let hand_right = Rc::new(RefCell::new(Button::new(
@@ -211,16 +211,16 @@ impl CreateCharacter {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("hand:right".to_string()),
         )));
         let skin_title = Rc::new(RefCell::new(Label::new(
             "Skin tone:",
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 158.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
             },
         )));
         let skin_left = Rc::new(RefCell::new(Button::new(
@@ -230,7 +230,7 @@ impl CreateCharacter {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 160.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("skin:left".to_string()),
         )));
         let skin_tone = SkinTone::WarmIvory;
@@ -253,13 +253,13 @@ impl CreateCharacter {
         )));
         let skin_label = Rc::new(RefCell::new(Label::new(
             skin_tone.name(),
-            assets.fonts.nasa24.clone(),
+            assets.fonts.handel24.clone(),
             skin_tone.text_color(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 158.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
             },
         )));
         let skin_right = Rc::new(RefCell::new(Button::new(
@@ -271,7 +271,7 @@ impl CreateCharacter {
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 160.0 },
             },
-            assets.fonts.nasa24.clone(),
+            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("skin:right".to_string()),
         )));
         let randomize_btn = Rc::new(RefCell::new(Button::new(

@@ -6,26 +6,25 @@ use tetra::Context;
 pub struct Fonts {
     pub consolab18: Font,
     pub consolab12: Font,
-    pub astrolab32: Font,
-    pub astrolab16: Font,
-    pub nasa24: Font,
-    pub nasa14: Font,
+    pub handel14: Font, // TODO: precalc font heights
+    pub handel16: Font,
+    pub handel24: Font,
+    pub handel32: Font,
     pub logo: Font,
 }
 
 impl Fonts {
     pub fn new(ctx: &mut Context) -> Self {
         let consolab = include_bytes!("../inc/fonts/consolab.ttf");
-        let astrolab = include_bytes!("../inc/fonts/astrolab.ttf");
-        let nasa = include_bytes!("../inc/fonts/nasalization.ttf");
+        let handel = include_bytes!("../inc/fonts/HandelGothic.ttf");
         Self {
             consolab18: Font::from_vector_file_data(ctx, consolab, 18.0).unwrap(),
             consolab12: Font::from_vector_file_data(ctx, consolab, 12.0).unwrap(),
-            astrolab32: Font::from_vector_file_data(ctx, astrolab, 32.0).unwrap(),
-            astrolab16: Font::from_vector_file_data(ctx, astrolab, 16.0).unwrap(),
-            nasa24: Font::from_vector_file_data(ctx, nasa, 24.0).unwrap(),
-            nasa14: Font::from_vector_file_data(ctx, nasa, 14.0).unwrap(),
-            logo: Font::from_vector_file_data(ctx, nasa, 72.0).unwrap(),
+            handel14: Font::from_vector_file_data(ctx, handel, 14.0).unwrap(),
+            handel16: Font::from_vector_file_data(ctx, handel, 16.0).unwrap(),
+            handel24: Font::from_vector_file_data(ctx, handel, 24.0).unwrap(),
+            handel32: Font::from_vector_file_data(ctx, handel, 32.0).unwrap(),
+            logo: Font::from_vector_file_data(ctx, handel, 72.0).unwrap(),
         }
     }
 }

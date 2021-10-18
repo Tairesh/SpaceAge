@@ -26,7 +26,7 @@ impl LoadWorld {
         // TODO: make a shortcut for scene title
         sprites.push(Rc::new(RefCell::new(Label::new(
             "Load world:",
-            assets.fonts.astrolab32.clone(),
+            assets.fonts.handel32.clone(),
             Colors::ORANGE_RED,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
@@ -79,11 +79,11 @@ impl LoadWorld {
             ))));
             let name = Rc::new(RefCell::new(Label::new(
                 format!("{} ({})", savefile.galaxy_name(), savefile.character_name()),
-                assets.fonts.nasa24.clone(),
+                assets.fonts.handel24.clone(),
                 Colors::LIGHT_YELLOW,
                 Position {
                     x: Horizontal::AtWindowCenterByLeft { offset: -265.0 },
-                    y: Vertical::AtWindowCenterByCenter { offset: y },
+                    y: Vertical::AtWindowCenterByCenter { offset: y - 4.0 },
                 },
             )));
             let name_size = name.borrow_mut().calc_size(ctx);
