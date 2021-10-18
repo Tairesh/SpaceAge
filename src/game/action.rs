@@ -25,8 +25,14 @@ impl ActionType {
                 }
             }
             ActionType::ActivatingPart(dir, action) => {
-                let tile = world.ship.get_tile(world.avatar.pos + *dir)?;
-                tile.action_length(*action)
+                if matches!(dir, Direction::Here)
+                    && matches!(action, ShipPartAction::Open | ShipPartAction::Close)
+                {
+                    None // TODO: hint explaining why it isn't working
+                } else {
+                    let tile = world.ship.get_tile(world.avatar.pos + *dir)?;
+                    tile.action_length(*action)
+                }
             }
         }
     }

@@ -230,7 +230,6 @@ impl Scene for ShipWalk {
                 }
                 if let Some(dir) = input::get_direction_keys_down(ctx) {
                     if self.selected.is_none() {
-                        // TODO: do not open/close if dir is HERE
                         self.select(dir);
                         if let Some(action) = action {
                             let mut world = self.world.borrow_mut();
@@ -275,6 +274,14 @@ impl Scene for ShipWalk {
     fn draw(&mut self, ctx: &mut Context) {
         if self.mode.draw_cursors() {
             for dir in DIR9 {
+                if matches!(dir, Direction::Here)
+                    && matches!(
+                        self.mode,
+                        GameMode::Activating(Some(ShipPartAction::Open | ShipPartAction::Close))
+                    )
+                {
+                    continue;
+                }
                 let pos = self.world.borrow().avatar.pos + dir;
                 if let Some(tile) = self.world.borrow().ship.get_tile(pos) {
                     if self.mode.cursor_here(tile) {
