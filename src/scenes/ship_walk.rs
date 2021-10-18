@@ -16,30 +16,34 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Instant;
 use tetra::graphics::mesh::{Mesh, ShapeStyle};
-use tetra::graphics::{DrawParams, Rectangle};
+use tetra::graphics::{Color, DrawParams, Rectangle};
 use tetra::input::{Key, KeyModifier};
 use tetra::{window, Context};
 
 #[derive(Debug)]
 enum GameMode {
     Default,
-    Opening,
-    Closing,
+    Activating(Option<ShipPartAction>),
 }
 
 impl GameMode {
     pub fn draw_cursors(&self) -> bool {
         match self {
             GameMode::Default => false,
-            GameMode::Opening | GameMode::Closing => true,
+            GameMode::Activating(..) => true,
         }
     }
 
     pub fn cursor_here(&self, tile: &ShipTile) -> bool {
         match self {
             GameMode::Default => false,
-            GameMode::Opening => tile.supports_action(ShipPartAction::Open),
-            GameMode::Closing => tile.supports_action(ShipPartAction::Close),
+            GameMode::Activating(action) => {
+                if let Some(action) = action {
+                    tile.supports_action(*action)
+                } else {
+                    true
+                }
+            }
         }
     }
 }
@@ -160,6 +164,24 @@ impl ShipWalk {
             self.world.borrow_mut().avatar.vision = dir;
         }
     }
+
+    fn draw_cursor(&self, ctx: &mut Context, dir: Direction, color: Color) {
+        let rect = self.ship_view.borrow().rect();
+        let center =
+            Vec2::from(self.world.borrow().avatar.pos * TileSet::TILE_SIZE * self.zoom.as_view())
+                + (rect.x, rect.y);
+        let delta = Vec2::new(
+            (dir.dx() * TileSet::TILE_SIZE.0) as f32,
+            (dir.dy() * TileSet::TILE_SIZE.1) as f32,
+        ) * self.zoom.as_view();
+        self.cursor.draw(
+            ctx,
+            DrawParams::new()
+                .position(center + delta)
+                .scale(self.zoom.as_scale())
+                .color(color),
+        );
+    }
 }
 
 impl Scene for ShipWalk {
@@ -180,9 +202,11 @@ impl Scene for ShipWalk {
                 if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
                     return Transition::Push(GameScene::GameMenu);
                 } else if input::is_pressed_key_with_mod(ctx, Key::O, None) {
-                    self.mode = GameMode::Opening;
+                    self.mode = GameMode::Activating(Some(ShipPartAction::Open));
                 } else if input::is_pressed_key_with_mod(ctx, Key::C, None) {
-                    self.mode = GameMode::Closing;
+                    self.mode = GameMode::Activating(Some(ShipPartAction::Close));
+                } else if input::is_pressed_key_with_mod(ctx, Key::E, None) {
+                    self.mode = GameMode::Activating(None);
                 }
 
                 let now = Instant::now();
@@ -200,39 +224,19 @@ impl Scene for ShipWalk {
                     }
                 }
             }
-            GameMode::Opening => {
+            GameMode::Activating(action) => {
                 if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
                     self.mode = GameMode::Default;
                 }
                 if let Some(dir) = input::get_direction_keys_down(ctx) {
                     if self.selected.is_none() {
-                        // TODO: do not open if dir is HERE
+                        // TODO: do not open/close if dir is HERE
                         self.select(dir);
-                        let mut world = self.world.borrow_mut();
-                        world.avatar.action = Action::new(
-                            ActionType::ActivatingPart(dir, ShipPartAction::Open),
-                            &world,
-                        );
-                    }
-                } else if self.selected.is_some() {
-                    self.mode = GameMode::Default;
-                    self.selected = None;
-                }
-            }
-            GameMode::Closing => {
-                if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
-                    self.mode = GameMode::Default;
-                }
-                // TODO: move it in some function to avoid duplication
-                if let Some(dir) = input::get_direction_keys_down(ctx) {
-                    if self.selected.is_none() {
-                        // TODO: do not close if dir is HERE
-                        self.select(dir);
-                        let mut world = self.world.borrow_mut();
-                        world.avatar.action = Action::new(
-                            ActionType::ActivatingPart(dir, ShipPartAction::Close),
-                            &world,
-                        );
+                        if let Some(action) = action {
+                            let mut world = self.world.borrow_mut();
+                            world.avatar.action =
+                                Action::new(ActionType::ActivatingPart(dir, action), &world);
+                        } // TODO: select action from list
                     }
                 } else if self.selected.is_some() {
                     self.mode = GameMode::Default;
@@ -262,42 +266,17 @@ impl Scene for ShipWalk {
 
     fn draw(&mut self, ctx: &mut Context) {
         if self.mode.draw_cursors() {
-            let world = self.world.borrow();
-            let rect = self.ship_view.borrow().rect();
-            let center = Vec2::from(world.avatar.pos * TileSet::TILE_SIZE * self.zoom.as_view())
-                + (rect.x, rect.y);
-
             for dir in DIR9 {
-                let pos = world.avatar.pos + dir;
-                if let Some(tile) = world.ship.get_tile(pos) {
+                let pos = self.world.borrow().avatar.pos + dir;
+                if let Some(tile) = self.world.borrow().ship.get_tile(pos) {
                     if self.mode.cursor_here(tile) {
-                        let delta = Vec2::new(
-                            (dir.dx() * TileSet::TILE_SIZE.0) as f32,
-                            (dir.dy() * TileSet::TILE_SIZE.1) as f32,
-                        ) * self.zoom.as_view();
-                        self.cursor.draw(
-                            ctx,
-                            DrawParams::new()
-                                .position(center + delta)
-                                .scale(self.zoom.as_scale())
-                                .color(Colors::ORANGE.with_alpha(0.7)),
-                        );
+                        self.draw_cursor(ctx, dir, Colors::ORANGE.with_alpha(0.7));
                     }
                 }
             }
 
             if let Some(dir) = self.selected {
-                let delta = Vec2::new(
-                    (dir.dx() * TileSet::TILE_SIZE.0) as f32,
-                    (dir.dy() * TileSet::TILE_SIZE.1) as f32,
-                ) * self.zoom.as_view();
-                self.cursor.draw(
-                    ctx,
-                    DrawParams::new()
-                        .scale(self.zoom.as_scale())
-                        .position(center + delta)
-                        .color(Colors::LIGHT_YELLOW.with_alpha(0.7)),
-                )
+                self.draw_cursor(ctx, dir, Colors::LIGHT_YELLOW.with_alpha(0.7));
             }
         }
     }
