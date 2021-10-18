@@ -20,8 +20,8 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(ctx: &mut Context, settings: Settings) -> Self {
-        let assets = Rc::new(Assets::load(ctx));
+    pub fn new(ctx: &mut Context, settings: Settings) -> Result<Self> {
+        let assets = Rc::new(Assets::load(ctx)?);
         let data = Rc::new(GameData::load());
         let mut game = Self {
             scenes: vec![Box::new(MainMenu::new(&assets))],
@@ -33,7 +33,7 @@ impl App {
             world: None,
         };
         game.on_open(ctx);
-        game
+        Ok(game)
     }
 
     fn on_open(&mut self, ctx: &mut Context) {

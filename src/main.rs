@@ -58,5 +58,5 @@ fn main() -> tetra::Result {
     window::set_minimum_size(&mut ctx, 1024, 768)?;
     window::set_maximum_size(&mut ctx, 1920, 1280)?;
 
-    ctx.run(|ctx| Ok(App::new(ctx, settings)))
+    ctx.run(|ctx| App::new(ctx, settings))
 }

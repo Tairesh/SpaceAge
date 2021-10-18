@@ -1,7 +1,7 @@
 use crate::ascii::cp437::char_to_point;
 use tetra::graphics::text::Font;
 use tetra::graphics::{DrawParams, Rectangle, Texture};
-use tetra::Context;
+use tetra::{Context, Result};
 
 pub struct Fonts {
     pub consolab18: Font,
@@ -14,18 +14,18 @@ pub struct Fonts {
 }
 
 impl Fonts {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> Result<Self> {
         let consolab = include_bytes!("../inc/fonts/consolab.ttf");
         let handel = include_bytes!("../inc/fonts/HandelGothic.ttf");
-        Self {
-            consolab18: Font::from_vector_file_data(ctx, consolab, 18.0).unwrap(),
-            consolab12: Font::from_vector_file_data(ctx, consolab, 12.0).unwrap(),
-            handel14: Font::from_vector_file_data(ctx, handel, 14.0).unwrap(),
-            handel16: Font::from_vector_file_data(ctx, handel, 16.0).unwrap(),
-            handel24: Font::from_vector_file_data(ctx, handel, 24.0).unwrap(),
-            handel32: Font::from_vector_file_data(ctx, handel, 32.0).unwrap(),
-            logo: Font::from_vector_file_data(ctx, handel, 72.0).unwrap(),
-        }
+        Ok(Self {
+            consolab18: Font::from_vector_file_data(ctx, consolab, 18.0)?,
+            consolab12: Font::from_vector_file_data(ctx, consolab, 12.0)?,
+            handel14: Font::from_vector_file_data(ctx, handel, 14.0)?,
+            handel16: Font::from_vector_file_data(ctx, handel, 16.0)?,
+            handel24: Font::from_vector_file_data(ctx, handel, 24.0)?,
+            handel32: Font::from_vector_file_data(ctx, handel, 32.0)?,
+            logo: Font::from_vector_file_data(ctx, handel, 72.0)?,
+        })
     }
 }
 
@@ -36,13 +36,15 @@ pub struct Images {
 }
 
 impl Images {
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
-            bg: Texture::from_file_data(ctx, include_bytes!("../inc/img/bg.jpg")).unwrap(),
-            icon: Texture::from_file_data(ctx, include_bytes!("../inc/img/icon.png")).unwrap(),
-            blue_nebula: Texture::from_file_data(ctx, include_bytes!("../inc/img/blue_nebula.jpg"))
-                .unwrap(),
-        }
+    pub fn new(ctx: &mut Context) -> Result<Self> {
+        Ok(Self {
+            bg: Texture::from_file_data(ctx, include_bytes!("../inc/img/bg.jpg"))?,
+            icon: Texture::from_file_data(ctx, include_bytes!("../inc/img/icon.png"))?,
+            blue_nebula: Texture::from_file_data(
+                ctx,
+                include_bytes!("../inc/img/blue_nebula.jpg"),
+            )?,
+        })
     }
 }
 
@@ -53,10 +55,10 @@ pub struct TileSet {
 impl TileSet {
     pub const TILE_SIZE: (i32, i32) = (12, 12);
 
-    pub fn new(ctx: &mut Context) -> Self {
-        Self {
-            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/12x12.png")).unwrap(),
-        }
+    pub fn new(ctx: &mut Context) -> Result<Self> {
+        Ok(Self {
+            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/12x12.png"))?,
+        })
     }
 
     pub fn draw<P: Into<DrawParams>>(&self, ctx: &mut Context, ch: char, params: P) {
@@ -82,11 +84,11 @@ pub struct Assets {
 }
 
 impl Assets {
-    pub fn load(ctx: &mut Context) -> Self {
-        Self {
-            fonts: Fonts::new(ctx),
-            images: Images::new(ctx),
-            tileset: TileSet::new(ctx),
-        }
+    pub fn load(ctx: &mut Context) -> Result<Self> {
+        Ok(Self {
+            fonts: Fonts::new(ctx)?,
+            images: Images::new(ctx)?,
+            tileset: TileSet::new(ctx)?,
+        })
     }
 }
