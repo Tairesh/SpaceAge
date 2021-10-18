@@ -126,7 +126,7 @@ impl ShipWalk {
         // TODO: implement a graphic clock with binary display
         let clock = Rc::new(RefCell::new(Label::new(
             format!("{}", world.borrow().time()),
-            assets.fonts.handel24.clone(),
+            assets.fonts.handel16.clone(),
             Colors::ORANGE,
             Position::by_right_top(-10.0, 10.0),
         )));

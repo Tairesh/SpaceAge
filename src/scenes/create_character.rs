@@ -37,7 +37,12 @@ pub struct CreateCharacter {
 }
 
 impl CreateCharacter {
-    pub fn new(savefile: SaveFile, assets: &Assets, data: Rc<GameData>, ctx: &mut Context) -> Self {
+    pub fn new(
+        savefile: SaveFile,
+        assets: Rc<Assets>,
+        data: Rc<GameData>,
+        ctx: &mut Context,
+    ) -> Self {
         let right_column_width: f32 = 300.0;
         let title = Rc::new(RefCell::new(Label::new(
             "Create new character:",
@@ -95,14 +100,15 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: -56.0 },
             },
         )));
-        let gender_left = Rc::new(RefCell::new(Button::new(
+        let gender_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "<",
+            '<',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("gender:left".to_string()),
         )));
         let gender_input = Rc::new(RefCell::new(TextInput::new(
@@ -116,16 +122,17 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
         )));
-        let gender_right = Rc::new(RefCell::new(Button::new(
+        let gender_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            ">",
+            '>',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 70.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: -50.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("gender:right".to_string()),
         )));
         let age_label = Rc::new(RefCell::new(Label::new(
@@ -137,14 +144,15 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
-        let age_left = Rc::new(RefCell::new(Button::new(
+        let age_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "-",
+            '-',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("age:left".to_string()),
         )));
         let age_input = Rc::new(RefCell::new(TextInput::int(
@@ -159,16 +167,17 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
         )));
-        let age_right = Rc::new(RefCell::new(Button::new(
+        let age_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "+",
+            '+',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 70.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("age:right".to_string()),
         )));
         let hand_title = Rc::new(RefCell::new(Label::new(
@@ -180,14 +189,15 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
-        let hand_left = Rc::new(RefCell::new(Button::new(
+        let hand_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "<",
+            '<',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("hand:left".to_string()),
         )));
         let main_hand = MainHand::Right;
@@ -202,16 +212,17 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
-        let hand_right = Rc::new(RefCell::new(Button::new(
+        let hand_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            ">",
+            '>',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 70.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("hand:right".to_string()),
         )));
         let skin_title = Rc::new(RefCell::new(Label::new(
@@ -223,14 +234,15 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
             },
         )));
-        let skin_left = Rc::new(RefCell::new(Button::new(
+        let skin_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "<",
+            '<',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -70.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 160.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("skin:left".to_string()),
         )));
         let skin_tone = SkinTone::WarmIvory;
@@ -262,53 +274,54 @@ impl CreateCharacter {
                 y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
             },
         )));
-        let skin_right = Rc::new(RefCell::new(Button::new(
+        let skin_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            ">",
+            '>',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 70.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 160.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("skin:right".to_string()),
         )));
-        let randomize_btn = Rc::new(RefCell::new(Button::new(
+        let randomize_btn = Rc::new(RefCell::new(Button::text(
             vec![
                 (Key::NumPadMultiply, None),
                 (Key::Num8, Some(KeyModifier::Shift)),
             ],
             "[*] Randomize",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -100.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 220.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("randomize".to_string()),
         )));
         let randomize_size = randomize_btn.borrow_mut().calc_size(ctx);
-        let back_btn = Rc::new(RefCell::new(Button::new(
+        let back_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::Escape, None)],
             "[Esc] Back",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -110.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 220.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Pop,
         )));
         // TODO: add next stage for selecting scenario and ship name
-        let create_btn = Rc::new(RefCell::new(Button::new(
+        let create_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::Enter, Some(KeyModifier::Alt))],
             "[Alt+Enter] Create",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft {
                     offset: randomize_size.x - 90.0,
                 },
                 y: Vertical::AtWindowCenterByTop { offset: 220.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("create".to_string()),
         )));
 
@@ -316,7 +329,7 @@ impl CreateCharacter {
             savefile,
             data,
             sprites: vec![
-                bg(assets),
+                bg(&assets),
                 title,
                 subtitle,
                 name_label,

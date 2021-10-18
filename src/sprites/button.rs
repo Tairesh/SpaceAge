@@ -1,9 +1,11 @@
+use crate::assets::{Assets, TileSet};
 use crate::colors::Colors;
 use crate::input;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Update};
 use crate::{Rect, Vec2};
+use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::{Font, Text};
 use tetra::graphics::{Color, DrawParams, Rectangle};
@@ -13,13 +15,15 @@ use tetra::Context;
 enum ButtonContent {
     Text(Text),
     Empty(Vec2),
+    AsciiIcon(char, Rc<Assets>, f32),
 }
 
 impl ButtonContent {
     pub fn height(&self) -> f32 {
         match self {
-            ButtonContent::Text(_) => 20.0,
+            ButtonContent::Text(..) => 20.0,
             ButtonContent::Empty(size) => size.y,
+            ButtonContent::AsciiIcon(.., zoom) => TileSet::TILE_SIZE.1 as f32 * zoom,
         }
     }
 }
@@ -77,16 +81,15 @@ pub struct Button {
 }
 
 impl Button {
-    pub fn new(
+    fn new(
         keys: Vec<(Key, Option<KeyModifier>)>,
-        text: &str,
+        content: ButtonContent,
         position: Position,
-        font: Font,
         on_click: Transition,
     ) -> Self {
         Self {
             keys,
-            content: ButtonContent::Text(Text::new(text, font)),
+            content,
             on_click,
             position,
             border: None,
@@ -98,6 +101,21 @@ impl Button {
             fixable: false,
             visible: true,
         }
+    }
+
+    pub fn text(
+        keys: Vec<(Key, Option<KeyModifier>)>,
+        text: &str,
+        font: Font,
+        position: Position,
+        on_click: Transition,
+    ) -> Self {
+        Self::new(
+            keys,
+            ButtonContent::Text(Text::new(text, font)),
+            position,
+            on_click,
+        )
     }
 
     pub fn empty(
@@ -106,34 +124,38 @@ impl Button {
         position: Position,
         on_click: Transition,
     ) -> Self {
-        Self {
+        Self::new(keys, ButtonContent::Empty(size), position, on_click)
+    }
+
+    pub fn icon(
+        keys: Vec<(Key, Option<KeyModifier>)>,
+        ch: char,
+        assets: Rc<Assets>,
+        zoom: f32,
+        position: Position,
+        on_click: Transition,
+    ) -> Self {
+        Self::new(
             keys,
-            content: ButtonContent::Empty(size),
-            on_click,
+            ButtonContent::AsciiIcon(ch, assets, zoom),
             position,
-            border: None,
-            bg: None,
-            rect: None,
-            is_pressed: false,
-            is_hovered: false,
-            is_disabled: false,
-            fixable: false,
-            visible: true,
-        }
+            on_click,
+        )
     }
 
     pub fn fixed(
         keys: Vec<(Key, Option<KeyModifier>)>,
         text: &str,
+        font: Font,
         state: bool,
         position: Position,
-        font: Font,
         on_click: Transition,
     ) -> Self {
-        let mut s = Self::new(keys, text, position, font, on_click);
-        s.fixable = true;
-        s.is_pressed = state;
-        s
+        Self {
+            fixable: true,
+            is_pressed: state,
+            ..Self::text(keys, text, font, position, on_click)
+        }
     }
 
     pub fn with_disabled(mut self, val: bool) -> Self {
@@ -150,6 +172,10 @@ impl Button {
                 20.0,
             ),
             ButtonContent::Empty(size) => (*size, 10.0),
+            ButtonContent::AsciiIcon(.., zoom) => (
+                Vec2::new(TileSet::TILE_SIZE.0 as f32, TileSet::TILE_SIZE.1 as f32) * (*zoom),
+                10.0,
+            ),
         }
     }
 
@@ -181,21 +207,25 @@ impl Draw for Button {
             .as_mut()
             .unwrap()
             .draw(ctx, DrawParams::new().position(vec).color(border_color));
-        vec.x += rect.w / 2.0 - content_size.x / 2.0;
-        vec.y += rect.h / 2.0 - content_size.y / 2.0 - 2.0;
-        // if !self.is_pressed {
-        //     vec.y -= 2.0;
-        // }
-        let text_color = self.state().fg_color();
-        match &mut self.content {
-            ButtonContent::Text(text) => {
-                // hack for "[key] Name" buttons
-                if text.content().starts_with('[') {
-                    vec.x -= 2.0;
-                }
-                text.draw(ctx, DrawParams::new().position(vec).color(text_color));
+        vec += Vec2::new(rect.w, rect.h) / 2.0 - content_size / 2.0;
+        // get a copy because mutable borrow below
+        let color = self.state().fg_color();
+        if let ButtonContent::Text(text) = &mut self.content {
+            // hack for "[key] Name" buttons
+            if text.content().starts_with('[') {
+                vec.x -= 2.0;
             }
-            ButtonContent::Empty(..) => {}
+            vec.y -= 2.0;
+            text.draw(ctx, DrawParams::new().position(vec).color(color));
+        } else if let ButtonContent::AsciiIcon(ch, assets, zoom) = &self.content {
+            assets.tileset.draw(
+                ctx,
+                *ch,
+                DrawParams::new()
+                    .position(vec)
+                    .color(color)
+                    .scale(Vec2::new(*zoom, *zoom)),
+            );
         }
     }
 

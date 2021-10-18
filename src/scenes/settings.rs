@@ -33,23 +33,23 @@ impl SettingsScene {
         let fullscreen_btn = Rc::new(RefCell::new(Button::fixed(
             vec![(Key::F, Some(KeyModifier::Alt))],
             "[Alt+F] Fullscreen",
+            assets.fonts.consolab18.clone(),
             matches!(settings.borrow().window_mode(), WindowMode::Fullscreen),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("fullscreen".to_string()),
         )));
         let window_btn = Rc::new(RefCell::new(Button::fixed(
             vec![(Key::W, Some(KeyModifier::Alt))],
             "[Alt+W] Window",
+            assets.fonts.consolab18.clone(),
             matches!(settings.borrow().window_mode(), WindowMode::Window),
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("window".to_string()),
         )));
         let window_size = window_btn.borrow_mut().calc_size(ctx);
@@ -64,14 +64,14 @@ impl SettingsScene {
                 y: Vertical::AtWindowCenterByCenter { offset: -106.0 },
             },
         )));
-        let back_btn = Rc::new(RefCell::new(Button::new(
+        let back_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::Escape, None)],
             "[Esc] Back",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowBottomByBottom { offset: -200.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Pop,
         )));
 

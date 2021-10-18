@@ -50,7 +50,7 @@ pub struct CreateWorld {
 }
 
 impl CreateWorld {
-    pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
+    pub fn new(assets: Rc<Assets>, ctx: &mut Context) -> Self {
         let right_column_width: f32 = 300.0;
         let title = Rc::new(RefCell::new(Label::new(
             "Create new game:",
@@ -140,14 +140,15 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
-        let size_left = Rc::new(RefCell::new(Button::new(
+        let size_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "<", // TODO: use icon buttons
+            '<',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("size:left".to_string()),
         )));
         let galaxy_size = GalaxySize::Normal;
@@ -162,16 +163,17 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
             },
         )));
-        let size_right = Rc::new(RefCell::new(Button::new(
+        let size_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            ">",
+            '>',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 20.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("size:right".to_string()),
         )));
         let class_label = Rc::new(RefCell::new(Label::new(
@@ -183,14 +185,15 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
-        let class_left = Rc::new(RefCell::new(Button::new(
+        let class_left = Rc::new(RefCell::new(Button::icon(
             vec![],
-            "<",
+            '<',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -50.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("class:left".to_string()),
         )));
         let galaxy_class = GalaxyClass::Spiral;
@@ -205,65 +208,66 @@ impl CreateWorld {
                 y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
             },
         )));
-        let class_right = Rc::new(RefCell::new(Button::new(
+        let class_right = Rc::new(RefCell::new(Button::icon(
             vec![],
-            ">",
+            '>',
+            assets.clone(),
+            2.0,
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: right_column_width - 50.0,
                 },
                 y: Vertical::AtWindowCenterByCenter { offset: 90.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("class:right".to_string()),
         )));
-        let randomize_btn = Rc::new(RefCell::new(Button::new(
+        let randomize_btn = Rc::new(RefCell::new(Button::text(
             vec![
                 (Key::NumPadMultiply, None),
                 (Key::Num8, Some(KeyModifier::Shift)),
             ],
             "[*] Randomize",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: -45.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("randomize".to_string()),
         )));
         let randomize_size = randomize_btn.borrow_mut().calc_size(ctx);
-        let preview_btn = Rc::new(RefCell::new(Button::new(
+        let preview_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::P, None)],
             "[p] Preview",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -55.0 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("preview".to_string()),
         )));
         let preview_size = preview_btn.borrow_mut().calc_size(ctx);
-        let back_btn = Rc::new(RefCell::new(Button::new(
+        let back_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::Escape, None)],
             "[Esc] Back",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: -65.0 - preview_size.x,
                 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Pop,
         )));
-        let create_btn = Rc::new(RefCell::new(Button::new(
+        let create_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::Enter, Some(KeyModifier::Alt))],
             "[Alt+Enter] Create",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByLeft {
                     offset: randomize_size.x - 35.0,
                 },
                 y: Vertical::AtWindowCenterByTop { offset: 150.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::CustomEvent("create".to_string()),
         )));
         let preview = Rc::new(RefCell::new(Galaxy::new(
@@ -274,7 +278,7 @@ impl CreateWorld {
         )));
         CreateWorld {
             sprites: vec![
-                bg(assets),
+                bg(&assets),
                 title,
                 name_label,
                 name_input.clone(),

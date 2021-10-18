@@ -63,18 +63,18 @@ impl LoadWorld {
                 },
                 Transition::CustomEvent(format!("load:{}", savefile.path.to_str().unwrap())),
             ))));
-            sprites.push(Rc::new(RefCell::new(Button::new(
+            sprites.push(Rc::new(RefCell::new(Button::text(
                 if i <= 10 {
                     vec![(KEYS[i], Some(KeyModifier::Alt))]
                 } else {
                     vec![]
                 },
                 "Delete",
+                assets.fonts.consolab18.clone(),
                 Position {
                     x: Horizontal::AtWindowCenterByLeft { offset: 240.0 },
                     y: Vertical::AtWindowCenterByCenter { offset: y },
                 },
-                assets.fonts.consolab18.clone(),
                 Transition::CustomEvent(format!("del:{}", savefile.path.to_str().unwrap())),
             ))));
             let name = Rc::new(RefCell::new(Label::new(

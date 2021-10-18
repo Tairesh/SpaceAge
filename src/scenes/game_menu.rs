@@ -14,25 +14,25 @@ pub struct GameMenu {
 
 impl GameMenu {
     pub fn new(assets: &Assets) -> Self {
-        let back = Rc::new(RefCell::new(Button::new(
+        let back = Rc::new(RefCell::new(Button::text(
             vec![(Key::R, None)],
-            "[r] Resume",
-            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: -50.0 }),
+            "[r] Back to game",
             assets.fonts.consolab18.clone(),
+            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: -50.0 }),
             Transition::Pop,
         )));
-        let settings = Rc::new(RefCell::new(Button::new(
+        let settings = Rc::new(RefCell::new(Button::text(
             vec![(Key::S, None)],
-            "[S] Settings",
-            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: 0.0 }),
+            "[s] Settings",
             assets.fonts.consolab18.clone(),
+            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: 0.0 }),
             Transition::Replace(GameScene::Settings),
         )));
-        let quit = Rc::new(RefCell::new(Button::new(
+        let quit = Rc::new(RefCell::new(Button::text(
             vec![(Key::Q, None)],
-            "[Q] Save and quit",
-            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: 50.0 }),
+            "[q] Save and quit",
             assets.fonts.consolab18.clone(),
+            Position::horizontal_center(0.0, Vertical::AtWindowCenterByTop { offset: 50.0 }),
             Transition::UnloadWorld,
         )));
         Self {

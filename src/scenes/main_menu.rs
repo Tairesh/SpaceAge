@@ -38,46 +38,46 @@ impl MainMenu {
             },
         )));
         let select_btn = Rc::new(RefCell::new(
-            Button::new(
+            Button::text(
                 vec![(Key::E, None)],
                 "[e] Select world",
+                assets.fonts.consolab18.clone(),
                 Position {
                     x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                     y: Vertical::AtWindowCenterByCenter { offset: 0.0 },
                 },
-                assets.fonts.consolab18.clone(),
                 Transition::Push(GameScene::LoadWorld),
             )
             .with_disabled(true),
         ));
-        let create_btn = Rc::new(RefCell::new(Button::new(
+        let create_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::C, None)],
             "[c] Create new world",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 50.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Push(GameScene::CreateWorld),
         )));
-        let settings_btn = Rc::new(RefCell::new(Button::new(
+        let settings_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::S, None)],
             "[s] Settings",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 100.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Push(GameScene::Settings),
         )));
-        let exit_btn = Rc::new(RefCell::new(Button::new(
+        let exit_btn = Rc::new(RefCell::new(Button::text(
             vec![(Key::X, None)],
             "[x] Exit",
+            assets.fonts.consolab18.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: 150.0 },
             },
-            assets.fonts.consolab18.clone(),
             Transition::Quit,
         )));
         Self {

@@ -47,11 +47,11 @@ impl GameScene {
             GameScene::Settings => {
                 Box::new(SettingsScene::new(&game.assets, game.settings.clone(), ctx))
             }
-            GameScene::CreateWorld => Box::new(CreateWorld::new(&game.assets, ctx)),
+            GameScene::CreateWorld => Box::new(CreateWorld::new(game.assets.clone(), ctx)),
             GameScene::LoadWorld => Box::new(LoadWorld::new(&game.assets, ctx)),
             GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(
                 s,
-                &game.assets,
+                game.assets.clone(),
                 game.data.clone(),
                 ctx,
             )),
