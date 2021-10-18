@@ -54,6 +54,14 @@ impl ShipPartInteract for Door {
         }
     }
 
+    fn supported_actions(&self) -> &[ShipPartAction] {
+        if self.open {
+            &[ShipPartAction::Close]
+        } else {
+            &[ShipPartAction::Open]
+        }
+    }
+
     fn action_length(&self, action: ShipPartAction) -> Option<u32> {
         match action {
             ShipPartAction::Open => {

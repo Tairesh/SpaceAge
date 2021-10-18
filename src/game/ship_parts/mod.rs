@@ -21,7 +21,7 @@ use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
-#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Hash, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum ShipPartAction {
     Open,
@@ -47,8 +47,11 @@ pub trait ShipPartView {
 #[enum_dispatch(ShipPart)]
 pub trait ShipPartInteract {
     fn passage(&self) -> Passage;
+    fn supported_actions(&self) -> &[ShipPartAction] {
+        &[]
+    }
     fn supports_action(&self, action: ShipPartAction) -> bool {
-        self.action_length(action).is_some()
+        self.supported_actions().contains(&action)
     }
     fn action_length(&self, _action: ShipPartAction) -> Option<u32> {
         None
