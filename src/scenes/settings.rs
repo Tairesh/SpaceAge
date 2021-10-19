@@ -61,7 +61,7 @@ impl SettingsScene {
                 x: Horizontal::AtWindowCenterByRight {
                     offset: 90.0 - window_size.x,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: -106.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -105.0 },
             },
         )));
         let back_btn = Rc::new(RefCell::new(Button::text(

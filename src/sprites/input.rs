@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use crate::assets::PreparedFont;
 use crate::colors::Colors;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
@@ -6,7 +7,7 @@ use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, S
 use crate::{Rect, Vec2};
 use std::time::{Duration, Instant};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
-use tetra::graphics::text::{Font, Text};
+use tetra::graphics::text::Text;
 use tetra::graphics::{Color, DrawParams, Rectangle};
 use tetra::input::{Key, KeyModifier, MouseButton};
 use tetra::{input, Context};
@@ -21,6 +22,7 @@ pub struct TextInput {
     text_with_spaces: Text,
     position: Position,
     width: f32,
+    line_height: f32,
     value_type: ValueType,
     rect: Option<Rect>,
     is_focused: bool,
@@ -36,14 +38,20 @@ pub struct TextInput {
 }
 
 impl TextInput {
-    pub fn new<C: Into<String>>(value: C, width: f32, font: Font, position: Position) -> Self {
+    pub fn new<C: Into<String>>(
+        value: C,
+        width: f32,
+        font: PreparedFont,
+        position: Position,
+    ) -> Self {
         let value = value.into();
         Self {
             value_type: ValueType::String { max_length: 32 },
-            text: Text::new(value.clone(), font.clone()),
-            text_with_spaces: Text::new(value.replace(" ", "_"), font),
+            text: Text::new(value.clone(), font.font.clone()),
+            text_with_spaces: Text::new(value.replace(" ", "_"), font.font),
             position,
             width,
+            line_height: font.line_height,
             rect: None,
             is_focused: false,
             is_disabled: false,
@@ -58,7 +66,13 @@ impl TextInput {
         }
     }
 
-    pub fn int(value: u32, clamps: (u32, u32), width: f32, font: Font, position: Position) -> Self {
+    pub fn int(
+        value: u32,
+        clamps: (u32, u32),
+        width: f32,
+        font: PreparedFont,
+        position: Position,
+    ) -> Self {
         let mut s = Self::new(value.to_string(), width, font, position);
         s.value_type = ValueType::Unsigned {
             min: clamps.0,
@@ -148,7 +162,7 @@ impl Draw for TextInput {
             .get_bounds(ctx)
             .map(|r| r.width + 3.0)
             .unwrap_or(-1.0f32);
-        let y = (rect.y + rect.h / 2.0 - 15.0).round();
+        let y = (rect.y + rect.h / 2.0 - self.line_height / 2.0 - 4.0).round();
         let text_pos = if !self.is_focused || self.is_disabled {
             Vec2::new(rect.x + rect.w / 2.0 - text_width / 2.0, y)
         } else {

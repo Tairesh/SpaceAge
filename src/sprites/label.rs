@@ -1,8 +1,9 @@
 #![allow(dead_code)]
+use crate::assets::PreparedFont;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify, Update};
 use crate::{Rect, Vec2};
-use tetra::graphics::text::{Font, Text};
+use tetra::graphics::text::Text;
 use tetra::graphics::{Color, DrawParams};
 use tetra::Context;
 
@@ -12,26 +13,39 @@ pub struct Label {
     position: Position,
     rect: Option<Rect>,
     visible: bool,
+    line_height: f32,
 }
 
 impl Label {
-    pub fn new<C: Into<String>>(text: C, font: Font, color: Color, position: Position) -> Self {
+    pub fn new<C: Into<String>>(
+        text: C,
+        font: PreparedFont,
+        color: Color,
+        position: Position,
+    ) -> Self {
         Label {
-            text: Text::new(text, font),
+            text: Text::new(text, font.font),
             color,
             position,
             rect: None,
             visible: true,
+            line_height: font.line_height,
         }
     }
 
-    pub fn hidden<C: Into<String>>(text: C, font: Font, color: Color, position: Position) -> Self {
+    pub fn hidden<C: Into<String>>(
+        text: C,
+        font: PreparedFont,
+        color: Color,
+        position: Position,
+    ) -> Self {
         Label {
-            text: Text::new(text, font),
+            text: Text::new(text, font.font),
             color,
             position,
             rect: None,
             visible: false,
+            line_height: font.line_height,
         }
     }
 
@@ -72,7 +86,7 @@ impl Positionate for Label {
 
     fn calc_size(&mut self, ctx: &mut Context) -> Vec2 {
         let rect = self.text.get_bounds(ctx).unwrap();
-        Vec2::new(rect.width, rect.height)
+        Vec2::new(rect.width, self.line_height)
     }
 
     fn rect(&self) -> Rect {

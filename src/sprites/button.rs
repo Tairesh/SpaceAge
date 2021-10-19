@@ -1,4 +1,4 @@
-use crate::assets::{Assets, TileSet};
+use crate::assets::{Assets, PreparedFont, TileSet};
 use crate::colors::Colors;
 use crate::input;
 use crate::scenes::Transition;
@@ -7,23 +7,22 @@ use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, U
 use crate::{Rect, Vec2};
 use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
-use tetra::graphics::text::{Font, Text};
+use tetra::graphics::text::Text;
 use tetra::graphics::{Color, DrawParams, Rectangle};
 use tetra::input::{Key, KeyModifier, MouseButton};
 use tetra::Context;
 
 enum ButtonContent {
-    Text(Text),
+    Text(Text, f32),
     Empty(Vec2),
     AsciiIcon(char, Rc<Assets>, f32),
 }
 
 impl ButtonContent {
-    pub fn height(&self) -> f32 {
+    pub const fn offset_x(&self) -> f32 {
         match self {
-            ButtonContent::Text(..) => 20.0,
-            ButtonContent::Empty(size) => size.y,
-            ButtonContent::AsciiIcon(.., zoom) => TileSet::TILE_SIZE.1 as f32 * zoom,
+            ButtonContent::Text(..) | ButtonContent::AsciiIcon(..) => 20.0,
+            ButtonContent::Empty(..) => 0.0,
         }
     }
 }
@@ -106,13 +105,13 @@ impl Button {
     pub fn text(
         keys: Vec<(Key, Option<KeyModifier>)>,
         text: &str,
-        font: Font,
+        font: PreparedFont,
         position: Position,
         on_click: Transition,
     ) -> Self {
         Self::new(
             keys,
-            ButtonContent::Text(Text::new(text, font)),
+            ButtonContent::Text(Text::new(text, font.font), font.line_height),
             position,
             on_click,
         )
@@ -146,7 +145,7 @@ impl Button {
     pub fn fixed(
         keys: Vec<(Key, Option<KeyModifier>)>,
         text: &str,
-        font: Font,
+        font: PreparedFont,
         state: bool,
         position: Position,
         on_click: Transition,
@@ -163,19 +162,16 @@ impl Button {
         self
     }
 
-    fn content_size(&mut self, ctx: &mut Context) -> (Vec2, f32) {
+    fn content_size(&mut self, ctx: &mut Context) -> Vec2 {
         match &mut self.content {
-            ButtonContent::Text(text) => (
-                text.get_bounds(ctx)
-                    .map(|b| Vec2::new(b.width, self.content.height()))
-                    .unwrap(),
-                20.0,
-            ),
-            ButtonContent::Empty(size) => (*size, 10.0),
-            ButtonContent::AsciiIcon(.., zoom) => (
-                Vec2::new(TileSet::TILE_SIZE.0 as f32, TileSet::TILE_SIZE.1 as f32) * (*zoom),
-                10.0,
-            ),
+            ButtonContent::Text(text, height) => text
+                .get_bounds(ctx)
+                .map(|b| Vec2::new(b.width, *height))
+                .unwrap(),
+            ButtonContent::Empty(size) => *size,
+            ButtonContent::AsciiIcon(.., zoom) => {
+                Vec2::new(TileSet::TILE_SIZE.0 as f32, TileSet::TILE_SIZE.1 as f32) * (*zoom)
+            }
         }
     }
 
@@ -196,7 +192,7 @@ impl Draw for Button {
     fn draw(&mut self, ctx: &mut Context) {
         let rect = self.rect.unwrap();
         let mut vec = Vec2::new(rect.x, rect.y);
-        let (content_size, _) = self.content_size(ctx);
+        let content_size = self.content_size(ctx);
         let bg_color = self.state().bg_color();
         self.bg
             .as_mut()
@@ -210,7 +206,7 @@ impl Draw for Button {
         vec += Vec2::new(rect.w, rect.h) / 2.0 - content_size / 2.0;
         // get a copy because mutable borrow below
         let color = self.state().fg_color();
-        if let ButtonContent::Text(text) = &mut self.content {
+        if let ButtonContent::Text(text, _) = &mut self.content {
             // hack for "[key] Name" buttons
             if text.content().starts_with('[') {
                 vec.x -= 2.0;
@@ -248,7 +244,8 @@ impl Positionate for Button {
     }
 
     fn calc_size(&mut self, ctx: &mut Context) -> Vec2 {
-        let (content_size, offset_x) = self.content_size(ctx);
+        let content_size = self.content_size(ctx);
+        let offset_x = self.content.offset_x();
         self.border = Some(
             Mesh::rounded_rectangle(
                 ctx,

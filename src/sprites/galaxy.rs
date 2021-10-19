@@ -1,10 +1,11 @@
+use crate::assets::PreparedFont;
 use crate::colors::Colors;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
-use tetra::graphics::text::{Font, Text};
+use tetra::graphics::text::Text;
 use tetra::graphics::{Canvas, DrawParams, Rectangle, Texture};
 use tetra::input::{Key, MouseButton};
 use tetra::{graphics, input, window, Context};
@@ -14,8 +15,8 @@ fn draw_galaxy(
     size: usize,
     quadrants: &[u32],
     name: &str,
-    font_title: Font,
-    font_bottom: Font,
+    font_title: PreparedFont,
+    font_bottom: PreparedFont,
 ) -> Canvas {
     let window_size = window::get_size(ctx);
     let window_min_size = i32::min(window_size.0, window_size.1);
@@ -56,7 +57,7 @@ fn draw_galaxy(
     .unwrap();
     mesh.draw(ctx, DrawParams::new().color(Colors::ORANGE));
 
-    let mut text = Text::new(format!("{} galaxy", name), font_title);
+    let mut text = Text::new(format!("{} galaxy", name), font_title.font);
     let bounds = text.get_bounds(ctx).unwrap();
     text.draw(
         ctx,
@@ -70,7 +71,7 @@ fn draw_galaxy(
     let sum: u64 = quadrants.iter().copied().map(u64::from).sum();
     let mut text = Text::new(
         format!("{} stars in {}x{} quadrants", sum, size, size),
-        font_bottom,
+        font_bottom.font,
     );
     let bounds = text.get_bounds(ctx).unwrap();
     text.draw(
@@ -89,8 +90,8 @@ fn draw_galaxy(
 
 pub struct Galaxy {
     canvas: Option<Canvas>,
-    font_title: Font,
-    font_bottom: Font,
+    font_title: PreparedFont,
+    font_bottom: PreparedFont,
     size: usize,
     position: Position,
     rect: Option<Rect>,
@@ -98,7 +99,12 @@ pub struct Galaxy {
 }
 
 impl Galaxy {
-    pub fn new(size: usize, font_title: Font, font_bottom: Font, position: Position) -> Self {
+    pub fn new(
+        size: usize,
+        font_title: PreparedFont,
+        font_bottom: PreparedFont,
+        position: Position,
+    ) -> Self {
         Self {
             canvas: None,
             font_title,

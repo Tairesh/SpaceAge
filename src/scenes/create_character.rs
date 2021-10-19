@@ -68,7 +68,7 @@ impl CreateCharacter {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -126.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -125.0 },
             },
         )));
         let name_input = Rc::new(RefCell::new(TextInput::new(
@@ -97,7 +97,7 @@ impl CreateCharacter {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -56.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -55.0 },
             },
         )));
         let gender_left = Rc::new(RefCell::new(Button::icon(
@@ -113,7 +113,7 @@ impl CreateCharacter {
         )));
         let gender_input = Rc::new(RefCell::new(TextInput::new(
             "Female",
-            right_column_width - 80.0,
+            right_column_width - 100.0,
             assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
@@ -141,7 +141,7 @@ impl CreateCharacter {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 15.0 },
             },
         )));
         let age_left = Rc::new(RefCell::new(Button::icon(
@@ -158,7 +158,7 @@ impl CreateCharacter {
         let age_input = Rc::new(RefCell::new(TextInput::int(
             18,
             (15, 199),
-            right_column_width - 80.0,
+            right_column_width - 100.0,
             assets.fonts.handel24.clone(),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
@@ -186,7 +186,7 @@ impl CreateCharacter {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 85.0 },
             },
         )));
         let hand_left = Rc::new(RefCell::new(Button::icon(
@@ -209,7 +209,7 @@ impl CreateCharacter {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 85.0 },
             },
         )));
         let hand_right = Rc::new(RefCell::new(Button::icon(
@@ -231,7 +231,7 @@ impl CreateCharacter {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -80.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 155.0 },
             },
         )));
         let skin_left = Rc::new(RefCell::new(Button::icon(
@@ -250,12 +250,12 @@ impl CreateCharacter {
             Mesh::rounded_rectangle(
                 ctx,
                 ShapeStyle::Fill,
-                Rectangle::new(0.0, 0.0, right_column_width - 80.0, 42.0),
+                Rectangle::new(0.0, 0.0, right_column_width - 100.0, 42.0),
                 BorderRadii::new(5.0),
             )
             .unwrap(),
             Some(skin_tone.into()),
-            Vec2::new(right_column_width - 80.0, 42.0),
+            Vec2::new(right_column_width - 100.0, 42.0),
             Position {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
@@ -271,7 +271,7 @@ impl CreateCharacter {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 70.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 154.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 155.0 },
             },
         )));
         let skin_right = Rc::new(RefCell::new(Button::icon(

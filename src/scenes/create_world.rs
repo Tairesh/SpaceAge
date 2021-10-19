@@ -67,7 +67,7 @@ impl CreateWorld {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -126.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -125.0 },
             },
         )));
         let mut rng = thread_rng();
@@ -108,7 +108,7 @@ impl CreateWorld {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: -56.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: -55.0 },
             },
         )));
         let seed_input = Rc::new(RefCell::new(TextInput::new(
@@ -137,7 +137,7 @@ impl CreateWorld {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 15.0 },
             },
         )));
         let size_left = Rc::new(RefCell::new(Button::icon(
@@ -160,7 +160,7 @@ impl CreateWorld {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 50.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 14.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 15.0 },
             },
         )));
         let size_right = Rc::new(RefCell::new(Button::icon(
@@ -182,7 +182,7 @@ impl CreateWorld {
             Colors::ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: -60.0 },
-                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 85.0 },
             },
         )));
         let class_left = Rc::new(RefCell::new(Button::icon(
@@ -205,7 +205,7 @@ impl CreateWorld {
                 x: Horizontal::AtWindowCenterByCenter {
                     offset: right_column_width / 2.0 - 50.0,
                 },
-                y: Vertical::AtWindowCenterByCenter { offset: 84.0 },
+                y: Vertical::AtWindowCenterByCenter { offset: 85.0 },
             },
         )));
         let class_right = Rc::new(RefCell::new(Button::icon(

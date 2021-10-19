@@ -1,30 +1,55 @@
 use crate::ascii::cp437::char_to_point;
-use tetra::graphics::text::Font;
+use tetra::graphics::text::{Font, Text};
 use tetra::graphics::{DrawParams, Rectangle, Texture};
 use tetra::{Context, Result};
 
+#[derive(Debug, Clone)]
+pub struct PreparedFont {
+    pub font: Font,
+    pub line_height: f32,
+}
+
+impl PreparedFont {
+    pub fn new(ctx: &mut Context, font: Font) -> Self {
+        let bounds = Text::new("IjqgpT})@", font.clone())
+            .get_bounds(ctx)
+            .unwrap();
+        Self {
+            font,
+            line_height: bounds.height,
+        }
+    }
+}
+
 pub struct Fonts {
-    pub consolab18: Font,
-    pub consolab12: Font,
-    pub handel14: Font, // TODO: precalc font heights
-    pub handel16: Font,
-    pub handel24: Font,
-    pub handel32: Font,
-    pub logo: Font,
+    pub consolab12: PreparedFont,
+    pub consolab18: PreparedFont,
+    pub handel14: PreparedFont,
+    pub handel16: PreparedFont,
+    pub handel24: PreparedFont,
+    pub handel32: PreparedFont,
+    pub logo: PreparedFont,
 }
 
 impl Fonts {
     pub fn new(ctx: &mut Context) -> Result<Self> {
         let consolab = include_bytes!("../inc/fonts/consolab.ttf");
         let handel = include_bytes!("../inc/fonts/HandelGothic.ttf");
+        let consolab12 = Font::from_vector_file_data(ctx, consolab, 12.0)?;
+        let consolab18 = Font::from_vector_file_data(ctx, consolab, 18.0)?;
+        let handel14 = Font::from_vector_file_data(ctx, handel, 14.0)?;
+        let handel16 = Font::from_vector_file_data(ctx, handel, 16.0)?;
+        let handel24 = Font::from_vector_file_data(ctx, handel, 24.0)?;
+        let handel32 = Font::from_vector_file_data(ctx, handel, 32.0)?;
+        let handel72 = Font::from_vector_file_data(ctx, handel, 72.0)?;
         Ok(Self {
-            consolab18: Font::from_vector_file_data(ctx, consolab, 18.0)?,
-            consolab12: Font::from_vector_file_data(ctx, consolab, 12.0)?,
-            handel14: Font::from_vector_file_data(ctx, handel, 14.0)?,
-            handel16: Font::from_vector_file_data(ctx, handel, 16.0)?,
-            handel24: Font::from_vector_file_data(ctx, handel, 24.0)?,
-            handel32: Font::from_vector_file_data(ctx, handel, 32.0)?,
-            logo: Font::from_vector_file_data(ctx, handel, 72.0)?,
+            consolab12: PreparedFont::new(ctx, consolab12),
+            consolab18: PreparedFont::new(ctx, consolab18),
+            handel14: PreparedFont::new(ctx, handel14),
+            handel16: PreparedFont::new(ctx, handel16),
+            handel24: PreparedFont::new(ctx, handel24),
+            handel32: PreparedFont::new(ctx, handel32),
+            logo: PreparedFont::new(ctx, handel72),
         })
     }
 }
