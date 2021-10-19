@@ -30,7 +30,7 @@ impl Fonts {
 }
 
 pub struct Images {
-    pub bg: Texture,
+    pub eclipse: Texture,
     pub icon: Texture,
     pub blue_nebula: Texture,
 }
@@ -38,7 +38,7 @@ pub struct Images {
 impl Images {
     pub fn new(ctx: &mut Context) -> Result<Self> {
         Ok(Self {
-            bg: Texture::from_file_data(ctx, include_bytes!("../inc/img/bg.jpg"))?,
+            eclipse: Texture::from_file_data(ctx, include_bytes!("../inc/img/eclipse.jpg"))?,
             icon: Texture::from_file_data(ctx, include_bytes!("../inc/img/icon.png"))?,
             blue_nebula: Texture::from_file_data(
                 ctx,

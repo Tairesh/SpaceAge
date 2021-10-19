@@ -103,7 +103,7 @@ pub(crate) fn easy_back(event: Event, focused: bool) -> Option<Transition> {
 
 pub(crate) fn bg(assets: &Assets) -> Rc<RefCell<Image>> {
     Rc::new(RefCell::new(Image::new(
-        assets.images.bg.clone(),
+        assets.images.eclipse.clone(),
         Position::center(),
     )))
 }
