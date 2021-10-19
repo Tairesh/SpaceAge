@@ -8,7 +8,6 @@ use variant_count::VariantCount;
 )]
 #[repr(u8)]
 pub enum GalaxySize {
-    Tiny,
     Small,
     Normal,
     Big,
@@ -18,11 +17,10 @@ pub enum GalaxySize {
 impl From<GalaxySize> for usize {
     fn from(s: GalaxySize) -> usize {
         match s {
-            GalaxySize::Tiny => 64,
-            GalaxySize::Small => 128,
-            GalaxySize::Normal => 256,
-            GalaxySize::Big => 512,
-            GalaxySize::Huge => 1024,
+            GalaxySize::Small => 64,
+            GalaxySize::Normal => 128,
+            GalaxySize::Big => 256,
+            GalaxySize::Huge => 512,
         }
     }
 }
@@ -30,7 +28,6 @@ impl From<GalaxySize> for usize {
 impl From<GalaxySize> for &str {
     fn from(s: GalaxySize) -> Self {
         match s {
-            GalaxySize::Tiny => "Tiny",
             GalaxySize::Small => "Small",
             GalaxySize::Normal => "Normal",
             GalaxySize::Big => "Big",

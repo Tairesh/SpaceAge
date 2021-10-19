@@ -58,6 +58,8 @@ const SPIRAL_T_MAX: f32 = 2.0 * PI * SPIRAL_WINDINGS;
 const SPIRAL_DRIFT: f32 = 0.3;
 
 fn fill_spiral<R: Rng + ?Sized>(rng: &mut R, size: usize, with_core: bool) -> Vec<u32> {
+    // TODO: this looks terrible, especially on big sizes
+    // need to be more than 2 arms
     let mut values = vec![0; size * size];
     let slice = values.as_mut_slice();
     let samples = SAMPLES_PER_SIZE * size;
@@ -127,7 +129,8 @@ fn fill_bared_spiral<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
     let core_radius = match size {
         64 => 5,
         128 => 12,
-        256 => 15,
+        256 => 14,
+        512 => 17,
         _ => ((size as f32) * 0.05).round() as usize,
     };
     let center = size / 2;
@@ -135,7 +138,7 @@ fn fill_bared_spiral<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
         for y in center - core_radius..=center + core_radius {
             let d = f32::hypot(x as f32 - center as f32, y as f32 - center as f32);
             let dx = (x as f32 - y as f32).abs();
-            if (d + dx * 0.8) > core_radius as f32 {
+            if (d + dx * 0.1) > core_radius as f32 {
                 continue;
             }
             let i = x * size + y;
@@ -197,8 +200,8 @@ fn fill_elliptical<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
     values
 }
 
-const CIRCULAR_RADIUS: f32 = 0.2;
-const MAX_STARS_CIRCULAR: u32 = 220_000;
+const CIRCULAR_RADIUS: f32 = 0.3;
+const MAX_STARS_CIRCULAR: u32 = 200_000;
 
 fn fill_circular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
     let mut values = vec![0; size * size];
@@ -221,14 +224,14 @@ fn fill_circular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
     values
 }
 
-const MAX_STARS_IRREGULAR: u32 = 120_000;
+const MAX_STARS_IRREGULAR: u32 = 20_000;
 
 fn fill_irregular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
     let mut values = vec![0; size * size];
     let slice = values.as_mut_slice();
-    let centers_count: usize = rng.gen_range(2..=4);
+    let centers_count: usize = rng.gen_range(10..=20);
     let mut centers = Vec::with_capacity(centers_count);
-    let clamps = ((size as f32 * 0.3) as usize, (size as f32 * 0.7) as usize);
+    let clamps = ((size as f32 * 0.2) as usize, (size as f32 * 0.8) as usize);
     for _ in 0..centers_count {
         centers.push((
             rng.gen_range(clamps.0..=clamps.1),
@@ -258,7 +261,7 @@ fn fill_irregular<R: Rng + ?Sized>(rng: &mut R, size: usize) -> Vec<u32> {
             if d > 0.5 {
                 slice[i] = 0
             } else {
-                slice[i] = (slice[i] as f32 * (0.5 - d) * 2.0).round() as u32
+                slice[i] = (slice[i] as f32 * (0.5 - d) * 10.0).round() as u32
             }
         }
     }
@@ -279,7 +282,7 @@ mod tests {
     fn test_spiral() {
         let spiral = generate_quadrants(42, 128, GalaxyClass::Spiral);
         assert_eq!(spiral.as_slice()[0], 0);
-        assert_eq!(spiral.as_slice()[64 * 128 + 64], 260472);
+        assert!(spiral.as_slice()[64 * 128 + 64] > 200_000);
         assert_eq!(spiral.as_slice()[127 * 128 + 127], 0);
         assert!(*spiral.iter().max().unwrap() <= CORE_MAX_STARS);
     }
@@ -288,7 +291,7 @@ mod tests {
     fn test_bared_spiral() {
         let bared = generate_quadrants(42, 128, GalaxyClass::BaredSpiral);
         assert_eq!(bared.as_slice()[0], 0);
-        assert_eq!(bared.as_slice()[64 * 128 + 64], 259395);
+        assert!(bared.as_slice()[64 * 128 + 64] > 200_000);
         assert_eq!(bared.as_slice()[127 * 128 + 127], 0);
         assert!(*bared.iter().max().unwrap() <= CORE_MAX_STARS);
     }
@@ -297,7 +300,7 @@ mod tests {
     fn test_elliptic() {
         let elliptic = generate_quadrants(42, 128, GalaxyClass::Elliptical);
         assert_eq!(elliptic.as_slice()[0], 0);
-        assert_eq!(elliptic.as_slice()[64 * 128 + 64], 240656);
+        assert!(elliptic.as_slice()[64 * 128 + 64] > 200_000);
         assert_eq!(elliptic.as_slice()[127 * 128 + 127], 0);
         assert!(*elliptic.iter().max().unwrap() <= CORE_MAX_STARS);
     }
@@ -306,7 +309,7 @@ mod tests {
     fn test_circular() {
         let circular = generate_quadrants(42, 128, GalaxyClass::Circular);
         assert_eq!(circular.as_slice()[0], 0);
-        assert_eq!(circular.as_slice()[32 * 128 + 64], 66684);
+        assert!(circular.as_slice()[32 * 128 + 64] > 60_000);
         assert_eq!(circular.as_slice()[64 * 128 + 64], 0);
         assert_eq!(circular.as_slice()[127 * 128 + 127], 0);
         assert!(*circular.iter().max().unwrap() <= CORE_MAX_STARS);
@@ -316,7 +319,7 @@ mod tests {
     fn test_irregular() {
         let irregular = generate_quadrants(42, 128, GalaxyClass::Irregular);
         assert_eq!(irregular.as_slice()[0], 0);
-        assert_eq!(irregular.as_slice()[64 * 128 + 64], 157761);
+        assert!(irregular.as_slice()[64 * 128 + 64] > 100_000);
         assert_eq!(irregular.as_slice()[127 * 128 + 127], 0);
         assert!(*irregular.iter().max().unwrap() <= CORE_MAX_STARS);
     }

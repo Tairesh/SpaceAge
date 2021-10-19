@@ -5,7 +5,7 @@ use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::{Font, Text};
-use tetra::graphics::{Canvas, DrawParams, Rectangle};
+use tetra::graphics::{Canvas, DrawParams, Rectangle, Texture};
 use tetra::input::{Key, MouseButton};
 use tetra::{graphics, input, window, Context};
 
@@ -16,49 +16,41 @@ fn draw_galaxy(
     name: &str,
     font_title: Font,
     font_bottom: Font,
-    zoom: i32,
 ) -> Canvas {
-    let pixel_size = size as i32 * zoom;
-    let canvas_size = i32::max(pixel_size, 512);
-    let offset = if pixel_size < 512 {
-        ((512 - pixel_size) as f32 / 2.0).round()
-    } else {
-        0.0
-    };
-    let canvas = Canvas::new(ctx, canvas_size, canvas_size).unwrap();
+    let window_size = window::get_size(ctx);
+    let window_min_size = i32::min(window_size.0, window_size.1);
+    let zoom = (window_min_size as f32 - 10.0) / size as f32;
+    let pixel_size = window_min_size - 10;
+    let canvas = Canvas::new(ctx, pixel_size, pixel_size).unwrap();
     graphics::set_canvas(ctx, &canvas);
     let mesh = Mesh::rounded_rectangle(
         ctx,
         ShapeStyle::Fill,
-        Rectangle::new(0.0, 0.0, canvas_size as f32, canvas_size as f32),
+        Rectangle::new(0.0, 0.0, pixel_size as f32, pixel_size as f32),
         BorderRadii::new(5.0),
     )
     .unwrap();
     mesh.draw(ctx, DrawParams::new().color(Colors::SPACE_VIOLET));
 
-    // draw so many meshes is very slow
-    // TODO: use some textures instead, they are batched
-    let mesh = Mesh::rectangle(ctx, ShapeStyle::Fill, Rectangle::new(0.0, 0.0, 5.0, 5.0)).unwrap();
+    // TODO: use some textures for beauty
+    let mut data = Vec::with_capacity(size * size * 4);
     let max = 262_144.0f32;
-    for x in 0..size {
-        for y in 0..size {
+    for y in 0..size {
+        for x in 0..size {
             let i = x * size + y;
             let d = quadrants[i] as f32 / max;
-            mesh.draw(
-                ctx,
-                DrawParams::new()
-                    .position(Vec2::new(
-                        offset + x as f32 * zoom as f32,
-                        offset + y as f32 * zoom as f32,
-                    ))
-                    .color(Colors::LIGHT_YELLOW.with_alpha(d)),
-            );
+            data.push(255);
+            data.push(255);
+            data.push(224);
+            data.push((255.0 * d).round() as u8);
         }
     }
+    let texture = Texture::from_rgba(ctx, size as i32, size as i32, data.as_slice()).unwrap();
+    texture.draw(ctx, DrawParams::new().scale(Vec2::new(zoom, zoom)));
     let mesh = Mesh::rounded_rectangle(
         ctx,
         ShapeStyle::Stroke(2.0),
-        Rectangle::new(0.0, 0.0, canvas_size as f32, canvas_size as f32),
+        Rectangle::new(0.0, 0.0, pixel_size as f32, pixel_size as f32),
         BorderRadii::new(5.0),
     )
     .unwrap();
@@ -70,7 +62,7 @@ fn draw_galaxy(
         ctx,
         DrawParams::new()
             .position(Vec2::new(
-                (canvas_size as f32) / 2.0 - bounds.width / 2.0,
+                (pixel_size as f32) / 2.0 - bounds.width / 2.0,
                 10.0,
             ))
             .color(Colors::ORANGE),
@@ -85,8 +77,8 @@ fn draw_galaxy(
         ctx,
         DrawParams::new()
             .position(Vec2::new(
-                (canvas_size as f32) / 2.0 - bounds.width / 2.0,
-                canvas_size as f32 - bounds.height - 10.0,
+                (pixel_size as f32) / 2.0 - bounds.width / 2.0,
+                pixel_size as f32 - bounds.height - 10.0,
             ))
             .color(Colors::LIGHT_GRAY),
     );
@@ -127,7 +119,6 @@ impl Galaxy {
             name,
             self.font_title.clone(),
             self.font_bottom.clone(),
-            3,
         ));
         self.positionate(ctx, window::get_size(ctx));
         self.set_focused(true)
