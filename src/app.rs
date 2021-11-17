@@ -98,6 +98,7 @@ impl App {
                     self.world = Some(Rc::new(RefCell::new(world)));
                     self.replace_scene(ctx, GameScene::ShipWalk);
                 } else {
+                    // TODO: show message and go to main menu
                     panic!("Can't load world: {:?}", savefile.path)
                 }
             }

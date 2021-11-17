@@ -23,6 +23,7 @@ mod scenes;
 mod settings;
 mod sprites;
 
+extern crate arrayvec;
 extern crate chrono;
 extern crate enum_dispatch;
 extern crate num_enum;
