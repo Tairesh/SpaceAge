@@ -29,9 +29,7 @@ impl From<&str> for ShipTile {
             ch @ ("d" | "b" | "M" | "V" | "P") => {
                 parts.push(Wing::new(ch).into());
             }
-            ch
-            @
-            ("╔" | "═" | "╗" | "║" | "╝" | "╚" | "╠" | "╦" | "╣" | "╩" | "╬") =>
+            ch @ ("╔" | "═" | "╗" | "║" | "╝" | "╚" | "╠" | "╦" | "╣" | "╩" | "╬") =>
             {
                 parts.push(Wall::new(ch).into());
             }

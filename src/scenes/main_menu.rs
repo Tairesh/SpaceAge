@@ -34,7 +34,7 @@ impl MainMenu {
             Colors::DARK_ORANGE,
             Position {
                 x: Horizontal::AtWindowCenterByCenter { offset: 0.0 },
-                y: Vertical::AtWindowCenterByBottom { offset: -180.0 },
+                y: Vertical::AtWindowCenterByBottom { offset: -178.0 },
             },
         )));
         let select_btn = Rc::new(RefCell::new(

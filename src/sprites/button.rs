@@ -211,7 +211,6 @@ impl Draw for Button {
             if text.content().starts_with('[') {
                 vec.x -= 2.0;
             }
-            vec.y -= 2.0;
             text.draw(ctx, DrawParams::new().position(vec).color(color));
         } else if let ButtonContent::AsciiIcon(ch, assets, zoom) = &self.content {
             assets.tileset.draw(
