@@ -6,7 +6,9 @@ pub const CHUNKS_IN_QUADRANT: usize = QUADRANT_SIZE * QUADRANT_SIZE;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Quadrant {
+    #[serde(rename = "s")]
     pub stars_count: u32,
+    #[serde(rename = "c")]
     pub chunks: ArrayVec<Option<Chunk>, CHUNKS_IN_QUADRANT>,
 }
 
