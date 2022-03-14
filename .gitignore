@@ -8,6 +8,7 @@
 /.idea
 
 # Local build stuff
+/.env
 /save/
 /settings.json
 /version.txt
