@@ -7,7 +7,7 @@ repository = "https://github.com/Tairesh/SpaceAge"
 license-file = "LICENSE"
 
 [dependencies.tetra]
-version = "0.6"
+version = "0.7"
 default-features = false
 features = ["serde_support","texture_png","texture_jpeg","font_ttf"]
 
