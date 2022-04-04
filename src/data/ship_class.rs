@@ -39,7 +39,12 @@ impl From<&str> for ShipTile {
             }
             "+" => {
                 parts.push(Floor::new().into());
-                parts.push(Door::new().into());
+                parts.push(Door::new(false, false).into());
+                parts.push(Roof::new().into());
+            }
+            "=" => {
+                parts.push(Floor::new().into());
+                parts.push(Door::new(false, true).into());
                 parts.push(Roof::new().into());
             }
             "@" => {

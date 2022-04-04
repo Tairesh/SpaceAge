@@ -12,18 +12,18 @@ pub struct Door {
 }
 
 impl Door {
-    pub fn new() -> Self {
+    pub fn new(open: bool, locked: bool) -> Self {
         Self {
             hp: 42,
-            open: false,
-            locked: false,
+            open,
+            locked,
         }
     }
 }
 
 impl Default for Door {
     fn default() -> Self {
-        Self::new()
+        Self::new(false, false)
     }
 }
 
@@ -85,7 +85,11 @@ impl ShipPartInteract for Door {
     fn act(&mut self, action: ShipPartAction) {
         match action {
             ShipPartAction::Open => {
-                self.open = true;
+                if self.locked {
+                    println!("Door is locked!"); // TODO: log, animation
+                } else {
+                    self.open = true;
+                }
             }
             ShipPartAction::Close => {
                 self.open = false;
