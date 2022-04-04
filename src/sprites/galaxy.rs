@@ -6,7 +6,7 @@ use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
 use crate::{Rect, Vec2};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::Text;
-use tetra::graphics::{Canvas, DrawParams, Rectangle, Texture};
+use tetra::graphics::{Canvas, DrawParams, Rectangle, Texture, TextureFormat};
 use tetra::input::{Key, MouseButton};
 use tetra::{graphics, input, window, Context};
 
@@ -46,7 +46,14 @@ fn draw_galaxy(
             data.push((255.0 * d).round() as u8);
         }
     }
-    let texture = Texture::from_rgba(ctx, size as i32, size as i32, data.as_slice()).unwrap();
+    let texture = Texture::from_data(
+        ctx,
+        size as i32,
+        size as i32,
+        TextureFormat::Rgba8,
+        data.as_slice(),
+    )
+    .unwrap();
     texture.draw(ctx, DrawParams::new().scale(Vec2::new(zoom, zoom)));
     let mesh = Mesh::rounded_rectangle(
         ctx,

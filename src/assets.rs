@@ -63,12 +63,9 @@ pub struct Images {
 impl Images {
     pub fn new(ctx: &mut Context) -> Result<Self> {
         Ok(Self {
-            eclipse: Texture::from_file_data(ctx, include_bytes!("../inc/img/eclipse.jpg"))?,
-            icon: Texture::from_file_data(ctx, include_bytes!("../inc/img/icon.png"))?,
-            blue_nebula: Texture::from_file_data(
-                ctx,
-                include_bytes!("../inc/img/blue_nebula.jpg"),
-            )?,
+            eclipse: Texture::from_encoded(ctx, include_bytes!("../inc/img/eclipse.jpg"))?,
+            icon: Texture::from_encoded(ctx, include_bytes!("../inc/img/icon.png"))?,
+            blue_nebula: Texture::from_encoded(ctx, include_bytes!("../inc/img/blue_nebula.jpg"))?,
         })
     }
 }
@@ -82,7 +79,7 @@ impl TileSet {
 
     pub fn new(ctx: &mut Context) -> Result<Self> {
         Ok(Self {
-            texture: Texture::from_file_data(ctx, include_bytes!("../inc/img/12x12.png"))?,
+            texture: Texture::from_encoded(ctx, include_bytes!("../inc/img/12x12.png"))?,
         })
     }
 
