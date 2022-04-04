@@ -4,13 +4,15 @@ on:
   push:
     paths:
       - '**/*.rs'
-      - '**/*.yml'
-      - '**/*.toml'
+      - '.github/workflows/tests.yml'
+      - 'Cargo.toml'
+    branches:
+      - main
   pull_request:
     paths:
       - '**/*.rs'
-      - '**/*.yml'
-      - '**/*.toml'
+      - '.github/workflows/tests.yml'
+      - 'Cargo.toml'
 
 env:
   CARGO_TERM_COLOR: always
