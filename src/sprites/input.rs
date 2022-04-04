@@ -48,7 +48,7 @@ impl TextInput {
         Self {
             value_type: ValueType::String { max_length: 32 },
             text: Text::new(value.clone(), font.font.clone()),
-            text_with_spaces: Text::new(value.replace(" ", "_"), font.font),
+            text_with_spaces: Text::new(value.replace(' ', "_"), font.font),
             position,
             width,
             line_height: font.line_height,
@@ -125,7 +125,7 @@ impl TextInput {
             }
             self.text.set_content(val.to_string());
             self.text_with_spaces
-                .set_content(self.text.content().replace(" ", "_"));
+                .set_content(self.text.content().replace(' ', "_"));
         }
     }
 
@@ -284,7 +284,7 @@ impl Update for TextInput {
                 if allow {
                     self.text.push_str(text_input);
                     self.text_with_spaces
-                        .push_str(text_input.to_string().replace(" ", "_").as_str());
+                        .push_str(text_input.to_string().replace(' ', "_").as_str());
                     self.is_danger = false;
                 }
             }
@@ -337,7 +337,7 @@ impl Stringify for TextInput {
     fn set_value<C: Into<String>>(&mut self, value: C) {
         self.text.set_content(value);
         self.text_with_spaces
-            .set_content(self.text.content().replace(" ", "_"));
+            .set_content(self.text.content().replace(' ', "_"));
         self.is_danger = false;
         self.validate_value();
     }

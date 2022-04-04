@@ -233,7 +233,7 @@ impl Ord for SaveFile {
 
 impl From<GalaxyMeta> for SaveFile {
     fn from(galaxy_meta: GalaxyMeta) -> Self {
-        let file_name = galaxy_meta.name.replace(" ", "_");
+        let file_name = galaxy_meta.name.replace(' ', "_");
         Self {
             path: ["save", (file_name + ".save").as_str()].iter().collect(),
             version: VERSION.to_string(),

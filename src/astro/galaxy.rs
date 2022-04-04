@@ -18,9 +18,9 @@ impl GalaxyMeta {
     pub fn new(name: String, seed: String, size: GalaxySize, class: GalaxyClass) -> Self {
         let name = name
             .trim()
-            .replace("\n", "")
-            .replace("/", "")
-            .replace("\\", "");
+            .replace('\n', "")
+            .replace('/', "")
+            .replace('\\', "");
         let mut hasher = DefaultHasher::new();
         seed.hash(&mut hasher);
         let seed = hasher.finish();
