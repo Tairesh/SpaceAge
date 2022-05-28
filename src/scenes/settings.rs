@@ -111,16 +111,20 @@ impl Scene for SettingsScene {
                 }
                 window::set_decorated(ctx, true);
                 window::set_size(ctx, settings.window_size.0, settings.window_size.1).ok();
+                let current_monitor = tetra::window::get_current_monitor(ctx).unwrap_or(0);
                 window::set_position(
                     ctx,
-                    WindowPosition::Centered(0),
-                    WindowPosition::Centered(0),
+                    WindowPosition::Centered(current_monitor),
+                    WindowPosition::Centered(current_monitor),
                 );
                 None
             }
             "fullscreen" => {
                 self.window.borrow_mut().unpress();
                 self.settings.borrow_mut().fullscreen = true;
+                if let Ok((width, height)) = window::get_current_monitor_size(ctx) {
+                    window::set_size(ctx, width, height).ok();
+                }
                 window::set_fullscreen(ctx, true).ok();
                 None
             }
