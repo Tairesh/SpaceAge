@@ -4,20 +4,15 @@ use std::path::Path;
 
 const PATH: &str = "settings.json";
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum WindowMode {
-    Fullscreen,
-    Window,
-}
-
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct Settings {
-    pub width: u32,
-    pub height: u32,
+    pub width: i32,
+    pub height: i32,
     pub fullscreen: bool,
     pub show_fps: bool,
     pub music_enabled: bool,
     pub music_volume: u8,
+    pub repeat_interval: u32,
 }
 
 impl Settings {
@@ -29,6 +24,7 @@ impl Settings {
             show_fps: false,
             music_enabled: true,
             music_volume: 64,
+            repeat_interval: 125,
         }
     }
 
@@ -70,13 +66,5 @@ impl Settings {
             self.music_volume = 128;
         }
         self
-    }
-
-    pub fn window_mode(&self) -> WindowMode {
-        if self.fullscreen {
-            WindowMode::Fullscreen
-        } else {
-            WindowMode::Window
-        }
     }
 }

@@ -20,8 +20,9 @@ fmt-check:
 test:
 	cargo test
 
+# TODO: add -D clippy::pedantic
 clippy:
-	cargo clippy -- -D warnings -D clippy::pedantic -A clippy::module_name_repetitions --verbose --no-deps
+	cargo clippy -- -D warnings --verbose --no-deps
 
 clean:
 	cargo clean

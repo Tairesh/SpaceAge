@@ -199,8 +199,8 @@ impl Positionate for ShipView {
     }
 
     fn calc_size(&mut self, _ctx: &mut Context) -> Vec2 {
-        let size = self.canvas.size();
-        Vec2::new(size.0 as f32 * self.zoom, size.1 as f32 * self.zoom)
+        let (width, height) = self.canvas.size();
+        Vec2::new(width as f32, height as f32) * self.zoom
     }
 
     fn rect(&self) -> Rect {

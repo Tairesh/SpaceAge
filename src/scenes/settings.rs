@@ -1,7 +1,7 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::scenes::{bg, easy_back, Scene, Transition};
-use crate::settings::{Settings, WindowMode};
+use crate::settings::Settings;
 use crate::sprites::button::Button;
 use crate::sprites::label::Label;
 use crate::sprites::position::{Horizontal, Position, Vertical};
@@ -34,7 +34,7 @@ impl SettingsScene {
             vec![(Key::F, Some(KeyModifier::Alt))],
             "[Alt+F] Fullscreen",
             assets.fonts.consolab18.clone(),
-            matches!(settings.borrow().window_mode(), WindowMode::Fullscreen),
+            settings.borrow().fullscreen,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
@@ -45,7 +45,7 @@ impl SettingsScene {
             vec![(Key::W, Some(KeyModifier::Alt))],
             "[Alt+W] Window",
             assets.fonts.consolab18.clone(),
-            matches!(settings.borrow().window_mode(), WindowMode::Window),
+            !settings.borrow().fullscreen,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
