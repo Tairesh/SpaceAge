@@ -110,7 +110,7 @@ impl Scene for SettingsScene {
                     window::set_fullscreen(ctx, false).ok();
                 }
                 window::set_decorated(ctx, true);
-                window::set_size(ctx, settings.width as i32, settings.height as i32).ok();
+                window::set_size(ctx, settings.window_size.0, settings.window_size.1).ok();
                 window::set_position(
                     ctx,
                     WindowPosition::Centered(0),

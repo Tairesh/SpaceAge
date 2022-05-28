@@ -45,7 +45,7 @@ type Rect = tetra::math::Rect<f32, f32>;
 fn main() -> tetra::Result {
     let settings = Settings::load()?;
     let title = format!("{} {}", TITLE, VERSION);
-    let mut ctx = ContextBuilder::new(title, settings.width as i32, settings.height as i32);
+    let mut ctx = ContextBuilder::new(title, settings.window_size.0, settings.window_size.1);
     ctx.show_mouse(true)
         .vsync(true)
         .key_repeat(true)

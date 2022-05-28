@@ -6,24 +6,18 @@ const PATH: &str = "settings.json";
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct Settings {
-    pub width: i32,
-    pub height: i32,
+    pub window_size: (i32, i32),
     pub fullscreen: bool,
     pub show_fps: bool,
-    pub music_enabled: bool,
-    pub music_volume: u8,
     pub repeat_interval: u32,
 }
 
 impl Settings {
     pub fn default() -> Settings {
         Settings {
-            width: 1024,
-            height: 768,
+            window_size: (1024, 768),
             fullscreen: false,
             show_fps: false,
-            music_enabled: true,
-            music_volume: 64,
             repeat_interval: 125,
         }
     }
@@ -50,20 +44,17 @@ impl Settings {
     }
 
     pub fn validate(&mut self) -> &Settings {
-        if self.width < 800 {
-            self.width = 800;
+        if self.window_size.0 < 800 {
+            self.window_size.0 = 800;
         }
-        if self.width > 1920 {
-            self.width = 1920;
+        if self.window_size.0 > 1920 {
+            self.window_size.0 = 1920;
         }
-        if self.height < 600 {
-            self.height = 600;
+        if self.window_size.1 < 600 {
+            self.window_size.1 = 600;
         }
-        if self.height > 1280 {
-            self.height = 1280;
-        }
-        if self.music_volume > 128 {
-            self.music_volume = 128;
+        if self.window_size.1 > 1280 {
+            self.window_size.1 = 1280;
         }
         self
     }

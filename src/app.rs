@@ -192,8 +192,7 @@ impl State for App {
             Event::Resized { width, height } => {
                 let mut settings = self.settings.borrow_mut();
                 if !settings.fullscreen {
-                    settings.width = width;
-                    settings.height = height;
+                    settings.window_size = (width, height);
                     settings.validate();
                 }
                 drop(settings);
