@@ -13,27 +13,26 @@ on:
       - '**/*.rs'
       - '.github/workflows/tests.yml'
       - 'Cargo.toml'
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
-  SPACEAGE_VERSION_POSTFIX: "-test"
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: "Install dependencies"
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+      - name: "Install SDL2"
         run: |
           sudo apt update
           sudo apt install -y libsdl2-dev
-          rustup update
-          rustc --version
-      - name: "Build"
-        run: cargo build --verbose
-      - name: "Check codestyle"
-        run: cargo fmt -- --check --verbose
-      - name: "Check clippy warnings"
-        run: cargo clippy -- -Dwarnings --verbose
+      - name: "Install Rust toolchain"
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: clippy
       - name: "Run tests"
-        run: cargo test --verbose
+        run: make check
