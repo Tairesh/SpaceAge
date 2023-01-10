@@ -47,9 +47,7 @@ impl GameScene {
         match self {
             GameScene::MainMenu => Box::new(MainMenu::new(&game.assets)),
             GameScene::Empty => Box::new(Empty {}),
-            GameScene::Settings => {
-                Box::new(SettingsScene::new(&game.assets, game.settings.clone(), ctx))
-            }
+            GameScene::Settings => Box::new(SettingsScene::new(&game.assets, ctx)),
             GameScene::CreateWorld => Box::new(CreateWorld::new(game.assets.clone(), ctx)),
             GameScene::LoadWorld => Box::new(LoadWorld::new(&game.assets, ctx)),
             GameScene::CreateCharacter(s) => Box::new(CreateCharacter::new(

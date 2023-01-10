@@ -13,14 +13,14 @@ use tetra::window::WindowPosition;
 use tetra::{window, Context, Event};
 
 pub struct SettingsScene {
-    settings: Rc<RefCell<Settings>>,
     sprites: Vec<Rc<RefCell<dyn Sprite>>>,
     window: Rc<RefCell<Button>>,
     fullscreen: Rc<RefCell<Button>>,
 }
 
 impl SettingsScene {
-    pub fn new(assets: &Assets, settings: Rc<RefCell<Settings>>, ctx: &mut Context) -> Self {
+    pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
+        let settings = Settings::instance();
         let title = Rc::new(RefCell::new(Label::new(
             "Settings",
             assets.fonts.handel32.clone(),
@@ -34,7 +34,7 @@ impl SettingsScene {
             vec![(Key::F, Some(KeyModifier::Alt))],
             "[Alt+F] Fullscreen",
             assets.fonts.consolab18.clone(),
-            settings.borrow().fullscreen,
+            settings.window.fullscreen,
             Position {
                 x: Horizontal::AtWindowCenterByLeft { offset: 110.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
@@ -45,7 +45,7 @@ impl SettingsScene {
             vec![(Key::W, Some(KeyModifier::Alt))],
             "[Alt+W] Window",
             assets.fonts.consolab18.clone(),
-            !settings.borrow().fullscreen,
+            !settings.window.fullscreen,
             Position {
                 x: Horizontal::AtWindowCenterByRight { offset: 100.0 },
                 y: Vertical::AtWindowCenterByCenter { offset: -100.0 },
@@ -76,7 +76,6 @@ impl SettingsScene {
         )));
 
         SettingsScene {
-            settings,
             window: window_btn.clone(),
             fullscreen: fullscreen_btn.clone(),
             sprites: vec![
@@ -104,14 +103,14 @@ impl Scene for SettingsScene {
         match event {
             "window" => {
                 self.fullscreen.borrow_mut().unpress();
-                let mut settings = self.settings.borrow_mut();
-                settings.fullscreen = false;
+                let mut settings = Settings::instance();
+                settings.window.fullscreen = false;
                 if window::is_fullscreen(ctx) {
                     window::set_fullscreen(ctx, false).ok();
                 }
                 window::set_decorated(ctx, true);
-                window::set_size(ctx, settings.window_size.0, settings.window_size.1).ok();
-                let current_monitor = tetra::window::get_current_monitor(ctx).unwrap_or(0);
+                window::set_size(ctx, settings.window.width, settings.window.height).ok();
+                let current_monitor = window::get_current_monitor(ctx).unwrap_or(0);
                 window::set_position(
                     ctx,
                     WindowPosition::Centered(current_monitor),
@@ -121,7 +120,7 @@ impl Scene for SettingsScene {
             }
             "fullscreen" => {
                 self.window.borrow_mut().unpress();
-                self.settings.borrow_mut().fullscreen = true;
+                Settings::instance().window.fullscreen = true;
                 if let Ok((width, height)) = window::get_current_monitor_size(ctx) {
                     window::set_size(ctx, width, height).ok();
                 }
@@ -135,6 +134,6 @@ impl Scene for SettingsScene {
 
 impl Drop for SettingsScene {
     fn drop(&mut self) {
-        self.settings.borrow_mut().save();
+        Settings::instance().save();
     }
 }

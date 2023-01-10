@@ -9,6 +9,8 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
+// TODO: move it away, like in Necromanzer
+
 pub fn savefiles_exists() -> bool {
     let path = Path::new("save");
     path.read_dir()

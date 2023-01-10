@@ -7,9 +7,8 @@ use tetra::{
 use crate::settings::Settings;
 
 pub fn create_context<S: Into<String>>(title: S) -> tetra::Result<Context> {
-    let settings = &Settings::load()?;
-    let mut ctx_builder =
-        ContextBuilder::new(title, settings.window_size.0, settings.window_size.1);
+    let settings = Settings::instance();
+    let mut ctx_builder = ContextBuilder::new(title, settings.window.width, settings.window.height);
     ctx_builder
         .show_mouse(true)
         .vsync(true)
@@ -21,7 +20,7 @@ pub fn create_context<S: Into<String>>(title: S) -> tetra::Result<Context> {
     window::set_icon(&mut ctx, &mut icon)?;
     window::set_minimum_size(&mut ctx, 1024, 768)?;
     window::set_maximum_size(&mut ctx, 1920, 1280)?;
-    if settings.fullscreen {
+    if settings.window.fullscreen {
         window::set_fullscreen(&mut ctx, true).ok();
     } else {
         let monitor = window::get_current_monitor(&ctx).unwrap_or(0);

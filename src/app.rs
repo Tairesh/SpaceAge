@@ -11,7 +11,6 @@ use tetra::{time, window, Context, Event, Result, State};
 
 pub struct App {
     scenes: Vec<Box<dyn Scene>>,
-    pub settings: Rc<RefCell<Settings>>,
     pub assets: Rc<Assets>,
     pub data: Rc<GameData>,
     pub world: Option<Rc<RefCell<World>>>,
@@ -21,12 +20,10 @@ pub struct App {
 
 impl App {
     pub fn new(ctx: &mut Context) -> Result<Self> {
-        let settings = Settings::load()?;
         let assets = Rc::new(Assets::load(ctx)?);
         let data = Rc::new(GameData::load());
         let mut game = Self {
             scenes: vec![Box::new(MainMenu::new(&assets))],
-            settings: Rc::new(RefCell::new(settings)),
             assets,
             data,
             default_title: window::get_title(ctx).to_string(),
@@ -57,7 +54,7 @@ impl App {
     }
 
     fn show_fps(&mut self, ctx: &mut Context) {
-        if self.settings.borrow().show_fps {
+        if Settings::instance().debug.show_fps {
             let fps = time::get_fps(ctx).round() as u8;
             if fps != self.current_fps {
                 window::set_title(ctx, format!("{} ({} FPS)", self.default_title, fps));
@@ -184,19 +181,19 @@ impl State for App {
     fn event(&mut self, ctx: &mut Context, event: Event) -> Result {
         match event {
             Event::KeyPressed { key: Key::F2 } => {
-                let mut settings = self.settings.borrow_mut();
-                settings.show_fps = !settings.show_fps;
-                if !settings.show_fps {
+                let mut settings = Settings::instance();
+                settings.debug.show_fps ^= true; // ^_^
+                if !settings.debug.show_fps {
                     window::set_title(ctx, &self.default_title);
                 }
             }
             Event::Resized { width, height } => {
-                let mut settings = self.settings.borrow_mut();
-                if !settings.fullscreen {
-                    settings.window_size = (width, height);
+                if !window::is_fullscreen(ctx) {
+                    let mut settings = Settings::instance();
+                    settings.window.width = width;
+                    settings.window.height = height;
                     settings.validate();
                 }
-                drop(settings);
                 self.on_resize(ctx);
             }
             _ => {}
@@ -215,7 +212,7 @@ impl State for App {
 
 impl Drop for App {
     fn drop(&mut self) {
-        self.settings.borrow_mut().save();
+        Settings::instance().save();
         if let Some(world) = &self.world {
             world.borrow().save();
         }
