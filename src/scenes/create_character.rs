@@ -439,8 +439,8 @@ impl Scene for CreateCharacter {
                 if let Ok(mut value) = input.value().parse::<u8>() {
                     if event == "age:right" {
                         value += 1;
-                    } else if value > 0 {
-                        value -= 1;
+                    } else {
+                        value = value.saturating_sub(1);
                     }
                     input.set_value(value.to_string());
                 }

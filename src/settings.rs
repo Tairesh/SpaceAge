@@ -44,18 +44,10 @@ impl Settings {
     }
 
     pub fn validate(&mut self) -> &Settings {
-        if self.window_size.0 < 800 {
-            self.window_size.0 = 800;
-        }
-        if self.window_size.0 > 1920 {
-            self.window_size.0 = 1920;
-        }
-        if self.window_size.1 < 600 {
-            self.window_size.1 = 600;
-        }
-        if self.window_size.1 > 1280 {
-            self.window_size.1 = 1280;
-        }
+        self.window_size.0 = self.window_size.0.clamp(800, 1920);
+        self.window_size.1 = self.window_size.1.clamp(600, 1280);
+        self.repeat_interval = self.repeat_interval.clamp(1, 1000);
+
         self
     }
 }

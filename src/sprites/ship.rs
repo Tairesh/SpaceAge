@@ -14,8 +14,8 @@ use tetra::{graphics, window, Context};
 
 fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet) -> Canvas {
     let canvas_size = (
-        TileSet::TILE_SIZE.0 * ship.bounds.0 as i32,
-        TileSet::TILE_SIZE.1 * ship.bounds.1 as i32,
+        TileSet::TILE_SIZE.0 * ship.bounds.0,
+        TileSet::TILE_SIZE.1 * ship.bounds.1,
     );
     let canvas = Canvas::new(ctx, canvas_size.0, canvas_size.1).unwrap();
     graphics::set_canvas(ctx, &canvas);

@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["Ilya Agafonov <tairesh.rus@gmail.com>"]
 repository = "https://github.com/Tairesh/SpaceAge"
 license-file = "LICENSE"
+#build = "build.rs"
 
 [dependencies.tetra]
 version = "0.7"
@@ -12,11 +13,31 @@ default-features = false
 features = ["serde_support","texture_png","texture_jpeg","font_ttf"]
 
 [dependencies]
+# my small library for roguelikes' geometry TODO: use it
+# geometry = { git = "https://github.com/Tairesh/geometry.git", features = ["serde", "rand"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+# for jsonizing hashmaps, etc. serde_with = "2.0"
 rand = "0.8"
 chrono = "0.4"
+# TODO: remove this two and use enum-iterator = "1.1"
 num_enum = "0.5"
 variant_count = "1.1"
 enum_dispatch = "0.3"
 arrayvec = { version = "0.7", features = ["serde"] }
+# for static hashmaps, i.e. tileset phf = { version = "0.11", features = ["macros"] }
+# for singletons once_cell = "1.10"
+
+# for windows releases
+#[build-dependencies]
+#winres = "0.1"
+
+[package.metadata.bundle]
+name = "Space Age"
+identifier = "com.tairesh.spaceage"
+icon = ["assets/img/icon.ico", "assets/img/icon.png"]
+#resources = ["assets"]
+copyright = "Copyright Ⓒ Ilya Agafonov"
+category = "RolePlaying"
+deb_depends = ["libsdl2-2.0-0 (>= 2.0.5)"]
+osx_frameworks = ["SDL2"]

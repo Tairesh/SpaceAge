@@ -16,11 +16,7 @@ pub struct GalaxyMeta {
 
 impl GalaxyMeta {
     pub fn new(name: String, seed: String, size: GalaxySize, class: GalaxyClass) -> Self {
-        let name = name
-            .trim()
-            .replace('\n', "")
-            .replace('/', "")
-            .replace('\\', "");
+        let name = name.trim().replace(['\n', '/', '\\'], "");
         let mut hasher = DefaultHasher::new();
         seed.hash(&mut hasher);
         let seed = hasher.finish();

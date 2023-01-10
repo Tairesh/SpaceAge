@@ -117,12 +117,12 @@ impl TextInput {
 
     fn validate_value(&mut self) {
         if let ValueType::Unsigned { min, max } = self.value_type {
-            let mut val = self.text.content().parse::<u32>().unwrap_or(min);
-            if val < min {
-                val = min;
-            } else if val > max {
-                val = max;
-            }
+            let val = self
+                .text
+                .content()
+                .parse::<u32>()
+                .unwrap_or(min)
+                .clamp(min, max);
             self.text.set_content(val.to_string());
             self.text_with_spaces
                 .set_content(self.text.content().replace(' ', "_"));
