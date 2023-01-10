@@ -1,4 +1,4 @@
-use crate::Vec2;
+use geometry::Vec2;
 
 #[allow(dead_code)]
 #[derive(Copy, Clone)]

@@ -2,7 +2,7 @@
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::{DrawParams, NineSlice, Texture};
 use tetra::input::{Key, MouseButton};
 use tetra::{input, Context};

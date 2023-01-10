@@ -1,6 +1,6 @@
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::Color;
 use tetra::{graphics, Context};
 

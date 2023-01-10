@@ -1,10 +1,4 @@
-#![windows_subsystem = "windows"]
-
-use tetra::graphics::ImageData;
-use tetra::{window, ContextBuilder};
-
-use crate::app::App;
-use crate::settings::Settings;
+// #![windows_subsystem = "windows"]
 
 mod app;
 mod ascii;
@@ -22,15 +16,7 @@ mod savefile;
 mod scenes;
 mod settings;
 mod sprites;
-
-extern crate arrayvec;
-extern crate chrono;
-extern crate enum_dispatch;
-extern crate num_enum;
-extern crate rand;
-extern crate serde;
-extern crate tetra;
-extern crate variant_count;
+mod window;
 
 const TITLE: &str = "Space Age";
 const VERSION: &str = concat!(
@@ -39,25 +25,6 @@ const VERSION: &str = concat!(
     env!("SPACEAGE_VERSION_POSTFIX")
 );
 
-type Vec2 = tetra::math::Vec2<f32>;
-type Rect = tetra::math::Rect<f32, f32>;
-
 fn main() -> tetra::Result {
-    let settings = Settings::load()?;
-    let title = format!("{} {}", TITLE, VERSION);
-    let mut ctx = ContextBuilder::new(title, settings.window_size.0, settings.window_size.1);
-    ctx.show_mouse(true)
-        .vsync(true)
-        .key_repeat(true)
-        .resizable(true);
-    if settings.fullscreen {
-        ctx.fullscreen(true);
-    }
-    let mut ctx = ctx.build()?;
-    let mut icon = ImageData::from_encoded(include_bytes!("../inc/img/icon.png"))?;
-    window::set_icon(&mut ctx, &mut icon)?;
-    window::set_minimum_size(&mut ctx, 1024, 768)?;
-    window::set_maximum_size(&mut ctx, 1920, 1280)?;
-
-    ctx.run(|ctx| App::new(ctx, settings))
+    window::create_context(format!("{} {}", TITLE, VERSION))?.run(app::App::new)
 }

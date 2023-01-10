@@ -20,7 +20,8 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(ctx: &mut Context, settings: Settings) -> Result<Self> {
+    pub fn new(ctx: &mut Context) -> Result<Self> {
+        let settings = Settings::load()?;
         let assets = Rc::new(Assets::load(ctx)?);
         let data = Rc::new(GameData::load());
         let mut game = Self {

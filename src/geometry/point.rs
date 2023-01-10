@@ -1,5 +1,5 @@
 use crate::geometry::direction::Direction;
-use crate::Vec2;
+use geometry::Vec2;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::ops::{Add, AddAssign, Mul, Range, Sub, SubAssign};

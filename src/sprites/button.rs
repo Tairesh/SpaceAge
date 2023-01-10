@@ -4,7 +4,7 @@ use crate::input;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::Text;

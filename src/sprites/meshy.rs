@@ -2,7 +2,7 @@
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Colorize, Draw, Hover, Positionate, Sprite, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::mesh::Mesh;
 use tetra::graphics::{Color, DrawParams};
 use tetra::{input, Context};

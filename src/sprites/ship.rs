@@ -7,7 +7,7 @@ use crate::game::ship::Ship;
 use crate::geometry::point::Point;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
 use tetra::{graphics, window, Context};

@@ -4,6 +4,8 @@ use std::path::Path;
 
 const PATH: &str = "settings.json";
 
+// TODO: use singleton
+
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct Settings {
     pub window_size: (i32, i32),

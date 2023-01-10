@@ -5,7 +5,7 @@ use crate::sprites::bg::Bg;
 use crate::sprites::meshy::HoverableMesh;
 use crate::sprites::position::{Horizontal, Position};
 use crate::sprites::sprite::Sprite;
-use crate::Vec2;
+use geometry::Vec2;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::graphics::mesh::{Mesh, ShapeStyle};

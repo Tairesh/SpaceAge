@@ -4,7 +4,7 @@ use crate::colors::Colors;
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Stringify, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use std::time::{Duration, Instant};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::Text;

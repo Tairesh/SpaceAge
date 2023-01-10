@@ -2,7 +2,7 @@
 use crate::assets::PreparedFont;
 use crate::sprites::position::Position;
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify, Update};
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::text::Text;
 use tetra::graphics::{Color, DrawParams};
 use tetra::Context;

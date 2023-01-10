@@ -1,6 +1,6 @@
 use crate::scenes::Transition;
 use crate::sprites::position::Position;
-use crate::{Rect, Vec2};
+use geometry::{Rect, Vec2};
 use tetra::graphics::Color;
 use tetra::Context;
 

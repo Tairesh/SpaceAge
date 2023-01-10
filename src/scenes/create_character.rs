@@ -13,7 +13,7 @@ use crate::sprites::label::Label;
 use crate::sprites::meshy::JustMesh;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify};
-use crate::Vec2;
+use geometry::Vec2;
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
