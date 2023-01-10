@@ -1,4 +1,4 @@
-use crate::geometry::point::Point;
+use geometry::Point;
 use std::collections::HashSet;
 
 // copy/pasted from https://github.com/amethyst/bracket-lib/blob/master/bracket-pathfinding/src/field_of_view/recursive_shadowcasting.rs
@@ -20,7 +20,7 @@ pub trait FovMap {
     fn is_opaque(&self, _idx: usize) -> bool;
 }
 
-pub fn field_of_view_set(center: Point, range: i32, fov_check: &dyn FovMap) -> HashSet<Point> {
+pub fn field_of_view_set(center: Point, range: u32, fov_check: &dyn FovMap) -> HashSet<Point> {
     let mut visible_points: HashSet<Point> =
         HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
@@ -58,7 +58,7 @@ pub fn field_of_view_set(center: Point, range: i32, fov_check: &dyn FovMap) -> H
             let x2 = x2 * x2;
             let y2 = current.y - center.y;
             let y2 = y2 * y2;
-            if x2 + y2 > r2 {
+            if x2 + y2 > r2 as i32 {
                 break;
             }
 
@@ -108,7 +108,7 @@ pub fn field_of_view_set(center: Point, range: i32, fov_check: &dyn FovMap) -> H
 struct ScanFovData<'a> {
     center: Point,
     dimensions: Point,
-    range_2: i32,
+    range_2: u32,
     fov_check: &'a dyn FovMap,
     visible_points: &'a mut HashSet<Point>,
 }
@@ -123,8 +123,8 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn distance_to_center(&self, point: Point) -> i32 {
-        point.square_distance(&self.center)
+    fn distance_to_center(&self, point: Point) -> u32 {
+        point.square_distance(self.center)
     }
 
     fn insert_visible_for_vertical(&mut self, point: Point) -> bool {
@@ -155,14 +155,14 @@ impl ScanFovData<'_> {
         is_visible
     }
 
-    fn scan_N2NE(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_N2NE(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(0, self.center.y - distance);
+        let mut current = Point::new(0, self.center.y - distance as i32);
         if current.y < 0 {
             return;
         }
@@ -200,14 +200,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_N2NW(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_N2NW(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(0, self.center.y - distance);
+        let mut current = Point::new(0, self.center.y - distance as i32);
         if current.y < 0 {
             return;
         }
@@ -244,14 +244,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_S2SE(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_S2SE(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(0, self.center.y + distance);
+        let mut current = Point::new(0, self.center.y + distance as i32);
         if current.y >= self.dimensions.y {
             return;
         }
@@ -289,14 +289,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_S2SW(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_S2SW(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(0, self.center.y + distance);
+        let mut current = Point::new(0, self.center.y + distance as i32);
         if current.y >= self.dimensions.y {
             return;
         }
@@ -333,14 +333,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_E2SE(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_E2SE(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(self.center.x + distance, 0);
+        let mut current = Point::new(self.center.x + distance as i32, 0);
         if current.x >= self.dimensions.x {
             return;
         }
@@ -378,14 +378,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_E2NE(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_E2NE(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(self.center.x + distance, 0);
+        let mut current = Point::new(self.center.x + distance as i32, 0);
         if current.x >= self.dimensions.x {
             return;
         }
@@ -422,14 +422,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_W2SW(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_W2SW(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(self.center.x - distance, 0);
+        let mut current = Point::new(self.center.x - distance as i32, 0);
         if current.x < 0 {
             return;
         }
@@ -467,14 +467,14 @@ impl ScanFovData<'_> {
         }
     }
 
-    fn scan_W2NW(&mut self, distance: i32, start_slope: f32, end_slope: f32) {
+    fn scan_W2NW(&mut self, distance: u32, start_slope: f32, end_slope: f32) {
         let mut start_slope = start_slope;
 
         if distance * distance > self.range_2 {
             return;
         }
 
-        let mut current = Point::new(self.center.x - distance, 0);
+        let mut current = Point::new(self.center.x - distance as i32, 0);
         if current.x < 0 {
             return;
         }

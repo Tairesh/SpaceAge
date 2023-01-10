@@ -1,7 +1,6 @@
 use crate::game::action::Action;
-use crate::geometry::direction::Direction;
-use crate::geometry::point::Point;
 use crate::human::character::Character;
+use geometry::{Direction, Point};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

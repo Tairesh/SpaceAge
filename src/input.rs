@@ -1,4 +1,4 @@
-use crate::geometry::direction::Direction;
+use geometry::Direction;
 pub use tetra::input::*;
 use tetra::Context;
 

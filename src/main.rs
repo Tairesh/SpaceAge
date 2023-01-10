@@ -8,7 +8,6 @@ mod colors;
 mod data;
 mod fov;
 mod game;
-mod geometry;
 mod human;
 mod input;
 mod savefile;

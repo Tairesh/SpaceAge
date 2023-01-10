@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use crate::geometry::point::Point;
+use geometry::Point;
 
 /// Converts a unicode character to a CP437 equivalent, returning 0 if it didn't have a match
 pub fn to_cp437(c: char) -> u8 {

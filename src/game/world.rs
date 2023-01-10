@@ -3,11 +3,13 @@ use crate::astro::galaxy::Galaxy;
 use crate::data::game_data::GameData;
 use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
-use crate::geometry::direction::Direction;
 use crate::savefile::{save, SaveFile};
 use chrono::{DateTime, NaiveDateTime, Utc};
+use geometry::Direction;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
+const START_TIME: i64 = 32_503_680_000;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct World {
@@ -58,7 +60,8 @@ impl World {
 
     pub fn time(&self) -> DateTime<Utc> {
         DateTime::from_utc(
-            NaiveDateTime::from_timestamp(32_503_680_000 + self.current_tick as i64 / 60, 0),
+            NaiveDateTime::from_timestamp_opt(START_TIME + self.current_tick as i64 / 60, 0)
+                .unwrap(),
             Utc,
         )
     }

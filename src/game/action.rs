@@ -1,7 +1,7 @@
 use crate::game::passage::Passage;
 use crate::game::ship_parts::ShipPartAction;
 use crate::game::world::World;
-use crate::geometry::direction::Direction;
+use geometry::Direction;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

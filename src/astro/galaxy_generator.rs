@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::astro::galaxy_class::GalaxyClass;
-use crate::geometry::direction::DIR8;
+use geometry::DIR8;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;

@@ -1,7 +1,7 @@
 use crate::data::ship_class::{generate_ship, ShipClass};
 use crate::fov::FovMap;
 use crate::game::ship_tile::ShipTile;
-use crate::geometry::point::Point;
+use geometry::Point;
 use serde::{Deserialize, Serialize};
 
 #[allow(dead_code)]

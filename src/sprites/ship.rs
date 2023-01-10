@@ -4,10 +4,9 @@ use crate::colors::Colors;
 use crate::fov::field_of_view_set;
 use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
-use crate::geometry::point::Point;
 use crate::sprites::position::{Horizontal, Position, Vertical};
 use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
-use geometry::{Rect, Vec2};
+use geometry::{Point, Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
 use tetra::{graphics, window, Context};
@@ -59,7 +58,7 @@ fn draw_ship(ctx: &mut Context, ship: &Ship, avatar: &Avatar, tileset: &TileSet)
     )
     .unwrap();
 
-    let fov = field_of_view_set(avatar.pos, i32::max(ship.bounds.0, ship.bounds.1), ship);
+    let fov = field_of_view_set(avatar.pos, ship.bounds.0.max(ship.bounds.1) as u32, ship);
     let mut fov_builder = GeometryBuilder::new();
     for (i, tile) in ship.tiles.iter().enumerate() {
         if tile.is_void() {
