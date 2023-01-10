@@ -67,7 +67,7 @@ impl World {
     }
 
     pub fn move_avatar(&mut self, dir: Direction) {
-        self.avatar.pos = self.avatar.pos + dir;
+        self.avatar.pos += dir;
         self.avatar.vision = dir;
     }
 

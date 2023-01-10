@@ -47,7 +47,7 @@ mod tests {
     use crate::data::game_data::GameData;
     use crate::data::ship_class::generate_ship;
     use crate::fov::field_of_view_set;
-    use crate::geometry::point::Point;
+    use geometry::Point;
 
     #[test]
     fn check_fov() {
@@ -56,7 +56,7 @@ mod tests {
 
         let fov = field_of_view_set(
             Point::new(6, 14),
-            i32::max(ship.bounds.0, ship.bounds.1),
+            ship.bounds.0.max(ship.bounds.1) as u32,
             &ship,
         );
         assert!(fov.contains(&Point::new(5, 15)));
