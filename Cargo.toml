@@ -20,9 +20,7 @@ serde_json = "1.0"
 # for jsonizing hashmaps, etc. serde_with = "2.0"
 rand = "0.8"
 chrono = "0.4"
-# TODO: remove this two and use enum-iterator = "1.1"
-num_enum = "0.5"
-variant_count = "1.1"
+enum-iterator = "1.1"
 enum_dispatch = "0.3"
 arrayvec = { version = "0.7", features = ["serde"] }
 # for static hashmaps, i.e. tileset phf = { version = "0.11", features = ["macros"] }

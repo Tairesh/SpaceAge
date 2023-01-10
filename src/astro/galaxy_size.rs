@@ -1,12 +1,7 @@
-use crate::enums;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use enum_iterator::{next_cycle, previous_cycle, Sequence};
 use serde::{Deserialize, Serialize};
-use variant_count::VariantCount;
 
-#[derive(
-    Debug, Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone,
-)]
-#[repr(u8)]
+#[derive(Debug, Serialize, Deserialize, Sequence, Copy, Clone)]
 pub enum GalaxySize {
     Small,
     Normal,
@@ -41,11 +36,11 @@ impl GalaxySize {
         (*self).into()
     }
 
-    pub fn next(&self) -> Self {
-        enums::next(*self, Self::VARIANT_COUNT)
+    pub fn next(self) -> Self {
+        next_cycle(&self).unwrap()
     }
 
-    pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::VARIANT_COUNT)
+    pub fn prev(self) -> Self {
+        previous_cycle(&self).unwrap()
     }
 }

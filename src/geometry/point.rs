@@ -220,9 +220,8 @@ impl Mul<Vec2> for Point {
 
 #[cfg(test)]
 mod tests {
-    use super::Point;
+    use super::{Point, Vec2};
     use crate::geometry::direction::Direction;
-    use crate::Vec2;
 
     #[test]
     fn new_point() {

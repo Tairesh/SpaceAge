@@ -1,16 +1,11 @@
 use crate::colors::Colors;
-use crate::enums;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use enum_iterator::{next_cycle, previous_cycle, Sequence};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use tetra::graphics::Color;
-use variant_count::VariantCount;
 
-#[derive(
-    Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Debug, Copy, Clone,
-)]
-#[repr(u8)]
+#[derive(Serialize, Deserialize, Sequence, Debug, Copy, Clone)]
 pub enum SkinTone {
     PaleIvory,
     WarmIvory,
@@ -35,12 +30,12 @@ impl SkinTone {
         (*self).into()
     }
 
-    pub fn next(&self) -> Self {
-        enums::next(*self, Self::VARIANT_COUNT)
+    pub fn next(self) -> Self {
+        next_cycle(&self).unwrap()
     }
 
-    pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::VARIANT_COUNT)
+    pub fn prev(self) -> Self {
+        previous_cycle(&self).unwrap()
     }
 
     pub fn text_color(&self) -> Color {
@@ -104,7 +99,7 @@ impl From<SkinTone> for Color {
 
 impl Distribution<SkinTone> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> SkinTone {
-        match rng.gen_range(0..SkinTone::VARIANT_COUNT) {
+        match rng.gen_range(0..16) {
             0 => SkinTone::PaleIvory,
             1 => SkinTone::WarmIvory,
             2 => SkinTone::Sand,

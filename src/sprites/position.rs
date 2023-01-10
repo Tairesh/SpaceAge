@@ -154,8 +154,7 @@ impl Position {
 
 #[cfg(test)]
 mod tests {
-    use super::{AnchorX, AnchorY, Horizontal, Position, Vertical};
-    use crate::Vec2;
+    use super::{AnchorX, AnchorY, Horizontal, Position, Vec2, Vertical};
 
     #[test]
     fn test_positions() {

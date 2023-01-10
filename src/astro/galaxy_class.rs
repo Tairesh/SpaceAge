@@ -1,14 +1,9 @@
-use crate::enums;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use enum_iterator::{next_cycle, previous_cycle, Sequence};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use variant_count::VariantCount;
 
-#[derive(
-    Debug, Serialize, Deserialize, IntoPrimitive, TryFromPrimitive, VariantCount, Copy, Clone,
-)]
-#[repr(u8)]
+#[derive(Debug, Serialize, Deserialize, Sequence, Copy, Clone, Eq, PartialEq)]
 pub enum GalaxyClass {
     Spiral,
     BaredSpiral,
@@ -34,18 +29,18 @@ impl GalaxyClass {
         (*self).into()
     }
 
-    pub fn next(&self) -> Self {
-        enums::next(*self, Self::VARIANT_COUNT)
+    pub fn next(self) -> Self {
+        next_cycle(&self).unwrap()
     }
 
-    pub fn prev(&self) -> Self {
-        enums::prev(*self, Self::VARIANT_COUNT)
+    pub fn prev(self) -> Self {
+        previous_cycle(&self).unwrap()
     }
 }
 
 impl Distribution<GalaxyClass> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> GalaxyClass {
-        match rng.gen_range(0..GalaxyClass::VARIANT_COUNT) {
+        match rng.gen_range(0..5) {
             0 => GalaxyClass::Spiral,
             1 => GalaxyClass::BaredSpiral,
             2 => GalaxyClass::Elliptical,

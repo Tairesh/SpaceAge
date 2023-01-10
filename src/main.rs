@@ -6,7 +6,6 @@ mod assets;
 mod astro;
 mod colors;
 mod data;
-mod enums;
 mod fov;
 mod game;
 mod geometry;
