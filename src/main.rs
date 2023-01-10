@@ -13,7 +13,7 @@ mod input;
 mod savefile;
 mod scenes;
 mod settings;
-mod sprites;
+mod ui;
 mod window;
 
 const TITLE: &str = "Space Age";

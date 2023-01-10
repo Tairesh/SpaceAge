@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 use crate::scenes::Transition;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Colorize, Draw, Hover, Positionate, Sprite, Update};
+use crate::ui::{Colorize, Draw, Focus, Hover, Position, Positionate, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use tetra::graphics::mesh::Mesh;
 use tetra::graphics::{Color, DrawParams};
@@ -85,7 +84,10 @@ impl Colorize for JustMesh {
 }
 
 impl Update for JustMesh {}
-impl Sprite for JustMesh {}
+
+impl Focus for JustMesh {}
+
+impl UiSprite for JustMesh {}
 
 pub struct HoverableMesh {
     mesh: Mesh,
@@ -193,6 +195,12 @@ impl Hover for HoverableMesh {
     fn off_hovered(&mut self) {
         self.is_hovered = false;
     }
+
+    fn hovered(&self) -> bool {
+        self.is_hovered
+    }
 }
 
-impl Sprite for HoverableMesh {}
+impl Focus for HoverableMesh {}
+
+impl UiSprite for HoverableMesh {}

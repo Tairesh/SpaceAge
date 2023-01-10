@@ -2,10 +2,7 @@ use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::savefile::{delete, load, savefiles, savefiles_exists};
 use crate::scenes::{bg, easy_back, GameScene, Scene, Transition};
-use crate::sprites::button::Button;
-use crate::sprites::label::Label;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Positionate, Sprite};
+use crate::ui::{Button, Horizontal, Label, Position, Positionate, UiSprite, Vertical};
 use crate::VERSION;
 use chrono::{DateTime, Local};
 use geometry::Vec2;
@@ -16,13 +13,14 @@ use tetra::input::{Key, KeyModifier};
 use tetra::{Context, Event};
 
 pub struct LoadWorld {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
 }
 
 impl LoadWorld {
     pub fn new(assets: &Assets, ctx: &mut Context) -> Self {
         let savefiles = savefiles();
-        let mut sprites: Vec<Rc<RefCell<dyn Sprite>>> = Vec::with_capacity(savefiles.len() * 5 + 2);
+        let mut sprites: Vec<Rc<RefCell<dyn UiSprite>>> =
+            Vec::with_capacity(savefiles.len() * 5 + 2);
         sprites.push(bg(assets));
         // TODO: make a shortcut for scene title
         sprites.push(Rc::new(RefCell::new(Label::new(
@@ -127,7 +125,7 @@ impl Scene for LoadWorld {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 

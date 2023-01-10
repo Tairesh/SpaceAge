@@ -6,11 +6,7 @@ use crate::game::ship_tile::ShipTile;
 use crate::game::world::World;
 use crate::input;
 use crate::scenes::{GameScene, Scene, Transition};
-use crate::sprites::image::Image;
-use crate::sprites::label::Label;
-use crate::sprites::position::Position;
-use crate::sprites::ship::ShipView;
-use crate::sprites::sprite::{Positionate, Sprite};
+use crate::ui::{Image, Label, Position, Positionate, ShipView, UiSprite};
 use geometry::Vec2;
 use geometry::{Direction, DIR9};
 use std::cell::RefCell;
@@ -99,7 +95,7 @@ pub struct ShipWalk {
     #[allow(dead_code)]
     world: Rc<RefCell<World>>,
     assets: Rc<Assets>,
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
     ship_view: Rc<RefCell<ShipView>>,
     clock: Rc<RefCell<Label>>,
     last_walk: Instant,
@@ -299,7 +295,7 @@ impl Scene for ShipWalk {
         }
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 }

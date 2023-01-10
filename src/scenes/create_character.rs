@@ -7,12 +7,10 @@ use crate::human::main_hand::MainHand;
 use crate::human::skin_tone::SkinTone;
 use crate::savefile::SaveFile;
 use crate::scenes::{bg, easy_back, Scene, Transition};
-use crate::sprites::button::Button;
-use crate::sprites::input::TextInput;
-use crate::sprites::label::Label;
-use crate::sprites::meshy::JustMesh;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify};
+use crate::ui::{
+    Button, Colorize, Draw, Horizontal, JustMesh, Label, Position, Positionate, Stringify,
+    TextInput, UiSprite, Vertical,
+};
 use geometry::Vec2;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -24,7 +22,7 @@ use tetra::{window, Context, Event};
 pub struct CreateCharacter {
     savefile: SaveFile,
     data: Rc<GameData>,
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
     name_input: Rc<RefCell<TextInput>>,
     name_empty: Rc<RefCell<Label>>,
     gender_input: Rc<RefCell<TextInput>>,
@@ -381,7 +379,7 @@ impl Scene for CreateCharacter {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 

@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 use crate::assets::PreparedFont;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Stringify, Update};
+use crate::ui::{Colorize, Draw, Focus, Position, Positionate, Stringify, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use tetra::graphics::text::Text;
 use tetra::graphics::{Color, DrawParams};
@@ -123,4 +122,7 @@ impl Update for Label {
         false
     }
 }
-impl Sprite for Label {}
+
+impl Focus for Label {}
+
+impl UiSprite for Label {}

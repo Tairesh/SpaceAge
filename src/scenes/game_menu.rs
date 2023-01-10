@@ -1,15 +1,13 @@
 use crate::assets::Assets;
 use crate::scenes::{bg, easy_back, GameScene, Scene, Transition};
-use crate::sprites::button::Button;
-use crate::sprites::position::{Position, Vertical};
-use crate::sprites::sprite::Sprite;
+use crate::ui::{Button, Position, UiSprite, Vertical};
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::Key;
 use tetra::{Context, Event};
 
 pub struct GameMenu {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
 }
 
 impl GameMenu {
@@ -46,7 +44,7 @@ impl Scene for GameMenu {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 }

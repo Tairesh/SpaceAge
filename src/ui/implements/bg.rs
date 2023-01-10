@@ -1,13 +1,10 @@
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
+use crate::ui::{Draw, Focus, Position, Positionate, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use tetra::graphics::Color;
 use tetra::{graphics, Context};
 
 pub struct Bg {
     color: Color,
-    position: Position,
-    rect: Option<Rect>,
     visible: bool,
 }
 
@@ -15,8 +12,6 @@ impl Bg {
     pub fn new(color: Color) -> Self {
         Self {
             color,
-            position: Position::center(),
-            rect: None,
             visible: true,
         }
     }
@@ -38,11 +33,11 @@ impl Draw for Bg {
 
 impl Positionate for Bg {
     fn position(&self) -> Position {
-        self.position
+        Position::center()
     }
 
-    fn set_position(&mut self, position: Position) {
-        self.position = position;
+    fn set_position(&mut self, _position: Position) {
+        // do nothing
     }
 
     fn calc_size(&mut self, _ctx: &mut Context) -> Vec2 {
@@ -50,13 +45,16 @@ impl Positionate for Bg {
     }
 
     fn rect(&self) -> Rect {
-        self.rect.unwrap()
+        Rect::default()
     }
 
-    fn set_rect(&mut self, rect: Rect) {
-        self.rect = Some(rect);
+    fn set_rect(&mut self, _rect: Rect) {
+        // do nothing
     }
 }
 
 impl Update for Bg {}
-impl Sprite for Bg {}
+
+impl Focus for Bg {}
+
+impl UiSprite for Bg {}

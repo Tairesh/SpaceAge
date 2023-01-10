@@ -1,8 +1,7 @@
 use crate::assets::PreparedFont;
 use crate::colors::Colors;
 use crate::scenes::Transition;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
+use crate::ui::{Draw, Focus, Position, Positionate, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
 use tetra::graphics::text::Text;
@@ -206,7 +205,7 @@ impl Update for Galaxy {
     }
 }
 
-impl Sprite for Galaxy {
+impl Focus for Galaxy {
     fn focused(&self) -> bool {
         self.visible()
     }
@@ -215,3 +214,5 @@ impl Sprite for Galaxy {
         self.set_visible(focused)
     }
 }
+
+impl UiSprite for Galaxy {}

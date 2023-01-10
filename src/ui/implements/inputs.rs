@@ -2,8 +2,9 @@
 use crate::assets::PreparedFont;
 use crate::colors::Colors;
 use crate::scenes::Transition;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Stringify, Update};
+use crate::ui::{
+    Disable, Draw, Focus, Hover, Position, Positionate, Press, Stringify, UiSprite, Update,
+};
 use geometry::{Rect, Vec2};
 use std::time::{Duration, Instant};
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
@@ -351,6 +352,10 @@ impl Hover for TextInput {
     fn off_hovered(&mut self) {
         self.is_hovered = false;
     }
+
+    fn hovered(&self) -> bool {
+        self.is_hovered
+    }
 }
 
 impl Press for TextInput {
@@ -369,9 +374,13 @@ impl Press for TextInput {
         self.blink = false;
         self.validate_value();
     }
+
+    fn pressed(&self) -> bool {
+        self.is_focused
+    }
 }
 
-impl Sprite for TextInput {
+impl Focus for TextInput {
     fn focused(&self) -> bool {
         self.is_focused
     }
@@ -384,3 +393,5 @@ impl Sprite for TextInput {
         }
     }
 }
+
+impl UiSprite for TextInput {}

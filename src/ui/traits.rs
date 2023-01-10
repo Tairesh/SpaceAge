@@ -1,8 +1,10 @@
-use crate::scenes::Transition;
-use crate::sprites::position::Position;
 use geometry::{Rect, Vec2};
 use tetra::graphics::Color;
 use tetra::Context;
+
+use crate::scenes::Transition;
+
+use super::Position;
 
 pub trait Draw {
     fn draw(&mut self, ctx: &mut Context);
@@ -29,7 +31,7 @@ pub trait Positionate {
 
 pub trait Update {
     // focused means there is some focused sprite on the scene
-    // blocked is rects of sprites above current one
+    // blocked is rects of ui elements above current one
     // TODO: implement a way to tell there is an yes-or-no-style alert, blocking even hovering
     fn update(
         &mut self,
@@ -62,17 +64,22 @@ pub trait Stringify {
 pub trait Hover {
     fn on_hovered(&mut self);
     fn off_hovered(&mut self);
+    fn hovered(&self) -> bool;
 }
 
 pub trait Press {
     fn on_pressed(&mut self);
     fn off_pressed(&mut self);
     fn unpress(&mut self);
+    fn pressed(&self) -> bool;
 }
 
-pub trait Sprite: Draw + Positionate + Update {
+pub trait Focus {
     fn focused(&self) -> bool {
         false
     }
     fn set_focused(&mut self, _focused: bool) {}
 }
+
+// TODO: remove this shit
+pub trait UiSprite: Draw + Positionate + Update + Focus {}

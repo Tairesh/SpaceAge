@@ -2,10 +2,7 @@ use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::savefile::savefiles_exists;
 use crate::scenes::{bg, GameScene, Scene, Transition};
-use crate::sprites::button::Button;
-use crate::sprites::label::Label;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Disable, Sprite};
+use crate::ui::{Button, Disable, Horizontal, Label, Position, UiSprite, Vertical};
 use crate::{TITLE, VERSION};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -13,7 +10,7 @@ use tetra::input::Key;
 use tetra::Context;
 
 pub struct MainMenu {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
     select_btn: Rc<RefCell<Button>>,
 }
 
@@ -102,7 +99,7 @@ impl Scene for MainMenu {
             .set_disabled(!savefiles_exists());
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 }

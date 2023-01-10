@@ -1,6 +1,5 @@
 #![allow(dead_code)]
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Colorize, Draw, Positionate, Sprite, Update};
+use crate::ui::{Colorize, Draw, Focus, Position, Positionate, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use tetra::graphics::{Color, DrawParams, NineSlice, Rectangle, Texture};
 use tetra::{window, Context};
@@ -125,4 +124,7 @@ impl Colorize for Image {
 }
 
 impl Update for Image {}
-impl Sprite for Image {}
+
+impl Focus for Image {}
+
+impl UiSprite for Image {}

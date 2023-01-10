@@ -2,10 +2,7 @@ use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::scenes::{bg, easy_back, Scene, Transition};
 use crate::settings::Settings;
-use crate::sprites::button::Button;
-use crate::sprites::label::Label;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Positionate, Press, Sprite};
+use crate::ui::{Button, Horizontal, Label, Position, Positionate, Press, UiSprite, Vertical};
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, KeyModifier};
@@ -13,7 +10,7 @@ use tetra::window::WindowPosition;
 use tetra::{window, Context, Event};
 
 pub struct SettingsScene {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
     window: Rc<RefCell<Button>>,
     fullscreen: Rc<RefCell<Button>>,
 }
@@ -95,7 +92,7 @@ impl Scene for SettingsScene {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 

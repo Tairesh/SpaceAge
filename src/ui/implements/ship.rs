@@ -4,8 +4,7 @@ use crate::colors::Colors;
 use crate::fov::field_of_view_set;
 use crate::game::avatar::Avatar;
 use crate::game::ship::Ship;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Draw, Positionate, Sprite, Update};
+use crate::ui::{Draw, Focus, Horizontal, Position, Positionate, UiSprite, Update, Vertical};
 use geometry::{Point, Rect, Vec2};
 use tetra::graphics::mesh::{GeometryBuilder, Mesh, ShapeStyle};
 use tetra::graphics::{Canvas, DrawParams, Rectangle};
@@ -212,4 +211,7 @@ impl Positionate for ShipView {
 }
 
 impl Update for ShipView {}
-impl Sprite for ShipView {}
+
+impl Focus for ShipView {}
+
+impl UiSprite for ShipView {}

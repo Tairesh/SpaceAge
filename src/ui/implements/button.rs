@@ -2,8 +2,7 @@ use crate::assets::{Assets, PreparedFont, TileSet};
 use crate::colors::Colors;
 use crate::input;
 use crate::scenes::Transition;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::{Disable, Draw, Hover, Positionate, Press, Sprite, Update};
+use crate::ui::{Disable, Draw, Focus, Hover, Position, Positionate, Press, UiSprite, Update};
 use geometry::{Rect, Vec2};
 use std::rc::Rc;
 use tetra::graphics::mesh::{BorderRadii, Mesh, ShapeStyle};
@@ -341,6 +340,10 @@ impl Hover for Button {
     fn off_hovered(&mut self) {
         self.is_hovered = false;
     }
+
+    fn hovered(&self) -> bool {
+        self.is_hovered
+    }
 }
 
 impl Press for Button {
@@ -357,6 +360,12 @@ impl Press for Button {
     fn unpress(&mut self) {
         self.is_pressed = false;
     }
+
+    fn pressed(&self) -> bool {
+        self.is_pressed
+    }
 }
 
-impl Sprite for Button {}
+impl Focus for Button {}
+
+impl UiSprite for Button {}

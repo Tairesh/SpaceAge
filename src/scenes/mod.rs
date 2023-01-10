@@ -20,9 +20,7 @@ use crate::scenes::main_menu::MainMenu;
 use crate::scenes::settings::SettingsScene;
 use crate::scenes::ship_walk::ShipWalk;
 use crate::scenes::terminal::Terminal;
-use crate::sprites::image::Image;
-use crate::sprites::position::Position;
-use crate::sprites::sprite::Sprite;
+use crate::ui::{Image, Position, UiSprite};
 use std::cell::RefCell;
 use std::rc::Rc;
 use tetra::input::{Key, MouseButton};
@@ -116,7 +114,7 @@ pub trait Scene {
     fn draw(&mut self, _ctx: &mut Context) {}
     fn on_open(&mut self, _ctx: &mut Context) {}
     fn on_resize(&mut self, _ctx: &mut Context) {}
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         None
     }
     fn custom_event(&mut self, _ctx: &mut Context, _event: &str) -> Option<Transition> {

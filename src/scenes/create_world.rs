@@ -6,12 +6,10 @@ use crate::astro::galaxy_size::GalaxySize;
 use crate::colors::Colors;
 use crate::savefile::{create, SaveError};
 use crate::scenes::{bg, easy_back, Scene, Transition};
-use crate::sprites::button::Button;
-use crate::sprites::galaxy::Galaxy;
-use crate::sprites::input::TextInput;
-use crate::sprites::label::Label;
-use crate::sprites::position::{Horizontal, Position, Vertical};
-use crate::sprites::sprite::{Draw, Positionate, Sprite, Stringify};
+use crate::ui::{
+    Button, Draw, Galaxy, Horizontal, Label, Position, Positionate, Stringify, TextInput, UiSprite,
+    Vertical,
+};
 use rand::distributions::Standard;
 use rand::{thread_rng, Rng};
 use std::cell::RefCell;
@@ -35,8 +33,9 @@ fn random_name<R: Rng + ?Sized>(rng: &mut R) -> String {
     )
 }
 
+// TODO: fuck this shit, refactor at least as in Necromanzer
 pub struct CreateWorld {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
     name_input: Rc<RefCell<TextInput>>,
     name_empty: Rc<RefCell<Label>>,
     name_error: Rc<RefCell<Label>>,
@@ -338,7 +337,7 @@ impl Scene for CreateWorld {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 

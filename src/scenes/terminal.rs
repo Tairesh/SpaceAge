@@ -1,10 +1,7 @@
 use crate::assets::Assets;
 use crate::colors::Colors;
 use crate::scenes::{easy_back, Scene, Transition};
-use crate::sprites::bg::Bg;
-use crate::sprites::meshy::HoverableMesh;
-use crate::sprites::position::{Horizontal, Position};
-use crate::sprites::sprite::Sprite;
+use crate::ui::{Bg, Horizontal, HoverableMesh, Position, UiSprite};
 use geometry::Vec2;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -13,7 +10,7 @@ use tetra::graphics::Rectangle;
 use tetra::{window, Context, Event};
 
 pub struct Terminal {
-    sprites: Vec<Rc<RefCell<dyn Sprite>>>,
+    sprites: Vec<Rc<RefCell<dyn UiSprite>>>,
 }
 
 impl Terminal {
@@ -47,7 +44,7 @@ impl Scene for Terminal {
         easy_back(event, focused).unwrap_or(Transition::DoNothing)
     }
 
-    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn Sprite>>>> {
+    fn sprites(&mut self) -> Option<&Vec<Rc<RefCell<dyn UiSprite>>>> {
         Some(&self.sprites)
     }
 }
