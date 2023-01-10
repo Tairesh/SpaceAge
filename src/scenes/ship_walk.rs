@@ -191,6 +191,7 @@ impl Scene for ShipWalk {
             return Transition::DoNothing;
         }
 
+        // TODO: move it away, see Necromanzer code
         match self.mode {
             GameMode::Default => {
                 if (input::is_mouse_scrolled_down(ctx) && self.zoom.dec())
@@ -200,15 +201,16 @@ impl Scene for ShipWalk {
                         .borrow_mut()
                         .set_zoom(self.zoom.as_view(), ctx);
                 }
-                if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
+                if input::is_key_with_mod_pressed(ctx, Key::Escape) {
                     return Transition::Push(GameScene::GameMenu);
-                } else if input::is_pressed_key_with_mod(ctx, Key::O, None) {
+                } else if input::is_key_with_mod_pressed(ctx, Key::O) {
                     self.mode = GameMode::Activating(Some(ShipPartAction::Open));
-                } else if input::is_pressed_key_with_mod(ctx, Key::C, None) {
+                } else if input::is_key_with_mod_pressed(ctx, Key::C) {
                     self.mode = GameMode::Activating(Some(ShipPartAction::Close));
-                } else if input::is_pressed_key_with_mod(ctx, Key::E, None) {
+                } else if input::is_key_with_mod_pressed(ctx, Key::A) {
                     self.mode = GameMode::Activating(None);
                 }
+                // TODO: Key::E to examine, Key::T to talk, Key::I to inventory view, Key::Q to drop an item, etc.
 
                 let now = Instant::now();
                 if let Some(dir) = input::get_direction_keys_down(ctx) {
@@ -226,7 +228,7 @@ impl Scene for ShipWalk {
                 }
             }
             GameMode::Activating(action) => {
-                if input::is_pressed_key_with_mod(ctx, Key::Escape, None) {
+                if input::is_key_with_mod_pressed(ctx, Key::Escape) {
                     self.mode = GameMode::Default;
                 }
                 if let Some(dir) = input::get_direction_keys_down(ctx) {

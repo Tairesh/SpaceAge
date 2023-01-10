@@ -284,7 +284,7 @@ impl Update for Button {
             let mut on_pressed = false;
             let mut off_pressed = false;
             for (key, key_mod) in self.keys.iter().copied() {
-                if input::is_pressed_key_with_mod(ctx, key, key_mod) {
+                if input::is_key_with_mod_pressed(ctx, (key, key_mod)) {
                     on_pressed = true;
                 }
                 if input::is_key_released(ctx, key) && self.is_pressed {
