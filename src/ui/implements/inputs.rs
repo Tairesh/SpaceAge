@@ -14,6 +14,7 @@ use tetra::input::{Key, KeyModifier, MouseButton};
 use tetra::{input, Context};
 
 enum ValueType {
+    // TODO: max_length should be usize
     String { max_length: u32 },
     Unsigned { min: u32, max: u32 },
 }
@@ -280,7 +281,7 @@ impl Update for TextInput {
                     ValueType::String { max_length } => {
                         (self.text.content().len() + text_input.len()) as u32 <= max_length
                     }
-                    ValueType::Unsigned { .. } => matches!(text_input.parse::<u32>(), Ok(_)),
+                    ValueType::Unsigned { .. } => text_input.parse::<u32>().is_ok(),
                 };
                 if allow {
                     self.text.push_str(text_input);

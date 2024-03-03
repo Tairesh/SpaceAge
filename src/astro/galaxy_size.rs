@@ -37,10 +37,10 @@ impl GalaxySize {
     }
 
     pub fn next(self) -> Self {
-        next_cycle(&self).unwrap()
+        next_cycle(&self)
     }
 
     pub fn prev(self) -> Self {
-        previous_cycle(&self).unwrap()
+        previous_cycle(&self)
     }
 }

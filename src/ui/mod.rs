@@ -8,7 +8,7 @@ pub use self::implements::{
     meshy::{HoverableMesh, JustMesh},
     ship::ShipView,
 };
-pub use self::position::{AnchorX, AnchorY, Horizontal, Position, Vertical};
+pub use self::position::{Horizontal, Position, Vertical};
 pub use self::traits::{
     Colorize, Disable, Draw, Focus, Hover, Positionate, Press, Stringify, UiSprite, Update,
 };

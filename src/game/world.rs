@@ -59,7 +59,7 @@ impl World {
     }
 
     pub fn time(&self) -> DateTime<Utc> {
-        DateTime::from_utc(
+        DateTime::from_naive_utc_and_offset(
             NaiveDateTime::from_timestamp_opt(START_TIME + self.current_tick as i64 / 60, 0)
                 .unwrap(),
             Utc,
